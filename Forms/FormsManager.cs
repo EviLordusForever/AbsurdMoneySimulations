@@ -26,8 +26,7 @@ namespace AbsurdMoneySimulations
 		{
 			if (showForm == null || showForm.IsDisposed)
 			{
-				showForm = new ShowForm();
-				showForm.bmp = new Bitmap(1920, 1080);
+				showForm = new ShowForm();				
 			}
 
 			showForm.Show();
@@ -37,7 +36,7 @@ namespace AbsurdMoneySimulations
 			showForm.Location = new Point(0, 0);
 			showForm.BackgroundImageLayout = ImageLayout.Stretch;
 
-			showForm.BackgroundImage = showForm.bmp;
+			showForm.BackgroundImage = Storage.bmp;
 		}
 	}
 }

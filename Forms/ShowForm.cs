@@ -12,8 +12,6 @@ namespace AbsurdMoneySimulations
 {
 	public partial class ShowForm : Form
 	{
-		public Bitmap bmp;
-
 		public ShowForm()
 		{
 			InitializeComponent();
@@ -21,7 +19,6 @@ namespace AbsurdMoneySimulations
 
 		private void ShowForm_Load(object sender, EventArgs e)
 		{
-
 		}
 	}
 }

@@ -57,4 +57,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label10.Text" xml:space="preserve">
+    <value>Bet is % of depo if depo is big enough
+Otherwise minimal bet is always 1$ even if depo is negative.
+But it can be much bigger if martingale or antimartingale activated.
+
+If you make bet is $10 and prize is 75%:
+if you win you will get +$7.5
+else you will loose your $10
+
+Spoilers:
+If your winrate is 50% you can't win anyway
+If you always make bet 100% of depo you will loose everything anyway
+Even 10% is too much
+Martingale and antimartingale are actually useless
+If after 1000 bets you in profit it can be just random
+If you win 10 times in a row, than you can loose 10 times in a row</value>
+  </data>
 </root>
