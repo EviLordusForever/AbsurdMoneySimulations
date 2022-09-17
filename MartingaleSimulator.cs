@@ -10,29 +10,36 @@ namespace AbsurdMoneySimulations
 	{
 		public static void Simulate()
 		{
+			FormsManager.OpenShowForm();
+
 			Thread myThread = new Thread(SimulateThread);
 			myThread.Name = "Martingale";
 			myThread.Start();
 
 			void SimulateThread()
-			{
-				FormsManager.OpenShowForm();
-
-				Bitmap bmp = new Bitmap(1920, 1080);
-				Graphics gr = Graphics.FromImage(bmp);
+			{	
+				Graphics gr = Graphics.FromImage(FormsManager.showForm.bmp);
 
 				double money = Convert.ToDouble(FormsManager.martingaleForm.money.Text);
 				double bet = Convert.ToDouble(FormsManager.martingaleForm.bet.Text) / 100;
 				double prize = Convert.ToDouble(FormsManager.martingaleForm.prize.Text) / 100;
 				double winrate = Convert.ToDouble(FormsManager.martingaleForm.winrate.Text) / 100;
 
-				for (int i = 0; i < 999999; i++)
+				for (int i = 0; i < 1920; i++)
 				{
 					Play();
 
-					MessageBox.Show($"{money}");
-					bmp.SetPixel(i, (int)(1280 - 300 - money), Color.Black);
+					int y = (int)(1080 - 300 - money);
+
+					if (y < FormsManager.showForm.bmp.Height && y >= 0)
+						FormsManager.showForm.bmp.SetPixel(i, y, Color.Black);
 				}
+
+				FormsManager.mainForm.Invoke(new Action(() =>
+				{
+					FormsManager.showForm.Refresh();
+					FormsManager.martingaleForm.BringToFront();
+				}));				
 
 				void Play()
 				{

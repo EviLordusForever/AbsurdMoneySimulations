@@ -28,34 +28,20 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.pictureBox = new System.Windows.Forms.PictureBox();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// pictureBox
-			// 
-			this.pictureBox.BackColor = System.Drawing.SystemColors.ActiveCaption;
-			this.pictureBox.Location = new System.Drawing.Point(12, 12);
-			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(164, 144);
-			this.pictureBox.TabIndex = 0;
-			this.pictureBox.TabStop = false;
 			// 
 			// ShowForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(432, 168);
-			this.Controls.Add(this.pictureBox);
 			this.Name = "ShowForm";
 			this.Text = "ShowForm";
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+			this.Load += new System.EventHandler(this.ShowForm_Load);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-
-		public PictureBox pictureBox;
 	}
 }

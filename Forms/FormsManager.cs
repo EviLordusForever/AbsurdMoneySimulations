@@ -25,15 +25,19 @@ namespace AbsurdMoneySimulations
 		public static void OpenShowForm()
 		{
 			if (showForm == null || showForm.IsDisposed)
+			{
 				showForm = new ShowForm();
+				showForm.bmp = new Bitmap(1920, 1080);
+			}
 
 			showForm.Show();
 			showForm.WindowState = FormWindowState.Normal;
 			showForm.BringToFront();
 			showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 			showForm.Location = new Point(0, 0);
-			showForm.pictureBox.Size = new Size(showForm.ClientSize.Width, showForm.ClientSize.Height);
-			showForm.pictureBox.Location = new Point(0, 0);
+			showForm.BackgroundImageLayout = ImageLayout.Stretch;
+
+			showForm.BackgroundImage = showForm.bmp;
 		}
 	}
 }
