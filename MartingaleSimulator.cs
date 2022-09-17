@@ -70,8 +70,8 @@ namespace AbsurdMoneySimulations
 
 						y = (int)(heigh - 300 - money);
 
-						if (y > -1000000 && y0 > -1000000)	
-							if (y < 1000000 && y0 < 1000000)
+						if (y > -5000000 && y0 > -5000000)	
+							if (y < 5000000 && y0 < 5000000)
 								gr.DrawLine(pen, i-1, y0, i, y);
 					}
 				}

@@ -143,7 +143,7 @@
 			this.winrate.Name = "winrate";
 			this.winrate.Size = new System.Drawing.Size(225, 23);
 			this.winrate.TabIndex = 8;
-			this.winrate.Text = "55";
+			this.winrate.Text = "59";
 			this.winrate.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// label4
