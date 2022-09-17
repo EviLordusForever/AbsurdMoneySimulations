@@ -16,6 +16,8 @@ namespace AbsurdMoneySimulations
 
 			void SimulateThread()
 			{
+				FormsManager.OpenShowForm();
+
 				Bitmap bmp = new Bitmap(1920, 1080);
 				Graphics gr = Graphics.FromImage(bmp);
 
