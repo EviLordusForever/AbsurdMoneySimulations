@@ -16,6 +16,12 @@ namespace AbsurdMoneySimulations
 		{
 			currentDirectory = Environment.CurrentDirectory;
 			programFiles = currentDirectory + "\\ProgramFiles\\";
+
+			if (!Directory.Exists(programFiles))
+			{
+				Directory.CreateDirectory(programFiles);
+				MessageBox.Show($"Directory \"{programFiles}\" was created!");
+			}
 		}
 
 		public static void SaveImage(Bitmap image, string path)
