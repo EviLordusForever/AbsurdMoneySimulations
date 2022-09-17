@@ -8,5 +8,10 @@ namespace AbsurdMoneySimulations
 {
 	public static class Core
 	{
+		public static void Starting()
+		{
+			FormsManager.mainForm = new MainForm();
+			FormsManager.mainForm.Show();
+		}
 	}
 }

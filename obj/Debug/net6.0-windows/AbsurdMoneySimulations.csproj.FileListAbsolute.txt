@@ -16,3 +16,4 @@ E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\refint\AbsurdMoney
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.pdb
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.genruntimeconfig.cache
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\ref\AbsurdMoneySimulations.dll
+E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.MartingaleForm.resources

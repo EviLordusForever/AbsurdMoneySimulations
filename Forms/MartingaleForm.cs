@@ -10,16 +10,11 @@ using System.Windows.Forms;
 
 namespace AbsurdMoneySimulations
 {
-	public partial class MainForm : Form
+	public partial class MartingaleForm : Form
 	{
-		public MainForm()
+		public MartingaleForm()
 		{
 			InitializeComponent();
-		}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-			FormsManager.OpenMartingaleForm();
 		}
 	}
 }
