@@ -9,6 +9,6 @@ namespace AbsurdMoneySimulations
 {
 	public static class Storage
 	{
-		public static Random rnd;
+		public static Random rnd = new Random();
 	}
 }
