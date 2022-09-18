@@ -74,9 +74,7 @@ namespace AbsurdMoneySimulations
 			//Directory.CreateDirectory(Disk.programFiles + "\\NN");
 			//File.Create(Disk.programFiles + "\\NN\\Megatron.json");
 			var files = Directory.GetFiles(Disk.programFiles + "\\NN");
-
 			File.WriteAllText(files[0], JsonConvert.SerializeObject(layers));
-			//?????
 			Log("Нейросеть успешно сохранена!");
 		}
 
