@@ -111,7 +111,7 @@ namespace AbsurdMoneySimulations
 				gr.DrawString($"So, {Math.Round(100.0 * (risk[width - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
 				gr.FillRectangle(Brushes.Cyan, Storage.bmp.Width - 270, 17, 270, 26);
 				gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17+27, 270, 26);
-				double ap = Math.Round(avarageMoney[width - 1] / simulationsCount, 2);
+				double ap = Math.Round(avarageMoney[width - 1] / simulationsCount - startMoney, 2);
 				string apStr = ap.ToString() + "$";
 				if (ap > 10000000)
 					apStr = "fucking ∞";
@@ -152,8 +152,6 @@ namespace AbsurdMoneySimulations
 					}
 
 					money += lastProfit;
-
-					//MessageBox.Show($"Ставка {lastBet}, результат {win}, деньги: {money}, потери: {loosedProfit}");
 				}
 
 				double CalculateBet()
@@ -184,7 +182,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		private static Bitmap GetFormBackgroundImage(Bitmap bmp0, int width, int height)
+		public static Bitmap GetFormBackgroundImage(Bitmap bmp0, int width, int height)
 		{
 			Bitmap bmp = new Bitmap(width, height);
 			using (Graphics g = Graphics.FromImage(bmp))

@@ -38,18 +38,19 @@
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(456, 23);
 			this.button1.TabIndex = 0;
-			this.button1.Text = "Bets Simulation";
+			this.button1.Text = "Bets simulations";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// button2
 			// 
-			this.button2.Location = new System.Drawing.Point(13, 41);
+			this.button2.Location = new System.Drawing.Point(12, 41);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(456, 23);
 			this.button2.TabIndex = 1;
-			this.button2.Text = "Something";
+			this.button2.Text = "winrate, prize and profit table";
 			this.button2.UseVisualStyleBackColor = true;
+			this.button2.Click += new System.EventHandler(this.button2_Click);
 			// 
 			// MainForm
 			// 
@@ -60,7 +61,7 @@
 			this.Controls.Add(this.button1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "MainForm";
-			this.Text = "MainForm";
+			this.Text = "So,";
 			this.ResumeLayout(false);
 
 		}

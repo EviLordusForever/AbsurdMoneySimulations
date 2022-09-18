@@ -266,7 +266,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(408, 516);
+			this.ClientSize = new System.Drawing.Size(408, 539);
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.simulationTime);
 			this.Controls.Add(this.label8);
@@ -289,7 +289,7 @@
 			this.Controls.Add(this.button1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "MartingaleForm";
-			this.Text = "Binary options simulation";
+			this.Text = "Bets simulation";
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
