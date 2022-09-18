@@ -290,6 +290,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "MartingaleForm";
 			this.Text = "Bets simulation";
+			this.Load += new System.EventHandler(this.MartingaleForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

@@ -19,7 +19,12 @@ namespace AbsurdMoneySimulations
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			MartingaleSimulator.Simulate();
+			BetsSimulator.Simulate();
+		}
+
+		private void MartingaleForm_Load(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

@@ -15,20 +15,18 @@ namespace AbsurdMoneySimulations
 
 			double[,] table = new double[120, 120];
 
-
-
 			Storage.bmp = new Bitmap(2700, 1920);
 			Graphics gr = Graphics.FromImage(Storage.bmp);
 
-			  
+
 			for (double wr = 45; wr <= 110; wr += 1.0 / 26)
 			//if (wr * prize - (100 - wr) > 0)
 			{
-				double prize = 100 * (100 - wr) / (wr);
+				double prize = 100 * (100 - wr) / wr;
 				gr.DrawLine(Pens.LimeGreen, (int)(40 + wr * 26), (int)(50 + prize * 18), (int)(40 + wr * 26), 1920);
 				gr.DrawLine(Pens.Red, (int)(40 + wr * 26), (int)(50 + prize * 18), (int)(40 + wr * 26), 30);
 			}
-			gr.FillRectangle(Brushes.Red, 50, 33, (int)(40 + 45 * 26), 1920);
+			gr.FillRectangle(Brushes.Red, 50, 33, 40 + 45 * 26, 1920);
 
 			for (int wr = 0; wr <= 100; wr += 2)
 			{
@@ -55,7 +53,7 @@ namespace AbsurdMoneySimulations
 
 			FormsManager.mainForm.Invoke(new Action(() =>
 			{
-				FormsManager.showForm.BackgroundImage = MartingaleSimulator.GetFormBackgroundImage(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
+				FormsManager.showForm.BackgroundImage = BetsSimulator.GetFormBackgroundImage(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
 			}));
 		}
 	}

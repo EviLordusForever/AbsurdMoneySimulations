@@ -3,10 +3,10 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static AbsurdMoneySimulations.Logger;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using static AbsurdMoneySimulations.Logger;
 
 namespace AbsurdMoneySimulations
 {
@@ -74,14 +74,10 @@ namespace AbsurdMoneySimulations
 
 		public static void Save()
 		{
-			//Directory.CreateDirectory(Disk.programFiles + "\\NN");
-			//File.Create(Disk.programFiles + "\\NN\\Megatron.json");
 			var files = Directory.GetFiles(Disk.programFiles + "\\NN");
 
 			JsonSerializerSettings jss = new JsonSerializerSettings();
 			jss.Formatting = Formatting.Indented;
-			jss.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
-			jss.Converters.Add(new LayerAbstractConverter());
 
 			File.WriteAllText(files[0], JsonConvert.SerializeObject(layers, jss));
 			Log("Нейросеть успешно сохранена!");
@@ -93,73 +89,13 @@ namespace AbsurdMoneySimulations
 			string toLoad = File.ReadAllText(files[0]);
 
 			var jss = new JsonSerializerSettings();
-			jss.Formatting = Formatting.Indented;
-			jss.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
 			jss.Converters.Add(new LayerAbstractConverter());
-			//jss.Formatting
-			//jss.
 
 			var v = JsonConvert.DeserializeObject<List<LayerAbstract>>(toLoad, jss);
 			layers = v as List<LayerAbstract>;
 
 			Log("ЗА ГРУ ЖЕ НО !");
-		}
-
-		public class BaseSpecifiedConcreteClassConverter : DefaultContractResolver
-		{
-			protected override JsonConverter ResolveContractConverter(Type objectType)
-			{
-				if (typeof(LayerAbstract).IsAssignableFrom(objectType) && !objectType.IsAbstract)
-					return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
-				return base.ResolveContractConverter(objectType);
-			}
-		}
-
-		public class LayerAbstractConverter : JsonConverter
-		{
-			static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new BaseSpecifiedConcreteClassConverter() };
-
-			public override bool CanConvert(Type objectType)
-			{
-				return (objectType == typeof(LayerAbstract));
-			}
-
-			public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-			{
-				//System.Text.Json.JsonSerializerOptions options = new System.Text.Json.JsonSerializerOptions(JsonSerializerDefaults.Web);
-				reader.SupportMultipleContent = true;
-
-				JObject jo = JObject.Load(reader);
-				reader = jo.CreateReader();
-				if (jo["type"] != null)
-					switch (jo.GetValue("type").ToString())
-					{
-						case "0":
-							return serializer.Deserialize(reader, typeof(LayerInput));
-						case "1":
-							return serializer.Deserialize(reader, typeof(LayerPerceptron));
-						case "2":
-							return serializer.Deserialize(reader, typeof(LayerMegatron));
-						case "3":
-							return serializer.Deserialize(reader, typeof(LayerCybertron));
-						default:
-							throw new Exception();
-					}
-				throw new NotImplementedException();
-			}
-
-			public override bool CanWrite
-			{
-				get { return false; }
-			}
-
-			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-			{
-				throw new NotImplementedException(); // won't be called because CanWrite returns false
-			}
-		}
-
-		
+		}			
 
 		public static double Think(int test, int delta)
 		{

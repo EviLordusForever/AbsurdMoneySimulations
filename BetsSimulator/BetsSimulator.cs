@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace AbsurdMoneySimulations
 {
-	public static class MartingaleSimulator
+	public static class BetsSimulator
 	{
 		public static void Simulate()
 		{
@@ -58,7 +58,7 @@ namespace AbsurdMoneySimulations
 					for (int i = 0; i < width; i++)
 					{
 						y0 = (int)(heigh - 300 - money);
-						
+
 						Play();
 
 						avarageMoney[i] += money;
@@ -70,9 +70,9 @@ namespace AbsurdMoneySimulations
 
 						y = (int)(heigh - 300 - money);
 
-						if (y > -5000000 && y0 > -5000000)	
+						if (y > -5000000 && y0 > -5000000)
 							if (y < 5000000 && y0 < 5000000)
-								gr.DrawLine(pen, i-1, y0, i, y);
+								gr.DrawLine(pen, i - 1, y0, i, y);
 					}
 				}
 
@@ -110,7 +110,7 @@ namespace AbsurdMoneySimulations
 				gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
 				gr.DrawString($"So, {Math.Round(100.0 * (risk[width - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
 				gr.FillRectangle(Brushes.Cyan, Storage.bmp.Width - 270, 17, 270, 26);
-				gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17+27, 270, 26);
+				gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17 + 27, 270, 26);
 				double ap = Math.Round(avarageMoney[width - 1] / simulationsCount - startMoney, 2);
 				string apStr = ap.ToString() + "$";
 				if (ap > 10000000)
@@ -134,7 +134,7 @@ namespace AbsurdMoneySimulations
 					lastBet = CalculateBet();
 
 					winBefore = win;
-					win = (Storage.rnd.NextDouble() < winrate);
+					win = Storage.rnd.NextDouble() < winrate;
 
 					if (win)
 					{
@@ -173,7 +173,7 @@ namespace AbsurdMoneySimulations
 						res = lastBet + lastProfit;
 					else
 					if (looseCombo > 0 && looseCombo <= martingaleChain)
-						res = (loosedProfit / prize) * 1;
+						res = loosedProfit / prize * 1;
 					else
 						res = Math.Max(1, money * bet);
 
