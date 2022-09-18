@@ -10,6 +10,8 @@ namespace AbsurdMoneySimulations
 	{
 		public double[][][] values;
 
+		public int type;
+
 		public abstract void FillRandomly(int subsCount, int nodesCount, int weightsCount);
 
 		public abstract void Calculate(int test, double[] input);
@@ -17,5 +19,6 @@ namespace AbsurdMoneySimulations
 		public abstract void Mutate(double mutagen);
 
 		public abstract int WeightsCount { get; }
+
 	}
 }

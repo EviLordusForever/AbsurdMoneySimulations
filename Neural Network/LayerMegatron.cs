@@ -55,10 +55,9 @@ namespace AbsurdMoneySimulations
 			values[test][sub][node] = subs[sub].Calculate(input, node * d);
 		}
 
-
-
 		public LayerMegatron()
 		{
+			type = 2;
 		}
 	}
 }

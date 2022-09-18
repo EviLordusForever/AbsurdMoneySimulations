@@ -36,6 +36,7 @@ namespace AbsurdMoneySimulations
 		public LayerInput(int size)
 		{
 			nodes = new Node[size];
+			type = 0;
 		}
 	}
 }

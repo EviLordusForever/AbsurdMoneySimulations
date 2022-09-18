@@ -46,6 +46,7 @@ namespace AbsurdMoneySimulations
 
 		public LayerCybertron()
 		{
+			type = 3;
 		}
 	}
 }

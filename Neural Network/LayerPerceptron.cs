@@ -49,6 +49,7 @@ namespace AbsurdMoneySimulations
 
 		public LayerPerceptron()
 		{
+			type = 1;
 		}
 	}
 }
