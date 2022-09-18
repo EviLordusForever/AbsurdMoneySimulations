@@ -8,6 +8,10 @@ namespace AbsurdMoneySimulations
 {
 	public abstract class AbstractLayer
 	{
+		public double[][][] values;
+
 		public abstract void FillRandomly(int subsCount, int nodesCount, int weightsCount);
+
+		public abstract void Calculate(int test, double[] input);
 	}
 }

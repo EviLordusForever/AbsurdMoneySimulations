@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbsurdMoneySimulations.Neural_Network
+namespace AbsurdMoneySimulations
 {
 	public class LayerCybertron : AbstractLayer
 	{
 		public LayerPerceptron[] subs;
 
-
+		public LayerCybertron()
+		{
+		}
 	}
 }

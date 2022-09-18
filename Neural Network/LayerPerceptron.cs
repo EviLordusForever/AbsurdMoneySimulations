@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	public class LayerPerceptron : AbstractLayer
 	{
 		public Node[] nodes;
-		public double[][] values;
+		//public double[][][] values;
 
 		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
 		{
@@ -21,26 +21,15 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public void Calculate(int test, double[] input, int start)
+		public override void Calculate(int test, double[] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
-				values[test][node] = nodes[node].Calculate(input, start);
+				values[test][0][node] = nodes[node].Calculate(input, 0);
 		}
 
 		public void CalculateOneNode(int test, double[] input, int start, int node)
 		{
-			values[test][node] = nodes[node].Calculate(input, start);
-		}
-
-		public LayerPerceptron(string[] nodesStrs)
-		{
-			nodes = new Node[nodesStrs.Length];
-
-			for (int n = 0; n < nodesStrs.Count(); n++)
-			{
-				string[] weightsStrs = nodesStrs[n].Split('w');
-				nodes[n] = new Node(weightsStrs);
-			}
+			values[test][0][node] = nodes[node].Calculate(input, start);
 		}
 
 		public LayerPerceptron()

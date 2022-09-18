@@ -46,23 +46,19 @@ namespace AbsurdMoneySimulations
 			layers[0].FillRandomly(1, 300, 0);
 
 			layers.Add(new LayerMegatron());   //55 x 30 x 15 = 24750
-			(layers[1] as LayerMegatron).FillRandomly(55, 15, 30);
+			layers[1].FillRandomly(15, 55, 30);
 
-			layers.Add(new LayerPerceptron[15]); //15 x 55 x 10 = 8250
-			for (int i = 0; i < 15; i++)
-			{
-				(layers[2] as LayerPerceptron[])[i] = new LayerPerceptron();
-				(layers[2] as LayerPerceptron[])[i].FillRandomly(10, 55);
-			}
+			layers.Add(new LayerCybertron()); //15 x 55 x 10 = 8250
+			layers[2].FillRandomly(15, 10, 55);
 
 			layers.Add(new LayerPerceptron()); //150 x 40 = 6000
-			(layers[3] as LayerPerceptron).FillRandomly(40, 150);
+			layers[3].FillRandomly(1, 40, 150);
 
 			layers.Add(new LayerPerceptron()); //40 x 15 = 600
-			(layers[4] as LayerPerceptron).FillRandomly(15, 40);
+			layers[4].FillRandomly(1, 15, 40);
 
 			layers.Add(new LayerPerceptron()); //15 x 1 = 15
-			(layers[5] as LayerPerceptron).FillRandomly(1, 15);
+			layers[5].FillRandomly(1, 1, 15);
 
 			Log("Нейросеть создана !");
 		}
@@ -84,25 +80,12 @@ namespace AbsurdMoneySimulations
 
 			layers = JsonSerializer.Deserialize(stream, typeof(ArrayList)) as ArrayList;
 
-/*			string[] layersStrs = toLoad.Split('l');
-			layers = new ArrayList(layersStrs.Count());
-			layersCount = layersStrs.Count();
-
-			for (int l = 0; l < layersStrs.Count(); l++)
-			{
-				string[] nodesStrs = layersStrs[l].Split('n');
-				if (nodesStrs.Contains("n"))
-					layers[l] = new LayerPerceptron(nodesStrs);
-				else
-					layers[l] = new LayerMegatron(nodesStrs);
-			}*/
-
 			Log("ЗА ГРУ ЖЕ НО !");
 		}
 
 		public static double Think(int test, int delta)
 		{
-			(layers[1] as LayerPerceptron).Calculate(test, (layers[0] as LayerPerceptron).values[test], 0);
+			layers[1].Calculate(test, layers[0].values[test], 0);
 
 			return (layers[1] as LayerPerceptron).values[test][0] * 1000;
 		}
