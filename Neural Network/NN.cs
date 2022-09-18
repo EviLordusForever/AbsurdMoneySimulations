@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static AbsurdMoneySimulations.Logger;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
@@ -17,7 +17,7 @@ namespace AbsurdMoneySimulations
 		public const double randomPower = 1.4;
 		public const int jumpLimit = 9000;
 
-		public static List<AbstractLayer> layers;
+		public static List<LayerAbstract> layers;
 
 		public static double[] grafic; //[-1, 1]
 		public static List<double> realGrafic;
@@ -28,22 +28,28 @@ namespace AbsurdMoneySimulations
 
 		public static double[] randomMutates;
 
-		public static List<int[]> linksToWeights;
-
-		
-		public static int globalWeightsCount;
+		public static List<byte> linksToLayersToMutate;
 
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
-		public static int lastMutatedNode;
-		public static int lastMutatedWeight;
 
-		public static void CreateNewNN()
+		public static void Test()
 		{
-			layers = new List<AbstractLayer>();
+			Thread myThread = new Thread(TestThread);
+			myThread.Start();
 
-			layers.Add(new LayerPerceptron()); //300
-			layers[0].FillRandomly(1, 300, 0);
+			void TestThread()
+			{
+				Create();
+				Save();
+			}
+		}
+
+		public static void Create()
+		{
+			layers = new List<LayerAbstract>();
+
+			layers.Add(new LayerInput(300)); //300
 
 			layers.Add(new LayerMegatron());   //55 x 30 x 15 = 24750
 			layers[1].FillRandomly(15, 55, 30);
@@ -65,8 +71,11 @@ namespace AbsurdMoneySimulations
 
 		public static void Save()
 		{
-			var files = Directory.GetFiles(Disk.programFiles + "Trading\\NN");
-			File.WriteAllText(files[0], string.Join("l", layers));
+			//Directory.CreateDirectory(Disk.programFiles + "\\NN");
+			//File.Create(Disk.programFiles + "\\NN\\Megatron.json");
+			var files = Directory.GetFiles(Disk.programFiles + "\\NN");
+
+			File.WriteAllText(files[0], JsonConvert.SerializeObject(layers));
 			//?????
 			Log("Нейросеть успешно сохранена!");
 		}
@@ -76,18 +85,16 @@ namespace AbsurdMoneySimulations
 			var files = Directory.GetFiles(Disk.programFiles + "Trading\\NN");
 			string toLoad = File.ReadAllText(files[0]);
 
-			FileStream stream = new FileStream(toLoad, FileMode.Open, FileAccess.Read);
-
-			layers = JsonSerializer.Deserialize(stream, typeof(ArrayList)) as ArrayList;
+			layers = JsonConvert.DeserializeObject(toLoad) as List<LayerAbstract>;
 
 			Log("ЗА ГРУ ЖЕ НО !");
 		}
 
 		public static double Think(int test, int delta)
 		{
-			layers[1].Calculate(test, layers[0].values[test], 0);
+			layers[1].Calculate(test, layers[0].values[test][0]);
 
-			return (layers[1] as LayerPerceptron).values[test][0] * 1000;
+			return layers[1].values[test][0][0] * 1000;
 		}
 
 		public static double ThinkNotFromBeginning(int test, int delta, int l, int n)
@@ -99,9 +106,10 @@ namespace AbsurdMoneySimulations
 				l++;
 
 				for (; l < layersCount; l++)
-					layers[l].Calculate(test, layers[l - 1].values[test], delta);
+					//layers[l].Calculate(test, layers[l - 1].values[test][]);
+					/////////////////////////////////
 
-				return layers[l - 1].values[test][0] * 1000;
+				return layers[l - 1].values[test][0][0] * 1000;
 			}
 			else
 			{
@@ -110,15 +118,18 @@ namespace AbsurdMoneySimulations
 				//"Предыдущий мутировавший слой" == 0
 				return Think(test, delta);
 			}
+
+			return 404;
 		}
 
 		public static void RecalcOnlyOneNode(int test, int delta, int l, int n)
 		{
 			if (l == 1)
 				(layers[l] as LayerPerceptron).CalculateOneNode(test, grafic, 0, n); /////
-			else
-				(layers[l] as LayerPerceptron).CalculateOneNode(test, (layers[l + 1] as LayerPerceptron).values[test], 0, n);
-		}
+			//else
+				//(layers[l] as LayerPerceptron).CalculateOneNode(test, layers[l + 1].values[test][], 0, n);
+				////////////////////////////////
+			}
 
 		public static void Born()
 		{
@@ -151,33 +162,17 @@ namespace AbsurdMoneySimulations
 			{
 				//PLEASE, JUST BELIVE THAT IS NORMAL
 
-				linksToWeights = new List<int[]>();
+				linksToLayersToMutate = new List<byte>();
 
-				for (int s = 0; s < (layers[1] as LayerMegatron).subs.Count(); s++)
-					if ((layers[1] as LayerMegatron).subs[s].weights != null)
-						for (int w = 0; w < (layers[1] as LayerMegatron).subs[s].weights.Count(); w++)
-							linksToWeights.Add(new int[] { 1, s, w });
-
-
-				for (int s = 0; s < (layers[1] as LayerMegatron).subs.Count(); s++)
+				for (byte l = 0; l < layers.Count; l++)
 				{
-					for (int n = 0; n < (layers[2] as LayerPerceptron).nodes.Count(); n++)
-						if ((layers[2] as LayerPerceptron).nodes[n].weights != null)
-							for (int w = 0; w < (layers[2] as LayerPerceptron).nodes[n].weights.Count(); w++)
-								linksToWeights.Add(new int[] { 2, n, w });
+					int weightsCount = layers[l].WeightsCount;
+
+					for (int w = 0; w < weightsCount; w++)
+						linksToLayersToMutate.Add(l);
 				}
 
-				for (int l = 3; l <= 5; l++)
-				{
-					for (int n = 0; n < (layers[l] as LayerPerceptron).nodes.Count(); n++)
-						if ((layers[l] as LayerPerceptron).nodes[n].weights != null)
-							for (int w = 0; w < (layers[l] as LayerPerceptron).nodes[n].weights.Count(); w++)
-								linksToWeights.Add(new int[] { l, n, w });
-				}
-
-				globalWeightsCount = linksToWeights.Count();
-
-				Log("Ссылки на все веса поставлены. Весов: " + globalWeightsCount);
+				Log("Ссылки на все веса поставлены. Весов: " + linksToLayersToMutate.Count);
 			}
 
 			void FillDeltas()
@@ -265,7 +260,8 @@ namespace AbsurdMoneySimulations
 					mutationSeed = Storage.rnd.Next(1000000000);
 					mutagen = randomMutates[mutationSeed % randomMutates.Length];
 					previous_mutated_layer = lastMutatedLayer;
-					previous_mutated_node = lastMutatedNode;
+					//previous_mutated_node = lastMutatedNode;
+					//////////////////////////////////
 					SelectLNW();
 
 					Mutate(1, mutagen);
@@ -417,7 +413,8 @@ namespace AbsurdMoneySimulations
 					else if (previous_mutated_layer > lastMutatedLayer)
 					{
 						l_ = lastMutatedLayer;
-						n_ = lastMutatedNode;
+						//n_ = lastMutatedNode;
+						/////////////////////////
 					}
 					else
 					{
@@ -428,17 +425,20 @@ namespace AbsurdMoneySimulations
 							RecalcOnlyOneNode(test, deltas[test], l_, n_);
 
 						l_ = lastMutatedLayer;
-						n_ = lastMutatedNode;
+						//n_ = lastMutatedNode;
+						////////////////////////////////
 					}
 
 					error_rate = 0;
 					for (int test = 0; test < testsCount; test++)
 					{
-						double prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
+						//double prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
+						////////////////////////
 
 						double reality = answers[deltas[test] + NN.inputWindow];
 
-						error_rate += Math.Abs(prediction - reality);
+						//error_rate += Math.Abs(prediction - reality);
+						/////////////////////////////////
 					}
 
 					error_rate /= testsCount;
@@ -467,11 +467,9 @@ namespace AbsurdMoneySimulations
 
 		public static void SelectLNW()
 		{
-			int number = mutationSeed % globalWeightsCount;
+			int number = mutationSeed % linksToLayersToMutate.Count;
 
-			lastMutatedLayer = linksToWeights[number][0];
-			lastMutatedNode = linksToWeights[number][1];
-			lastMutatedWeight = linksToWeights[number][2];
+			lastMutatedLayer = linksToLayersToMutate[number];
 		}
 
 		public static void Neural_battle()
@@ -493,7 +491,7 @@ namespace AbsurdMoneySimulations
 					var files = Directory.GetFiles(Disk.programFiles + "Trading\\NN");
 					string recordsmen = File.ReadAllText(files[0]);
 
-					CreateNewNN();
+					Create();
 					Save();
 					Load();
 					var er = GetStatistics();
@@ -522,7 +520,7 @@ namespace AbsurdMoneySimulations
 		public static void Mutate(int count, double mutagen)
 		{
 			for (int i = 0; i < count; i++)
-				layers[lastMutatedLayer].nodes[lastMutatedNode].weights[lastMutatedWeight] += mutagen;
+				layers[lastMutatedLayer].Mutate(mutagen);
 		}
 	}
 }

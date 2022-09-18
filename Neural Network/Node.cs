@@ -9,6 +9,7 @@ namespace AbsurdMoneySimulations
 	public class Node
 	{
 		public double[] weights;
+		public int lastMutatedWeight;
 
 		public void FillRandomly(int weightsCount)
 		{
@@ -27,21 +28,14 @@ namespace AbsurdMoneySimulations
 			return Brain.Normalize(res);
 		}
 
-		public Node(string[] weightsStrs)
+		public void Mutate(double mutagen)
 		{
-			weights = new double[weightsStrs.Count()];
-
-			for (int w = 0; w < weightsStrs.Count(); w++)
-				weights[w] = Convert.ToDouble(weightsStrs[w]);
+			lastMutatedWeight = Storage.rnd.Next(weights.Length);
+			weights[lastMutatedWeight] += mutagen;
 		}
 
 		public Node()
 		{
-		}
-
-		public override string ToString()
-		{
-			return String.Join("w", weights);
 		}
 	}
 }

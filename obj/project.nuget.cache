@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "NFAjTme1WgHEr3+WoRQeYhvtVfzp4yIzhEqVCvLrSfKQ1OuPTb0iNSheSPtCY/3/UqOS6deuw9mwF/NlcMtOYA==",
+  "dgSpecHash": "4Ahm1185vfDfC+/rFxAElnu+M30sIqkDCtsQ4D9HFFLTmvysERhxj5nSncqzximnYQNp1oxYf1vW4YEDF9UPCA==",
   "success": true,
   "projectFilePath": "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\User\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

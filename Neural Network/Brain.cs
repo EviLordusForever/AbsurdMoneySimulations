@@ -17,5 +17,12 @@ namespace AbsurdMoneySimulations
         {
             return (double)(2 * 1 / (1 + Math.Pow(1.1, -input)) - 1);
         }
+
+        public static T[] SubArray<T>(this T[] array, int offset, int length)
+        {
+            return array.Skip(offset)
+                        .Take(length)
+                        .ToArray();
+        }
     }
 }
