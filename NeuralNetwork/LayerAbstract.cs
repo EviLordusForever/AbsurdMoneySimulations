@@ -8,15 +8,15 @@ namespace AbsurdMoneySimulations
 {
 	public abstract class LayerAbstract
 	{
-		public double[][][] values;
+		public float[][][] values;
 
 		public int type;
 
 		public abstract void FillRandomly(int subsCount, int nodesCount, int weightsCount);
 
-		public abstract void Calculate(int test, double[] input);
+		public abstract void Calculate(int test, float[] input);
 
-		public abstract void Mutate(double mutagen);
+		public abstract void Mutate(float mutagen);
 
 		public abstract int WeightsCount { get; }
 

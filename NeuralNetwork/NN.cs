@@ -16,19 +16,19 @@ namespace AbsurdMoneySimulations
 		public const int testsCount = 2000;
 		public const int inputWindow = 500;
 		public static int layersCount = 7;
-		public const double randomPower = 1.4;
+		public const float randomPower = 1.4f;
 		public const int jumpLimit = 9000;
 
 		public static List<LayerAbstract> layers;
 
-		public static double[] grafic; //[-1, 1]
-		public static List<double> realGrafic;
+		public static float[] grafic; //[-1, 1]
+		public static List<float> realGrafic;
 
 		public static List<int> availableGraficPoints;
-		public static double[] answers;
+		public static float[] answers;
 		public static int[] deltas;
 
-		public static double[] randomMutates;
+		public static float[] randomMutates;
 
 		public static List<byte> linksToLayersToMutate;
 
@@ -98,14 +98,14 @@ namespace AbsurdMoneySimulations
 			Log("ЗА ГРУ ЖЕ НО !");
 		}			
 
-		public static double Think(int test, int delta)
+		public static float Think(int test, int delta)
 		{
 			layers[1].Calculate(test, layers[0].values[test][0]);
 
 			return layers[1].values[test][0][0] * 1000;
 		}
 
-		public static double ThinkNotFromBeginning(int test, int delta, int l, int n)
+		public static float ThinkNotFromBeginning(int test, int delta, int l, int n)
 		{
 			if (l > 0)
 			{
@@ -152,15 +152,15 @@ namespace AbsurdMoneySimulations
 
 			void FillRandomMutations()
 			{
-				randomMutates = new double[1019];
+				randomMutates = new float[1019];
 
 				for (int i = 0; i < 1019; i++)
 				{
 					for (int j = 0; j < 10000; j++)
-						randomMutates[i] += Storage.rnd.NextDouble();
+						randomMutates[i] += (float)Storage.rnd.NextSingle();
 
 					randomMutates[i] -= 5000;
-					randomMutates[i] *= 0.1;
+					randomMutates[i] *= 0.1f;
 				}
 
 				Log("Случайные мутации заполнены.");
@@ -186,12 +186,12 @@ namespace AbsurdMoneySimulations
 			void FillDeltas()
 			{
 				int maximalDelta = availableGraficPoints.Count();
-				double delta_delta = 1.02 * (double)maximalDelta / testsCount;
+				float delta_delta = 1.02f * maximalDelta / testsCount;
 
 				deltas = new int[testsCount];
 
 				int i = 0;
-				for (double delta = 0; delta < maximalDelta; delta += delta_delta)
+				for (float delta = 0; delta < maximalDelta; delta += delta_delta)
 					deltas[i++] = availableGraficPoints[Convert.ToInt32(delta)];
 
 				Log("Отступы для тестов заполнены.");
@@ -199,7 +199,7 @@ namespace AbsurdMoneySimulations
 
 			void FillAnswers()
 			{
-				answers = new double[grafic.Length];
+				answers = new float[grafic.Length];
 				for (int i = NN.inputWindow - 1; i < grafic.Length - horizon - 1; i++)
 					for (int j = 1; j <= horizon; j++)
 						answers[i] += grafic[i + j];
@@ -211,7 +211,7 @@ namespace AbsurdMoneySimulations
 		public static void LoadGrafic()
 		{
 			var files = Directory.GetFiles(Disk.programFiles + "Grafic");
-			var graficL = new List<double>();
+			var graficL = new List<float>();
 			availableGraficPoints = new List<int>();
 
 			int g = 0;
@@ -223,7 +223,7 @@ namespace AbsurdMoneySimulations
 				int l = 0;
 				while (l < lines.Length)
 				{
-					graficL.Add(Brain.Normalize(Convert.ToDouble(lines[l])));
+					graficL.Add(Brain.Normalize(Convert.ToSingle(lines[l])));
 
 					if (l < lines.Length - inputWindow - horizon - 1)
 						availableGraficPoints.Add(g);
@@ -246,22 +246,22 @@ namespace AbsurdMoneySimulations
 			Thread myThread = new Thread(SoThread);
 			myThread.Start();
 
-			double l;
-			double r;
+			float l;
+			float r;
 
 			void SoThread()
 			{
 				NN.Born();
-				double error_rate = 0;
-				double mutagen = 0;
+				float error_rate = 0;
+				float mutagen = 0;
 				short previous = 0;
 				string history = "";
-				double record = FindErrorRate();
+				float record = FindErrorRate();
 				Log("Получен текущий er_fb: " + record);
 				int previous_mutated_layer = 0;
 				int previous_mutated_node = 0;
 				lastMutatedLayer = 0;
-				double er = 0;
+				float er = 0;
 
 				for (int Generation = 0; ; Generation++)
 				{
@@ -309,9 +309,9 @@ namespace AbsurdMoneySimulations
 							Log("ПРОВЕДУ ТЕСТ!");
 							Log("Часть 1:");
 							Log("Провека: ");
-							double error1 = FindErrorRateNotFromBeginning();
+							float error1 = FindErrorRateNotFromBeginning();
 							Log("er not from beginning: " + error1);
-							double error2 = FindErrorRate();
+							float error2 = FindErrorRate();
 							Log("er from beginning: " + error2);
 							Log("Теперь статистика: ");
 							GetStatistics();
@@ -321,9 +321,9 @@ namespace AbsurdMoneySimulations
 							Log("Теперь загружу ее.");
 							Load();
 							Log("Провека: ");
-							double error3 = FindErrorRateNotFromBeginning();
+							float error3 = FindErrorRateNotFromBeginning();
 							Log("er not from beginning: " + error3);
-							double error4 = FindErrorRate();
+							float error4 = FindErrorRate();
 							Log("er from beginning: " + error4);
 							Log("Теперь статистика: ");
 							GetStatistics();
@@ -331,11 +331,11 @@ namespace AbsurdMoneySimulations
 							Log("Теперь переинициализирую: ");
 							Born();
 							Log("Провека: ");
-							double error5 = FindErrorRateNotFromBeginning();
+							float error5 = FindErrorRateNotFromBeginning();
 							Log("er not from beginning: " + error5);
-							double error6 = FindErrorRate();
+							float error6 = FindErrorRate();
 							Log("er from beginning: " + error6);
-							double error7 = FindErrorRateNotFromBeginning();
+							float error7 = FindErrorRateNotFromBeginning();
 							Log("er not from beginning: " + error7);
 							Log("Теперь статистика: ");
 							GetStatistics();
@@ -351,8 +351,8 @@ namespace AbsurdMoneySimulations
 					//в локальный минимуми ни к чему хорошему не приводит(
 
 					string res = "";
-					double n = 0;
-					double speed = 2;
+					float n = 0;
+					float speed = 2;
 
 					while (Math.Abs(mutagen) > 0.0025)
 					{
@@ -408,7 +408,7 @@ namespace AbsurdMoneySimulations
 					//Log(Memory.programFiles + "\\Trading\\TEST.csv");
 				}
 
-				double FindErrorRateNotFromBeginning()
+				float FindErrorRateNotFromBeginning()
 				{ //По поводу l n запутанно получилось, но это крутая оптимизация
 
 					int l_;
@@ -442,10 +442,10 @@ namespace AbsurdMoneySimulations
 					error_rate = 0;
 					for (int test = 0; test < testsCount; test++)
 					{
-						//double prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
+						//float prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
 						////////////////////////
 
-						double reality = answers[deltas[test] + NN.inputWindow];
+						float reality = answers[deltas[test] + NN.inputWindow];
 
 						//error_rate += Math.Abs(prediction - reality);
 						/////////////////////////////////
@@ -456,16 +456,16 @@ namespace AbsurdMoneySimulations
 					return error_rate;
 				}
 
-				double FindErrorRate()
+				float FindErrorRate()
 				{
 					error_rate = 0;
 					for (int test = 0; test < testsCount; test++)
 					{
-						double prediction = Think(test, deltas[test]);
+						float prediction = Think(test, deltas[test]);
 
-						double reality = answers[deltas[test] + NN.inputWindow];
+						float reality = answers[deltas[test] + NN.inputWindow];
 
-						error_rate += Math.Abs(prediction - reality);
+						error_rate += MathF.Abs(prediction - reality);
 					}
 
 					error_rate /= testsCount;
@@ -494,7 +494,7 @@ namespace AbsurdMoneySimulations
 
 				Load();
 
-				double record = GetStatistics();
+				float record = GetStatistics();
 
 				for (int n = 0; n < 30; n++)
 				{
@@ -522,12 +522,12 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static double GetStatistics()
+		public static float GetStatistics()
 		{
 			return 404;
 		}
 
-		public static void Mutate(int count, double mutagen)
+		public static void Mutate(int count, float mutagen)
 		{
 			for (int i = 0; i < count; i++)
 				layers[lastMutatedLayer].Mutate(mutagen);

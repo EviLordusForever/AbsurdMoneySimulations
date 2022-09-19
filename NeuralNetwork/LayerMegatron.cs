@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	public class LayerMegatron : LayerAbstract
 	{
 		public Node[] subs; //[sub]
-		public double[][][] values; //[test][sub][node]
+		public float[][][] values; //[test][sub][node]
 		public int d;
 		public int lastMutatedSub;
 
@@ -23,14 +23,14 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void Calculate(int test, double[] input)
+		public override void Calculate(int test, float[] input)
 		{
 			for (int sub = 0; sub < subs.Length; sub++)
 				for (int node = 0; node < values[test][sub].Length; node++)
 					values[test][sub][node] = subs[sub].Calculate(input, node * d);
 		}
 
-		public override void Mutate(double mutagen)
+		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(subs.Count());
 			subs[lastMutatedSub].Mutate(mutagen);
@@ -44,13 +44,13 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public void CalculateOneSub(int test, double[] input, int sub)
+		public void CalculateOneSub(int test, float[] input, int sub)
 		{
 			for (int node = 0; node < values[test][sub].Length; node++)
 				values[test][sub][node] = subs[sub].Calculate(input, node * d); //(!)
 		}
 
-		public void CalculateOneNode(int test, double[] input, int sub, int node)
+		public void CalculateOneNode(int test, float[] input, int sub, int node)
 		{
 			values[test][sub][node] = subs[sub].Calculate(input, node * d);
 		}

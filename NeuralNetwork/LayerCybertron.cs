@@ -21,7 +21,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void Calculate(int test, double[] input)
+		public override void Calculate(int test, float[] input)
 		{
 			int len = input.Length / subs.Length;
 
@@ -30,7 +30,7 @@ namespace AbsurdMoneySimulations
 			//Test me
 		}
 
-		public override void Mutate(double mutagen)
+		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(subs.Count());
 			subs[lastMutatedSub].Mutate(mutagen);

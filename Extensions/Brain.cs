@@ -18,6 +18,11 @@ namespace AbsurdMoneySimulations
 			return (double)(2 * 1 / (1 + Math.Pow(1.1, -input)) - 1);
 		}
 
+		public static float Normalize(float input)
+		{
+			return (2f * 1 / (1 + MathF.Pow(1.1f, -input)) - 1);
+		}
+
 		public static T[] SubArray<T>(this T[] array, int offset, int length)
 		{
 			return array.Skip(offset)

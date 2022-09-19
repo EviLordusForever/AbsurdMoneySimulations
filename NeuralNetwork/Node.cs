@@ -8,19 +8,19 @@ namespace AbsurdMoneySimulations
 {
 	public class Node
 	{
-		public double[] weights;
+		public float[] weights;
 		public int lastMutatedWeight;
 
 		public void FillRandomly(int weightsCount)
 		{
-			weights = new double[weightsCount];
+			weights = new float[weightsCount];
 			for (int i = 0; i < weightsCount; i++)
-				weights[i] = (Storage.rnd.NextDouble() * 2 - 1) * NN.randomPower; /////////////////
+				weights[i] = (Storage.rnd.NextSingle() * 2 - 1) * NN.randomPower; /////////////////
 		}
 
-		public double Calculate(double[] input, int start)
+		public float Calculate(float[] input, int start)
 		{
-			double res = 0;
+			float res = 0;
 
 			for (int i = 0; i < weights.Count(); i++)
 				res += weights[i] * input[start + i];
@@ -28,7 +28,7 @@ namespace AbsurdMoneySimulations
 			return Brain.Normalize(res);
 		}
 
-		public void Mutate(double mutagen)
+		public void Mutate(float mutagen)
 		{
 			lastMutatedWeight = Storage.rnd.Next(weights.Length);
 			weights[lastMutatedWeight] += mutagen;

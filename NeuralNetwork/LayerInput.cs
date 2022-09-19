@@ -15,12 +15,12 @@ namespace AbsurdMoneySimulations
 			return;
 		}
 
-		public override void Calculate(int test, double[] input)
+		public override void Calculate(int test, float[] input)
 		{
 			return;
 		}
 
-		public override void Mutate(double mutagen)
+		public override void Mutate(float mutagen)
 		{
 			return;
 		}

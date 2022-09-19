@@ -10,7 +10,6 @@ namespace AbsurdMoneySimulations
 	{
 		public Node[] nodes;
 		public int lastMutatedNode;
-		//public double[][][] values;
 
 		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
 		{
@@ -22,13 +21,13 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void Calculate(int test, double[] input)
+		public override void Calculate(int test, float[] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
 				values[test][0][node] = nodes[node].Calculate(input, 0);
 		}
 
-		public override void Mutate(double mutagen)
+		public override void Mutate(float mutagen)
 		{
 			lastMutatedNode = Storage.rnd.Next(nodes.Count());
 			nodes[lastMutatedNode].Mutate(mutagen);
@@ -42,7 +41,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public void CalculateOneNode(int test, double[] input, int start, int node)
+		public void CalculateOneNode(int test, float[] input, int start, int node)
 		{
 			values[test][0][node] = nodes[node].Calculate(input, start);
 		}
