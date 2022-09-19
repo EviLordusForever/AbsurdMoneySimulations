@@ -39,6 +39,11 @@ namespace AbsurdMoneySimulations
 			nodes[lastMutatedNode].Mutate(mutagen);
 		}
 
+		public override float[][] GetValues(int test)
+		{
+			return values[test];
+		}
+
 		public override int WeightsCount
 		{
 			get
@@ -47,13 +52,20 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public void CalculateOneNode(int test, float[] input, int start, int node)
+		public void CalculateOneNode(int test)
 		{
-			values[test][0][node] = nodes[node].Calculate(input, start);
+			values[test][0][lastMutatedNode] = nodes[lastMutatedNode].Calculate(NNTester.tests[test], 0);
 		}
 
-		public LayerPerceptron()
+		public LayerPerceptron(int nodesCount)
 		{
+			values = new float[NNTester.testsCount][][];
+			for (int test = 0; test < NNTester.testsCount; test++)
+			{
+				values[test] = new float[1][];
+				values[test][0] = new float[nodesCount];
+			}
+
 			type = 1;
 		}
 	}

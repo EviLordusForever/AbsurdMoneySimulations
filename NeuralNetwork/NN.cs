@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 	public static class NN
 	{
 		public const int horizon = 29;
-		public const int inputWindow = 500;
+		public const int inputWindow = 300;
 		public static int layersCount = 7;
 		public const float randomPower = 1.4f;
 		public const int jumpLimit = 9000;
@@ -36,8 +36,12 @@ namespace AbsurdMoneySimulations
 				Save();
 				Load();
 				NNTester.LoadGrafic();
-				NNTester.FillTestStartPoints();
+				NNTester.FillTests();
 				NNTester.FillAnswersForTests();
+				Log(Calculate(0, NNTester.tests[0]).ToString());
+				Log(Calculate(1, NNTester.tests[1]).ToString());
+				Log(Calculate(0, NNTester.tests[0]).ToString());
+				Log(Calculate(1, NNTester.tests[1]).ToString());
 			}
 		}
 
@@ -47,19 +51,19 @@ namespace AbsurdMoneySimulations
 
 			//input 300
 
-			layers.Add(new LayerMegatron());   //55 x 30 x 15 = 24750
+			layers.Add(new LayerMegatron(15, 55));   //55 x 30 x 15 = 24750
 			layers[0].FillRandomly(15, 55, 30);
 
-			layers.Add(new LayerCybertron()); //15 x 55 x 10 = 8250
+			layers.Add(new LayerCybertron(150)); //15 x 55 x 10 = 8250
 			layers[1].FillRandomly(15, 10, 55);
 
-			layers.Add(new LayerPerceptron()); //150 x 40 = 6000
+			layers.Add(new LayerPerceptron(40)); //150 x 40 = 6000
 			layers[2].FillRandomly(1, 40, 150);
 
-			layers.Add(new LayerPerceptron()); //40 x 15 = 600
+			layers.Add(new LayerPerceptron(15)); //40 x 15 = 600
 			layers[3].FillRandomly(1, 15, 40);
 
-			layers.Add(new LayerPerceptron()); //15 x 1 = 15
+			layers.Add(new LayerPerceptron(1)); //15 x 1 = 15
 			layers[4].FillRandomly(1, 1, 15);
 
 			Log("Нейросеть создана !");
@@ -104,9 +108,9 @@ namespace AbsurdMoneySimulations
 			return layers[layers.Count - 1].values[test][0][0] * 1000;
 		}
 
-		public static float ThinkNotFromBeginning(int test, int delta, int l, int n)
+/*		public static float ThinkNotFromBeginning(int test)
 		{
-			RecalcOnlyOneNode(test, delta, l, n);
+*//*			RecalcOnlyOneNode(test);
 
 			l++;
 
@@ -114,13 +118,15 @@ namespace AbsurdMoneySimulations
 				layers[l].Calculate(test, layers[l - 1].values[test]);
 				/////////////////////////////////
 
-			return layers[l - 1].values[test][0][0] * 1000;
-		}
+			return layers[l - 1].values[test][0][0] * 1000;*//*
+		}*/
 
-		public static void RecalcOnlyOneNode(int test, int delta, int l, int n)
+		public static void RecalcOnlyOneNode(int test)
 		{
+			int l = lastMutatedLayer;
+
 			if (l == 1)
-				(layers[l] as LayerPerceptron).CalculateOneNode(test, NNTester.grafic, 0, n); /////
+				(layers[l] as LayerPerceptron).CalculateOneNode(test); /////
 			//else
 				//(layers[l] as LayerPerceptron).CalculateOneNode(test, layers[l + 1].values[test][], 0, n);
 				////////////////////////////////
@@ -355,9 +361,9 @@ namespace AbsurdMoneySimulations
 						l_ = previous_mutated_layer;
 						n_ = previous_mutated_node;
 
-						for (int test = 0; test < NNTester.testsCount; test++)
-							RecalcOnlyOneNode(test, NNTester.testStartPoints[test], l_, n_);
-
+						//for (int test = 0; test < NNTester.testsCount; test++)
+						//	RecalcOnlyOneNode(test, NNTester.testStartPoints[test], l_, n_);
+						////////////////////////////
 						l_ = lastMutatedLayer;
 						//n_ = lastMutatedNode;
 						////////////////////////////////
@@ -369,7 +375,7 @@ namespace AbsurdMoneySimulations
 						//float prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
 						////////////////////////
 
-						float reality = NNTester.answers[NNTester.testStartPoints[test] + NN.inputWindow];
+						float reality = NNTester.answers[test];
 
 						//error_rate += Math.Abs(prediction - reality);
 						/////////////////////////////////
@@ -388,7 +394,7 @@ namespace AbsurdMoneySimulations
 						float prediction = 0;// Calculate(test, NNTester.testStartPoints[test]);
 						///////////////////////////////////
 
-						float reality = NNTester.answers[NNTester.testStartPoints[test] + NN.inputWindow];
+						float reality = NNTester.answers[test];
 
 						error_rate += MathF.Abs(prediction - reality);
 					}
@@ -414,8 +420,8 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				if (NNTester.testStartPoints == null)
-					Init();
+/*				if (NNTester.testStartPoints == null)
+					Init();*/
 
 				Load();
 

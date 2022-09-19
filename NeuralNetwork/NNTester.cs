@@ -13,8 +13,10 @@ namespace AbsurdMoneySimulations
 
 		public static float[] grafic; //[-1, 1]
 		public static List<int> availableGraficPoints;
+		public static float[][] tests;
 		public static float[] answers;
-		public static int[] testStartPoints;
+
+
 
 		public static List<float> realGrafic;
 
@@ -30,12 +32,12 @@ namespace AbsurdMoneySimulations
 			{
 				string[] lines = File.ReadAllLines(files[f]);
 
-				int l = 0;
+				int l = 1;
 				while (l < lines.Length)
 				{
-					graficL.Add(Brain.Normalize(Convert.ToSingle(lines[l])));
+					graficL.Add(Brain.Normalize(Convert.ToSingle(lines[l]) - Convert.ToSingle(lines[l - 1])));
 
-					if (l < lines.Length - NN.inputWindow - NN.horizon - 1)
+					if (l < lines.Length - NN.inputWindow - NN.horizon - 2)
 						availableGraficPoints.Add(g);
 
 					l++; g++;
@@ -51,18 +53,23 @@ namespace AbsurdMoneySimulations
 			Log("Длина графика: " + grafic.Length);
 		}
 
-		public static void FillTestStartPoints()
+		public static void FillTests()
 		{
 			int maximalDelta = availableGraficPoints.Count();
 			float delta_delta = 1.02f * maximalDelta / testsCount;
 
-			testStartPoints = new int[testsCount];
+			tests = new float[testsCount][];
 
 			int i = 0;
 			for (float delta = 0; delta < maximalDelta; delta += delta_delta)
-				testStartPoints[i++] = availableGraficPoints[Convert.ToInt32(delta)];
+			{
+				int offset = availableGraficPoints[Convert.ToInt32(delta)];
 
-			Log($"Отступы для тестов нейросети заполнены. ({testStartPoints.Length})");
+				tests[i] = Brain.SubArray(grafic, offset, NN.inputWindow);
+				i++;
+			}
+
+			Log($"Тесты для нейросети заполнены. ({tests.Length})");
 		}
 
 		public static void FillAnswersForTests()

@@ -36,6 +36,11 @@ namespace AbsurdMoneySimulations
 			subs[lastMutatedSub].Mutate(mutagen);
 		}
 
+		public override float[][] GetValues(int test)
+		{
+			return values[test];
+		}
+
 		public override int WeightsCount
 		{
 			get
@@ -55,8 +60,18 @@ namespace AbsurdMoneySimulations
 			values[test][sub][node] = subs[sub].Calculate(input, node * d);
 		}
 
-		public LayerMegatron()
+		public LayerMegatron(int subsCount, int nodesCount)
 		{
+			values = new float[NNTester.testsCount][][];
+			for (int test = 0; test < NNTester.testsCount; test++)
+			{
+				values[test] = new float[subsCount][];
+				for (int sub = 0; sub < subsCount; sub++)
+				{
+					values[test][sub] = new float[nodesCount];
+				}
+			}
+
 			type = 2;
 		}
 	}
