@@ -13,7 +13,6 @@ namespace AbsurdMoneySimulations
 	public static class NN
 	{
 		public const int horizon = 29;
-		public const int testsCount = 2000;
 		public const int inputWindow = 500;
 		public static int layersCount = 7;
 		public const float randomPower = 1.4f;
@@ -21,17 +20,8 @@ namespace AbsurdMoneySimulations
 
 		public static List<LayerAbstract> layers;
 
-		public static float[] grafic; //[-1, 1]
-		public static List<float> realGrafic;
-
-		public static List<int> availableGraficPoints;
-		public static float[] answers;
-		public static int[] deltas;
-
 		public static float[] randomMutates;
-
 		public static List<byte> linksToLayersToMutate;
-
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
@@ -45,7 +35,9 @@ namespace AbsurdMoneySimulations
 				Create();
 				Save();
 				Load();
-				LoadGrafic();
+				NNTester.LoadGrafic();
+				NNTester.FillTestStartPoints();
+				NNTester.FillAnswersForTests();
 			}
 		}
 
@@ -92,11 +84,16 @@ namespace AbsurdMoneySimulations
 			var jss = new JsonSerializerSettings();
 			jss.Converters.Add(new LayerAbstractConverter());
 
-			var v = JsonConvert.DeserializeObject<List<LayerAbstract>>(toLoad, jss);
-			layers = v as List<LayerAbstract>;
+			layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(toLoad, jss);
 
 			Log("ЗА ГРУ ЖЕ НО !");
-		}			
+
+
+		}
+
+		public static void CheckWeightsCount()
+		{
+		}
 
 		public static float Think(int test, int delta)
 		{
@@ -133,113 +130,52 @@ namespace AbsurdMoneySimulations
 		public static void RecalcOnlyOneNode(int test, int delta, int l, int n)
 		{
 			if (l == 1)
-				(layers[l] as LayerPerceptron).CalculateOneNode(test, grafic, 0, n); /////
+				(layers[l] as LayerPerceptron).CalculateOneNode(test, NNTester.grafic, 0, n); /////
 			//else
 				//(layers[l] as LayerPerceptron).CalculateOneNode(test, layers[l + 1].values[test][], 0, n);
 				////////////////////////////////
 			}
 
-		public static void Born()
+		public static void Init()
 		{
-			if (layers == null)
-				Load();
-
-			LoadGrafic();
 			FillRandomMutations();
-			FillLinksToWeights();
-			FillDeltas();
-			FillAnswers();
-
-			void FillRandomMutations()
-			{
-				randomMutates = new float[1019];
-
-				for (int i = 0; i < 1019; i++)
-				{
-					for (int j = 0; j < 10000; j++)
-						randomMutates[i] += (float)Storage.rnd.NextSingle();
-
-					randomMutates[i] -= 5000;
-					randomMutates[i] *= 0.1f;
-				}
-
-				Log("Случайные мутации заполнены.");
-			}
-
-			void FillLinksToWeights()
-			{
-				//PLEASE, JUST BELIVE THAT IS NORMAL
-
-				linksToLayersToMutate = new List<byte>();
-
-				for (byte l = 0; l < layers.Count; l++)
-				{
-					int weightsCount = layers[l].WeightsCount;
-
-					for (int w = 0; w < weightsCount; w++)
-						linksToLayersToMutate.Add(l);
-				}
-
-				Log("Ссылки на все веса поставлены. Весов: " + linksToLayersToMutate.Count);
-			}
-
-			void FillDeltas()
-			{
-				int maximalDelta = availableGraficPoints.Count();
-				float delta_delta = 1.02f * maximalDelta / testsCount;
-
-				deltas = new int[testsCount];
-
-				int i = 0;
-				for (float delta = 0; delta < maximalDelta; delta += delta_delta)
-					deltas[i++] = availableGraficPoints[Convert.ToInt32(delta)];
-
-				Log("Отступы для тестов заполнены.");
-			}
-
-			void FillAnswers()
-			{
-				answers = new float[grafic.Length];
-				for (int i = NN.inputWindow - 1; i < grafic.Length - horizon - 1; i++)
-					for (int j = 1; j <= horizon; j++)
-						answers[i] += grafic[i + j];
-
-				Log("Ответы заполнены.");
-			}
+			FillLinksToAllWeights();
 		}
 
-		public static void LoadGrafic()
+		public static void FillRandomMutations()
 		{
-			var files = Directory.GetFiles(Disk.programFiles + "Grafic");
-			var graficL = new List<float>();
-			availableGraficPoints = new List<int>();
+			randomMutates = new float[1019];
 
-			int g = 0;
-
-			for (int f = 0; f < files.Length; f++)
+			for (int i = 0; i < 1019; i++)
 			{
-				string[] lines = File.ReadAllLines(files[f]);
+				for (int j = 0; j < 10000; j++)
+					randomMutates[i] += (float)Storage.rnd.NextSingle();
 
-				int l = 0;
-				while (l < lines.Length)
-				{
-					graficL.Add(Brain.Normalize(Convert.ToSingle(lines[l])));
-
-					if (l < lines.Length - inputWindow - horizon - 1)
-						availableGraficPoints.Add(g);
-
-					l++; g++;
-				}
-
-				Log($"Загружен график: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
+				randomMutates[i] -= 5000;
+				randomMutates[i] *= 0.1f;
 			}
 
-			grafic = graficL.ToArray();
-
-			Log("График (сборный) для обучения загружен.");
-			Log("По совместимости также загружены доступные точки на графике.");
-			Log("Полученная длина графика: " + grafic.Length);
+			Log("Случайные мутации заполнены.");
 		}
+
+		public static void FillLinksToAllWeights()
+		{
+			//PLEASE, JUST BELIVE THAT IS NORMAL
+
+			linksToLayersToMutate = new List<byte>();
+
+			for (byte l = 0; l < layers.Count; l++)
+			{
+				int weightsCount = layers[l].WeightsCount;
+
+				for (int w = 0; w < weightsCount; w++)
+					linksToLayersToMutate.Add(l);
+			}
+
+			Log("Ссылки на все веса поставлены. Весов: " + linksToLayersToMutate.Count);
+		}
+
+
 
 		public static void Educate()
 		{
@@ -251,7 +187,7 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				NN.Born();
+				NN.Init();
 				float error_rate = 0;
 				float mutagen = 0;
 				short previous = 0;
@@ -272,7 +208,7 @@ namespace AbsurdMoneySimulations
 					previous_mutated_layer = lastMutatedLayer;
 					//previous_mutated_node = lastMutatedNode;
 					//////////////////////////////////
-					SelectLNW();
+					SelectLayerForMutation();
 
 					Mutate(1, mutagen);
 
@@ -329,7 +265,7 @@ namespace AbsurdMoneySimulations
 							GetStatistics();
 							Log("Часть 3:");
 							Log("Теперь переинициализирую: ");
-							Born();
+							Init();
 							Log("Провека: ");
 							float error5 = FindErrorRateNotFromBeginning();
 							Log("er not from beginning: " + error5);
@@ -431,8 +367,8 @@ namespace AbsurdMoneySimulations
 						l_ = previous_mutated_layer;
 						n_ = previous_mutated_node;
 
-						for (int test = 0; test < testsCount; test++)
-							RecalcOnlyOneNode(test, deltas[test], l_, n_);
+						for (int test = 0; test < NNTester.testsCount; test++)
+							RecalcOnlyOneNode(test, NNTester.testStartPoints[test], l_, n_);
 
 						l_ = lastMutatedLayer;
 						//n_ = lastMutatedNode;
@@ -440,18 +376,18 @@ namespace AbsurdMoneySimulations
 					}
 
 					error_rate = 0;
-					for (int test = 0; test < testsCount; test++)
+					for (int test = 0; test < NNTester.testsCount; test++)
 					{
 						//float prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
 						////////////////////////
 
-						float reality = answers[deltas[test] + NN.inputWindow];
+						float reality = NNTester.answers[NNTester.testStartPoints[test] + NN.inputWindow];
 
 						//error_rate += Math.Abs(prediction - reality);
 						/////////////////////////////////
 					}
 
-					error_rate /= testsCount;
+					error_rate /= NNTester.testsCount;
 
 					return error_rate;
 				}
@@ -459,23 +395,23 @@ namespace AbsurdMoneySimulations
 				float FindErrorRate()
 				{
 					error_rate = 0;
-					for (int test = 0; test < testsCount; test++)
+					for (int test = 0; test < NNTester.testsCount; test++)
 					{
-						float prediction = Think(test, deltas[test]);
+						float prediction = Think(test, NNTester.testStartPoints[test]);
 
-						float reality = answers[deltas[test] + NN.inputWindow];
+						float reality = NNTester.answers[NNTester.testStartPoints[test] + NN.inputWindow];
 
 						error_rate += MathF.Abs(prediction - reality);
 					}
 
-					error_rate /= testsCount;
+					error_rate /= NNTester.testsCount;
 
 					return error_rate;
 				}
 			}
 		}
 
-		public static void SelectLNW()
+		public static void SelectLayerForMutation()
 		{
 			int number = mutationSeed % linksToLayersToMutate.Count;
 
@@ -489,8 +425,8 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				if (deltas == null)
-					Born();
+				if (NNTester.testStartPoints == null)
+					Init();
 
 				Load();
 
