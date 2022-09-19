@@ -11,6 +11,7 @@ namespace AbsurdMoneySimulations
 		public static MainForm mainForm;
 		public static MartingaleForm martingaleForm;
 		public static ShowForm showForm;
+		public static LogForm logForm;
 
 		public static void OpenMartingaleForm()
 		{
@@ -37,6 +38,21 @@ namespace AbsurdMoneySimulations
 			showForm.BackgroundImageLayout = ImageLayout.Stretch;
 
 			showForm.BackgroundImage = Storage.bmp;
+		}
+
+		public static void OpenLogForm()
+		{
+			FormsManager.mainForm.Invoke(new Action(() =>
+			{
+				if (logForm == null || logForm.IsDisposed)
+				{
+					logForm = new LogForm();
+				}
+
+				logForm.Show();
+				logForm.WindowState = FormWindowState.Normal;
+				logForm.BringToFront();
+			}));
 		}
 	}
 }

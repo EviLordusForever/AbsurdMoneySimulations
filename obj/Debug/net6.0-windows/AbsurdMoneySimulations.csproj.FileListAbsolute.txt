@@ -20,3 +20,4 @@ E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulat
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.ShowForm.resources
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.csproj.CopyComplete
+E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.LogForm.resources
