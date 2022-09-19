@@ -23,8 +23,6 @@ namespace AbsurdMoneySimulations
 			if (jo["type"] != null)
 				switch (jo.GetValue("type").ToString())
 				{
-					case "0":
-						return serializer.Deserialize(reader, typeof(LayerInput));
 					case "1":
 						return serializer.Deserialize(reader, typeof(LayerPerceptron));
 					case "2":

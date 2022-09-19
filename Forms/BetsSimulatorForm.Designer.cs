@@ -1,6 +1,6 @@
 ﻿namespace AbsurdMoneySimulations
 {
-	partial class MartingaleForm
+	partial class BetsSimulatorForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MartingaleForm));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BetsSimulatorForm));
 			this.button1 = new System.Windows.Forms.Button();
 			this.money = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();

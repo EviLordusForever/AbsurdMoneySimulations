@@ -45,22 +45,22 @@ namespace AbsurdMoneySimulations
 		{
 			layers = new List<LayerAbstract>();
 
-			layers.Add(new LayerInput(300)); //300
+			//input 300
 
 			layers.Add(new LayerMegatron());   //55 x 30 x 15 = 24750
-			layers[1].FillRandomly(15, 55, 30);
+			layers[0].FillRandomly(15, 55, 30);
 
 			layers.Add(new LayerCybertron()); //15 x 55 x 10 = 8250
-			layers[2].FillRandomly(15, 10, 55);
+			layers[1].FillRandomly(15, 10, 55);
 
 			layers.Add(new LayerPerceptron()); //150 x 40 = 6000
-			layers[3].FillRandomly(1, 40, 150);
+			layers[2].FillRandomly(1, 40, 150);
 
 			layers.Add(new LayerPerceptron()); //40 x 15 = 600
-			layers[4].FillRandomly(1, 15, 40);
+			layers[3].FillRandomly(1, 15, 40);
 
 			layers.Add(new LayerPerceptron()); //15 x 1 = 15
-			layers[5].FillRandomly(1, 1, 15);
+			layers[4].FillRandomly(1, 1, 15);
 
 			Log("Нейросеть создана !");
 		}
@@ -91,40 +91,30 @@ namespace AbsurdMoneySimulations
 
 		}
 
-		public static void CheckWeightsCount()
+		public static float Calculate(int test, float[] input)
 		{
-		}
+			float[][] array = new float[1][];
+			array[0] = input;
 
-		public static float Think(int test, int delta)
-		{
-			layers[1].Calculate(test, layers[0].values[test][0]);
+			layers[0].Calculate(test, array);
 
-			return layers[1].values[test][0][0] * 1000;
+			for (int l = 1; l < layers.Count; l++)
+				layers[l].Calculate(test, layers[l - 1].GetValues(test));
+
+			return layers[layers.Count - 1].values[test][0][0] * 1000;
 		}
 
 		public static float ThinkNotFromBeginning(int test, int delta, int l, int n)
 		{
-			if (l > 0)
-			{
-				RecalcOnlyOneNode(test, delta, l, n);
+			RecalcOnlyOneNode(test, delta, l, n);
 
-				l++;
+			l++;
 
-				for (; l < layersCount; l++)
-					//layers[l].Calculate(test, layers[l - 1].values[test][]);
-					/////////////////////////////////
+			for (; l < layersCount; l++)
+				layers[l].Calculate(test, layers[l - 1].values[test]);
+				/////////////////////////////////
 
-				return layers[l - 1].values[test][0][0] * 1000;
-			}
-			else
-			{
-				//Должно возникать в самом начале
-				//Когда ничего еще не мутировало и
-				//"Предыдущий мутировавший слой" == 0
-				return Think(test, delta);
-			}
-
-			return 404;
+			return layers[l - 1].values[test][0][0] * 1000;
 		}
 
 		public static void RecalcOnlyOneNode(int test, int delta, int l, int n)
@@ -174,8 +164,6 @@ namespace AbsurdMoneySimulations
 
 			Log("Ссылки на все веса поставлены. Весов: " + linksToLayersToMutate.Count);
 		}
-
-
 
 		public static void Educate()
 		{
@@ -397,7 +385,8 @@ namespace AbsurdMoneySimulations
 					error_rate = 0;
 					for (int test = 0; test < NNTester.testsCount; test++)
 					{
-						float prediction = Think(test, NNTester.testStartPoints[test]);
+						float prediction = 0;// Calculate(test, NNTester.testStartPoints[test]);
+						///////////////////////////////////
 
 						float reality = NNTester.answers[NNTester.testStartPoints[test] + NN.inputWindow];
 

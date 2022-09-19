@@ -14,9 +14,14 @@ namespace AbsurdMoneySimulations
 
 		public abstract void FillRandomly(int subsCount, int nodesCount, int weightsCount);
 
-		public abstract void Calculate(int test, float[] input);
+		public abstract void Calculate(int test, float[][] input);
 
 		public abstract void Mutate(float mutagen);
+
+		public float[][] GetValues(int test)
+		{
+			return values[test];
+		}
 
 		public abstract int WeightsCount { get; }
 

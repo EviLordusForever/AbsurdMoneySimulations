@@ -9,18 +9,18 @@ namespace AbsurdMoneySimulations
 	public static class FormsManager
 	{
 		public static MainForm mainForm;
-		public static MartingaleForm martingaleForm;
+		public static BetsSimulatorForm betsSimulatorForm;
 		public static ShowForm showForm;
 		public static LogForm logForm;
 
 		public static void OpenMartingaleForm()
 		{
-			if (martingaleForm == null || martingaleForm.IsDisposed)
-				martingaleForm = new MartingaleForm();
+			if (betsSimulatorForm == null || betsSimulatorForm.IsDisposed)
+				betsSimulatorForm = new BetsSimulatorForm();
 
-			martingaleForm.Show();
-			martingaleForm.WindowState = FormWindowState.Normal;
-			martingaleForm.BringToFront();
+			betsSimulatorForm.Show();
+			betsSimulatorForm.WindowState = FormWindowState.Normal;
+			betsSimulatorForm.BringToFront();
 		}
 
 		public static void OpenShowForm()

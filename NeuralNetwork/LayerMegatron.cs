@@ -23,11 +23,11 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void Calculate(int test, float[] input)
+		public override void Calculate(int test, float[][] input)
 		{
 			for (int sub = 0; sub < subs.Length; sub++)
 				for (int node = 0; node < values[test][sub].Length; node++)
-					values[test][sub][node] = subs[sub].Calculate(input, node * d);
+					values[test][sub][node] = subs[sub].Calculate(input[0], node * d);
 		}
 
 		public override void Mutate(float mutagen)

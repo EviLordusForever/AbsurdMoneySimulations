@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace AbsurdMoneySimulations
 {
-	public partial class MartingaleForm : Form
+	public partial class BetsSimulatorForm : Form
 	{
-		public MartingaleForm()
+		public BetsSimulatorForm()
 		{
 			InitializeComponent();
 		}

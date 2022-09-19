@@ -20,7 +20,6 @@ namespace AbsurdMoneySimulations
 
 
 			for (double wr = 45; wr <= 110; wr += 1.0 / 26)
-			//if (wr * prize - (100 - wr) > 0)
 			{
 				double prize = 100 * (100 - wr) / wr;
 				gr.DrawLine(Pens.LimeGreen, (int)(40 + wr * 26), (int)(50 + prize * 18), (int)(40 + wr * 26), 1920);

@@ -8,39 +8,37 @@ namespace AbsurdMoneySimulations
 {
 	public class LayerCybertron : LayerAbstract
 	{
-		public LayerPerceptron[] subs;
+		public LayerPerceptron[] perceptrons;
 		public int lastMutatedSub;
 
 		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
 		{
-			subs = new LayerPerceptron[subsCount];
+			perceptrons = new LayerPerceptron[subsCount];
 			for (int i = 0; i < subsCount; i++)
 			{
-				subs[i] = new LayerPerceptron();
-				subs[i].FillRandomly(subsCount, nodesCount, weightsCount);
+				perceptrons[i] = new LayerPerceptron();
+				perceptrons[i].FillRandomly(subsCount, nodesCount, weightsCount);
 			}
 		}
 
-		public override void Calculate(int test, float[] input)
+		public override void Calculate(int test, float[][] input)
 		{
-			int len = input.Length / subs.Length;
-
-			for (int sub = 0; sub < subs.Length; sub++)
-				subs[sub].Calculate(test, Brain.SubArray(input, len * sub, len));
+			for (int sub = 0; sub < perceptrons.Length; sub++)
+				perceptrons[sub].Calculate(test, input[sub]);
 			//Test me
 		}
 
 		public override void Mutate(float mutagen)
 		{
-			lastMutatedSub = Storage.rnd.Next(subs.Count());
-			subs[lastMutatedSub].Mutate(mutagen);
+			lastMutatedSub = Storage.rnd.Next(perceptrons.Count());
+			perceptrons[lastMutatedSub].Mutate(mutagen);
 		}
 
 		public override int WeightsCount
 		{
 			get
 			{
-				return subs.Count() * subs[0].WeightsCount;
+				return perceptrons.Count() * perceptrons[0].WeightsCount;
 			}
 		}
 

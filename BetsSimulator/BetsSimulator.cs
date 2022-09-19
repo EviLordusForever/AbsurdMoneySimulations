@@ -13,26 +13,26 @@ namespace AbsurdMoneySimulations
 			FormsManager.OpenShowForm();
 
 			Thread myThread = new Thread(SimulateThread);
-			myThread.Name = "Martingale";
+			myThread.Name = "BetsSimulator";
 			myThread.Start();
 
 			void SimulateThread()
 			{
-				int width = Convert.ToInt16(FormsManager.martingaleForm.simulationTime.Text);
-				int heigh = Convert.ToInt16(FormsManager.martingaleForm.height.Text);
+				int width = Convert.ToInt16(FormsManager.betsSimulatorForm.simulationTime.Text);
+				int heigh = Convert.ToInt16(FormsManager.betsSimulatorForm.height.Text);
 				Storage.bmp = new Bitmap(width, heigh);
 
 				Graphics gr = Graphics.FromImage(Storage.bmp);
 				gr.Clear(Color.White);
 
 
-				int martingaleChain = Convert.ToInt16(FormsManager.martingaleForm.martingaleChain.Text);
-				int antimaringaleChain = Convert.ToInt16(FormsManager.martingaleForm.antimartingaleChain.Text);
-				double startMoney = Convert.ToDouble(FormsManager.martingaleForm.money.Text);
-				double bet = Convert.ToDouble(FormsManager.martingaleForm.bet.Text) / 100;
-				double prize = Convert.ToDouble(FormsManager.martingaleForm.prize.Text) / 100;
-				double winrate = Convert.ToDouble(FormsManager.martingaleForm.winrate.Text) / 100;
-				double simulationsCount = Convert.ToDouble(FormsManager.martingaleForm.simulationsCount.Text);
+				int martingaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.martingaleChain.Text);
+				int antimaringaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.antimartingaleChain.Text);
+				double startMoney = Convert.ToDouble(FormsManager.betsSimulatorForm.money.Text);
+				double bet = Convert.ToDouble(FormsManager.betsSimulatorForm.bet.Text) / 100;
+				double prize = Convert.ToDouble(FormsManager.betsSimulatorForm.prize.Text) / 100;
+				double winrate = Convert.ToDouble(FormsManager.betsSimulatorForm.winrate.Text) / 100;
+				double simulationsCount = Convert.ToDouble(FormsManager.betsSimulatorForm.simulationsCount.Text);
 				double money;
 				double oldmoney;
 				double[] avarageMoney = new double[width];
@@ -126,7 +126,7 @@ namespace AbsurdMoneySimulations
 				FormsManager.mainForm.Invoke(new Action(() =>
 				{
 					FormsManager.showForm.BackgroundImage = GetFormBackgroundImage(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
-					FormsManager.martingaleForm.BringToFront();
+					FormsManager.betsSimulatorForm.BringToFront();
 				}));
 
 				void Play()
