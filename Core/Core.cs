@@ -12,6 +12,9 @@ namespace AbsurdMoneySimulations
 		{
 			FormsManager.mainForm = new MainForm();
 			FormsManager.mainForm.Show();
+			Logger.Log("Starting...");
+			FormsManager.mainForm.BringToFront();
+			Logger.Log("Hello!");
 		}
 	}
 }

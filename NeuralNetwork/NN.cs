@@ -231,7 +231,7 @@ namespace AbsurdMoneySimulations
 					l++; g++;
 				}
 
-				Log($"Загружен график {files[f]}");
+				Log($"Загружен график: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
 			}
 
 			grafic = graficL.ToArray();

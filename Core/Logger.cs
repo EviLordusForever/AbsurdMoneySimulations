@@ -6,29 +6,35 @@ using System.Threading.Tasks;
 
 namespace AbsurdMoneySimulations
 {
-	public static class Logger
-	{
+    public static class Logger
+    {
         public static int logSize = 10000;
         public static string logText;
+        public static StreamWriter writer;
 
-        public static void Log(string str)
+        public static void Log(string text)
         {
             FormsManager.mainForm.Invoke(new Action(() =>
             {
                 FormsManager.OpenLogForm();
-                string msg = CreateMessageToShout(str);
-                ShoutToEverybodyConsole(msg);
-                CutEverybodyConsole();
+                string msg = CreateMessageToShout(text);
+                ShoutToFile(msg);
+                ShoutToEverybodyLog(msg);
+                CutEverybodyLog();
                 VisualiseLog();
             }));
 
+            void ShoutToFile(string msg)
+            {
+                 writer.Write(msg + "\r\n");
+            }
 
-            void ShoutToEverybodyConsole(string msg)
+            void ShoutToEverybodyLog(string msg)
             {
                 logText = $"{msg}\r\n{logText}";
             }
 
-            void CutEverybodyConsole()
+            void CutEverybodyLog()
             {
                 if (logText.Length > logSize + 1000)
                     logText = logText.Remove(logSize);
@@ -99,8 +105,6 @@ namespace AbsurdMoneySimulations
                     return res;
                 }
             }
-
-
         }
 
         public static void VisualiseLog()
@@ -117,6 +121,25 @@ namespace AbsurdMoneySimulations
             if (m.Length == 1)
                 m = "0" + m;
             return h + ":" + m;
+        }
+
+        static void Flusher()
+        {
+            Thread myThread = new Thread(FlushThread);
+            myThread.Start();
+
+            void FlushThread()
+            {
+                Thread.Sleep(20000);
+                writer.Flush();
+            }
+        }
+
+        static Logger()
+        {
+            logText = "";
+            writer = new StreamWriter(Disk.programFiles + "Logs\\log.log", true);
+            Flusher();
         }
     }
 }

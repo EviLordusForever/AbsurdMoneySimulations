@@ -47,11 +47,11 @@ namespace AbsurdMoneySimulations
 				if (logForm == null || logForm.IsDisposed)
 				{
 					logForm = new LogForm();
+					logForm.BringToFront();
 				}
 
 				logForm.Show();
-				logForm.WindowState = FormWindowState.Normal;
-				logForm.BringToFront();
+				logForm.WindowState = FormWindowState.Normal;				
 				logForm.Location = new Point(-7, 0);
 			}));
 		}
