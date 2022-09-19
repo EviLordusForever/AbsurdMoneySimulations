@@ -39,7 +39,7 @@
 			this.rtb.ForeColor = System.Drawing.Color.White;
 			this.rtb.Location = new System.Drawing.Point(-1, 0);
 			this.rtb.Name = "rtb";
-			this.rtb.Size = new System.Drawing.Size(1002, 750);
+			this.rtb.Size = new System.Drawing.Size(1372, 750);
 			this.rtb.TabIndex = 0;
 			this.rtb.Text = "text";
 			this.rtb.TextChanged += new System.EventHandler(this.rtb_TextChanged);
@@ -48,7 +48,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1001, 749);
+			this.ClientSize = new System.Drawing.Size(1370, 749);
 			this.Controls.Add(this.rtb);
 			this.ForeColor = System.Drawing.Color.Yellow;
 			this.Name = "LogForm";

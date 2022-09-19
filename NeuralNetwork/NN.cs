@@ -45,6 +45,7 @@ namespace AbsurdMoneySimulations
 				Create();
 				Save();
 				Load();
+				LoadGrafic();
 			}
 		}
 
@@ -209,7 +210,7 @@ namespace AbsurdMoneySimulations
 
 		public static void LoadGrafic()
 		{
-			var files = Directory.GetFiles(Disk.programFiles + "Trading\\Grafic");
+			var files = Directory.GetFiles(Disk.programFiles + "Grafic");
 			var graficL = new List<double>();
 			availableGraficPoints = new List<int>();
 
@@ -229,6 +230,8 @@ namespace AbsurdMoneySimulations
 
 					l++; g++;
 				}
+
+				Log($"Загружен график {files[f]}");
 			}
 
 			grafic = graficL.ToArray();

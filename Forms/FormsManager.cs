@@ -52,6 +52,7 @@ namespace AbsurdMoneySimulations
 				logForm.Show();
 				logForm.WindowState = FormWindowState.Normal;
 				logForm.BringToFront();
+				logForm.Location = new Point(-7, 0);
 			}));
 		}
 	}

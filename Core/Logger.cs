@@ -58,7 +58,7 @@ namespace AbsurdMoneySimulations
 
                 string ModyfyText(string str)
                 {
-                    int size = 88;
+                    int size = 180;
                     string res = "";
                     str += "\r\n";
 
