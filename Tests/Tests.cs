@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestAvailableGP);
+			Thread myThread = new Thread(TestTests);
 			myThread.Start();			
 		}
 

@@ -50,7 +50,7 @@ namespace AbsurdMoneySimulations
 			unnormalizedgrafic = graficL.ToArray();
 			grafic = new float[unnormalizedgrafic.Length];
 
-			for (int i = 0; i < files.Length; i++)
+			for (int i = 0; i < grafic.Length; i++)
 				grafic[i] = Brain.Normalize(unnormalizedgrafic[i]);
 
 
@@ -66,6 +66,7 @@ namespace AbsurdMoneySimulations
 			float delta_delta = 1.00f * maximalDelta / testsCount;
 
 			tests = new float[testsCount][];
+			answers = new float[testsCount];
 
 			int i = 0;
 			for (float delta = 0; delta < maximalDelta; delta += delta_delta)
