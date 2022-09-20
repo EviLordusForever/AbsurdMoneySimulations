@@ -86,8 +86,9 @@ namespace AbsurdMoneySimulations
 			values[test][sub][node] = subs[sub].Calculate(input, node * d);
 		}
 
-		public LayerMegatron(int subsCount, int nodesCount)
+		public LayerMegatron(int subsCount, int nodesCount, int d)
 		{
+			this.d = d;
 			values = new float[NNTester.testsCount][][];
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{

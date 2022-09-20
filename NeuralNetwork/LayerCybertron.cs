@@ -33,13 +33,13 @@ namespace AbsurdMoneySimulations
 			if (lrs == LayerRecalculateStatus.First)
 			{
 				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.First);
-				lastMutatedSub = lastMutatedSub;
+				lrs.lastMutatedSub = lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else if (lrs == LayerRecalculateStatus.OneSubChanged)
 			{
 				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.Full);
-				lastMutatedSub = lastMutatedSub;
+				lrs.lastMutatedSub = lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else

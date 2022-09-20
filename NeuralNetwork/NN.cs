@@ -63,7 +63,7 @@ namespace AbsurdMoneySimulations
 
 			//input 300
 
-			layers.Add(new LayerMegatron(15, 55));   //55 x 30 x 15 = 24750
+			layers.Add(new LayerMegatron(15, 55, 5));   //55 x 30 x 15 = 24750
 			layers[0].FillRandomly(15, 55, 30);
 
 			layers.Add(new LayerCybertron(150)); //15 x 55 x 10 = 8250
