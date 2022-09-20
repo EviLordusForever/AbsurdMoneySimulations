@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestTests);
+			Thread myThread = new Thread(TestAvailableGP);
 			myThread.Start();			
 		}
 
@@ -160,6 +160,27 @@ namespace AbsurdMoneySimulations
 			csv = String.Concat(subcsv);
 
 			File.WriteAllText(Disk.programFiles + "tests.csv", csv);
+		}
+
+		public static void TestAvailableGP()
+		{
+			NNTester.LoadGrafic();
+
+			string csv = "";
+			string[] subcsv = new string[NNTester.grafic.Length];
+
+
+			for (int i = 0; i < NNTester.grafic.Length; i++)
+				subcsv[i] = NNTester.grafic[i] + ",0\r\n";
+
+			for (int i = 0; i < NNTester.availableGraficPoints.Count; i++)
+				subcsv[NNTester.availableGraficPoints[i]] = NNTester.grafic[NNTester.availableGraficPoints[i]] + ",1\r\n";
+
+			csv = string.Concat(subcsv);
+
+			File.WriteAllText(Disk.programFiles + "tests.csv", csv);
+
+			Log("Done!");
 		}
 	}
 }

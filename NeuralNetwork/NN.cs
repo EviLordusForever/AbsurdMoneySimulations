@@ -325,7 +325,7 @@ namespace AbsurdMoneySimulations
 					return error_rate;
 				}
 			}
-		}
+		} //
 
 		public static void SelectLayerForMutation()
 		{
@@ -372,12 +372,12 @@ namespace AbsurdMoneySimulations
 					}
 				}
 			}
-		}
+		} //
 
 		public static float GetStatistics()
 		{
 			return 404;
-		}
+		} //
 
 		public static void Mutate()
 		{
