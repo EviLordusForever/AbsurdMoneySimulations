@@ -98,6 +98,11 @@ namespace AbsurdMoneySimulations
 			return values[test];
 		}
 
+		public override float GetAnswer(int test)
+		{
+			return nodes[0].summ;
+		}
+
 		public override int WeightsCount
 		{
 			get

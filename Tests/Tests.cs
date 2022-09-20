@@ -178,9 +178,9 @@ namespace AbsurdMoneySimulations
 		public static void TestEvolution()
 		{
 			NN.Create();
-			NN.Init();
 			NN.Save();
 			NN.Load();
+			NN.Init();
 
 			NNTester.LoadGrafic();
 			NNTester.FillTests();

@@ -61,6 +61,11 @@ namespace AbsurdMoneySimulations
 			perceptrons[lastMutatedSub].Demutate(mutagen);
 		}
 
+		public override float GetAnswer(int test)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override float[][] GetValues(int test)
 		{
 			int node1 = 0;

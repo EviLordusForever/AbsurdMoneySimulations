@@ -33,7 +33,12 @@ namespace AbsurdMoneySimulations
 			//55*10*15
 			//150*40
 
-			//input 300
+			//300
+			//55 x 15 = 825
+			//10 x 15 = 150
+			//40
+			//15
+			//1
 
 			layers.Add(new LayerMegatron(15, 55, 5));   //55 x 30 x 15 = 24750
 			layers[0].FillRandomly(15, 55, 30);
@@ -89,7 +94,7 @@ namespace AbsurdMoneySimulations
 			for (int l = 1; l < layers.Count; l++)
 				layers[l].Calculate(test, layers[l - 1].GetValues(test));
 
-			return layers[layers.Count - 1].values[test][0][0] * 1000;
+			return layers[layers.Count - 1].GetAnswer(test) * 1000;
 			//What? |
 		}
 
@@ -111,7 +116,7 @@ namespace AbsurdMoneySimulations
 					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
 			}
 
-			return layers[layers.Count - 1].values[test][0][0] * 1000;
+			return layers[layers.Count - 1].GetAnswer(test) * 1000;
 		}
 
 		public static void Init()
@@ -253,14 +258,52 @@ namespace AbsurdMoneySimulations
 
 		public static float FindErrorRate()
 		{
+			restart:
+
+			int coresCount = 4;
+			int testsPerThreadCount = NNTester.testsCount / coresCount;
+
 			float er = 0;
-			for (int test = 0; test < NNTester.testsCount; test++)
+
+			int alive = 4;
+
+			Thread[] subThreads = new Thread[4];
+
+			for (int core = 0; core < coresCount; core++)
 			{
-				float prediction = Calculate(test, NNTester.tests[test]);
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core * testsPerThreadCount);
+			}
 
-				float reality = NNTester.answers[test];
+			void SubThread(object obj)
+			{
+				int x = (int)obj;
 
-				er += MathF.Abs(prediction - reality);
+				for (int test = x; test < x + testsPerThreadCount; test++)
+				{
+					float prediction = Calculate(test, NNTester.tests[test]);
+
+					float reality = NNTester.answers[test];
+
+					er += MathF.Abs(prediction - reality);
+				}
+
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks; 
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THREAD IS STACKED");
+					for (int core = 0; core < coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
 			}
 
 			er /= NNTester.testsCount;
@@ -270,14 +313,52 @@ namespace AbsurdMoneySimulations
 
 		public static float RefindErrorRate()
 		{
+			restart:
+
+			int coresCount = 4;
+			int testsPerThreadCount = NNTester.testsCount / coresCount;
+
 			float er = 0;
-			for (int test = 0; test < NNTester.testsCount; test++)
+
+			int alive = 4;
+
+			Thread[] subThreads = new Thread[4];
+
+			for (int core = 0; core < coresCount; core++)
 			{
-				float prediction = Recalculate(test);
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core * testsPerThreadCount);
+			}
 
-				float reality = NNTester.answers[test];
+			void SubThread(object obj)
+			{
+				int x = (int)obj;
 
-				er += MathF.Abs(prediction - reality);
+				for (int test = x; test < x + testsPerThreadCount; test++)
+				{
+					float prediction = Recalculate(test);
+
+					float reality = NNTester.answers[test];
+
+					er += MathF.Abs(prediction - reality);
+				}
+
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks;
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THREAD IS STACKED");
+					for (int core = 0; core < coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
 			}
 
 			er /= NNTester.testsCount;

@@ -29,12 +29,6 @@ namespace AbsurdMoneySimulations
 				CalculateOneSub(test, input, sub);
 		}
 
-		private void CalculateOneSub(int test, float[][] input, int sub)
-		{
-			for (int node = 0; node < values[test][sub].Length; node++)
-				values[test][sub][node] = subs[sub].Calculate(input[0], node * d);
-		}
-
 		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
@@ -51,6 +45,12 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		private void CalculateOneSub(int test, float[][] input, int sub)
+		{
+			for (int node = 0; node < values[test][sub].Length; node++)
+				values[test][sub][node] = subs[sub].Calculate(input[0], node * d);
+		}
+	
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(subs.Count());
@@ -60,6 +60,11 @@ namespace AbsurdMoneySimulations
 		public override void Demutate(float mutagen)
 		{
 			subs[lastMutatedSub].Demutate(mutagen);
+		}
+
+		public override float GetAnswer(int test)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override float[][] GetValues(int test)
@@ -73,17 +78,6 @@ namespace AbsurdMoneySimulations
 			{
 				return subs.Count() * subs[0].weights.Count();
 			}
-		}
-
-		public void CalculateOneSub(int test, float[] input, int sub)
-		{
-			for (int node = 0; node < values[test][sub].Length; node++)
-				values[test][sub][node] = subs[sub].Calculate(input, node * d); //(!)
-		}
-
-		public void CalculateOneNode(int test, float[] input, int sub, int node)
-		{
-			values[test][sub][node] = subs[sub].Calculate(input, node * d);
 		}
 
 		public LayerMegatron(int subsCount, int nodesCount, int d)

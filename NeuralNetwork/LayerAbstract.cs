@@ -25,6 +25,8 @@ namespace AbsurdMoneySimulations
 
 		public abstract float[][] GetValues(int test);
 
+		public abstract float GetAnswer(int test);
+
 		public abstract int WeightsCount { get; }
 
 	}
