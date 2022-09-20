@@ -17,7 +17,7 @@ namespace AbsurdMoneySimulations
 		//Than part of Second Layer
 		//And so on...
 		//The problem is that
-		//it is different for every type of layers
+		//this is different for every type of layers
 
 		private string status;
 		public int lastMutatedNode;

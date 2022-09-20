@@ -51,7 +51,7 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(1)); //15 x 1 = 15
 			layers[4].FillRandomly(1, 1, 15);
 
-			Log("Нейросеть создана !");
+			Log("Neural Network created!");
 		}
 
 		public static void Save()
@@ -62,7 +62,7 @@ namespace AbsurdMoneySimulations
 			jss.Formatting = Formatting.Indented;
 
 			File.WriteAllText(files[0], JsonConvert.SerializeObject(layers, jss));
-			Log("Нейросеть успешно сохранена!");
+			Log("Neural Network saved!");
 		}
 
 		public static void Load()
@@ -75,7 +75,7 @@ namespace AbsurdMoneySimulations
 
 			layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(toLoad, jss);
 
-			Log("ЗА ГРУ ЖЕ НО !");
+			Log("Neural Network loaded from disk!");
 
 
 		}

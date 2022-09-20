@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestSpeed);
+			Thread myThread = new Thread(TestTests);
 			myThread.Start();			
 		}
 
@@ -135,6 +135,31 @@ namespace AbsurdMoneySimulations
 				res += NN.Calculate(test, NNTester.tests[test]);
 			Log($"Ended calculate tests");
 			Log(res);
+		}
+
+		public static void TestTests()
+		{
+			string csv = "";
+			string[] subcsv = new string[NNTester.testsCount];
+			NNTester.LoadGrafic();
+			NNTester.FillTests();
+			NNTester.FillAnswersForTests();
+
+			for (int test = 0; test < NNTester.testsCount; test++)
+			{
+				subcsv[test] = String.Join("\r\n", NNTester.tests[test]);
+
+				subcsv[test] += "\r\n\r\n\r\n";
+				subcsv[test] += NNTester.answers[test];
+				subcsv[test] += "\r\n\r\n\r\n";
+				
+				if (test % 50 == 0)
+				Log($"t{test}");
+			}
+
+			csv = String.Concat(subcsv);
+
+			File.WriteAllText(Disk.programFiles + "tests.csv", csv);
 		}
 	}
 }
