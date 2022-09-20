@@ -13,10 +13,9 @@ namespace AbsurdMoneySimulations
 		public float summ;
 		public int lastMutatedWeight;
 
-		public void FillRandomly(int weightsCount)
+		public void FillRandomly()
 		{
-			weights = new float[weightsCount];
-			for (int i = 0; i < weightsCount; i++)
+			for (int i = 0; i < weights.Count(); i++)
 				weights[i] = (Storage.rnd.NextSingle() * 2 - 1) * NN.randomPower; /////////////////
 		}
 
@@ -48,8 +47,15 @@ namespace AbsurdMoneySimulations
 			weights[lastMutatedWeight] += mutagen;
 		}
 
-		public Node()
+		public void Demutate(float mutagen)
 		{
+			weights[lastMutatedWeight] -= mutagen;
+		}
+
+		public Node(int weightsCount)
+		{
+			weights = new float[weightsCount];
+			subvalues = new float[weightsCount];
 		}
 	}
 }

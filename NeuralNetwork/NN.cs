@@ -32,24 +32,34 @@ namespace AbsurdMoneySimulations
 
 			void TestThread()
 			{
-/*				Create();
-				Init();
-				Save();*/
-				Load();
+  				Create();
+				//Init();
+				//Save();
+				//Load();
 				Init();
 				NNTester.LoadGrafic();
 				NNTester.FillTests();
 				NNTester.FillAnswersForTests();
-				Log(Calculate(0, NNTester.tests[0]).ToString());
-				Log(Calculate(1, NNTester.tests[1]).ToString());
-				Log(Calculate(0, NNTester.tests[0]).ToString());
-				Log(Calculate(1, NNTester.tests[1]).ToString());
+				SelectLayerForMutation();
+				Log("LML: " + lastMutatedLayer);
+				//Log(String.Concat(linksToLayersToMutate));
+				Log("До: " + Calculate(0, NNTester.tests[0]).ToString());
+				Mutate(randomMutates[0]);
+				Log("Recalculate после мутации: " + Recalculate(0).ToString());
+				Log("Сalculate после мутации: " + Calculate(0, NNTester.tests[0]).ToString());
+				Demutate(randomMutates[0]);
+				Log("Recalculate после демутации: " + Recalculate(0).ToString());
+				Log("Сalculate: " + Calculate(0, NNTester.tests[0]).ToString());
 			}
 		}
 
 		public static void Create()
 		{
 			layers = new List<LayerAbstract>();
+
+			//30*15
+			//55*10*15
+			//150*40
 
 			//input 300
 
@@ -110,18 +120,25 @@ namespace AbsurdMoneySimulations
 			return layers[layers.Count - 1].values[test][0][0] * 1000;
 		}
 
-		public static float ThinkNotFromBeginning(int test)
+		public static float Recalculate(int test)
 		{
-			layers[lastMutatedLayer].CalculateOneNode(test); /////
+			LayerRecalculateStatus lrs = LayerRecalculateStatus.First;
 
+			if (lastMutatedLayer > 0)
+				for (int layer = lastMutatedLayer; layer < layers.Count; layer++)
+					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
+			else
+			{
+				float[][] array = new float[1][];
+				array[0] = NNTester.tests[test];
 
-			l++;
+				layers[0].Calculate(test, array);
 
-			for (; l < layersCount; l++)
-				layers[l].Calculate(test, layers[l - 1].values[test]);
-				/////////////////////////////////
+				for (int layer = 1; layer < layers.Count; layer++)
+					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
+			}
 
-			return layers[l - 1].values[test][0][0] * 1000;
+			return layers[layers.Count - 1].values[test][0][0] * 1000;
 		}
 
 		public static void Init()
@@ -196,7 +213,7 @@ namespace AbsurdMoneySimulations
 					//////////////////////////////////
 					SelectLayerForMutation();
 
-					Mutate(1, mutagen);
+					Mutate(mutagen);
 
 					er = FindErrorRateNotFromBeginning();
 
@@ -211,7 +228,7 @@ namespace AbsurdMoneySimulations
 					else
 					{
 						Log(" ▽ Плохая мутация. Откат.");
-						Mutate(1, -mutagen);
+						Mutate(-mutagen);
 					}
 
 					history += record + "\r\n";
@@ -265,69 +282,6 @@ namespace AbsurdMoneySimulations
 							Thread.Sleep(60000);
 						}
 					}
-				}
-
-				void Optimize()
-				{
-					//Эта оптимизация почему-то быстро загоняет его
-					//в локальный минимуми ни к чему хорошему не приводит(
-
-					string res = "";
-					float n = 0;
-					float speed = 2;
-
-					while (Math.Abs(mutagen) > 0.0025)
-					{
-						if (Math.Abs(mutagen) > 20)
-							break;
-
-						n++;
-
-						Log("er: " + record + "; mutagen: " + mutagen.ToString());
-
-						history += record + "\r\n";
-
-						NN.Mutate(10, mutagen);
-						r = FindErrorRate();
-						NN.Mutate(10, mutagen * -2);
-						l = FindErrorRate();
-						NN.Mutate(10, mutagen);
-
-						if (l > record && r > record)
-						{
-							mutagen /= speed;
-							previous = 0;
-						}
-						else if (r < l)
-						{
-							record = r;
-
-							if (mutagen < 0)
-								mutagen = -mutagen;
-
-							NN.Mutate(1, mutagen);
-
-							if (previous == 1)
-								mutagen *= speed;
-							previous = 1;
-						}
-						else
-						{
-							record = l;
-
-							if (mutagen > 0)
-								mutagen = -mutagen;
-
-							NN.Mutate(1, -mutagen);
-
-							if (previous == -1)
-								mutagen *= speed;
-							previous = -1;
-						}
-					}
-
-					//System.IO.File.AppendAllText(Memory.programFiles + "\\Trading\\TEST.csv", res, Encoding.UTF8);
-					//Log(Memory.programFiles + "\\Trading\\TEST.csv");
 				}
 
 				float FindErrorRateNotFromBeginning()
@@ -400,9 +354,9 @@ namespace AbsurdMoneySimulations
 
 		public static void SelectLayerForMutation()
 		{
-			int number = mutationSeed % linksToLayersToMutate.Count;
+			int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
 
-			lastMutatedLayer = linksToLayersToMutate[number];
+			lastMutatedLayer = number;
 		}
 
 		public static void Neural_battle()
@@ -450,10 +404,14 @@ namespace AbsurdMoneySimulations
 			return 404;
 		}
 
-		public static void Mutate(int count, float mutagen)
+		public static void Mutate(float mutagen)
 		{
-			for (int i = 0; i < count; i++)
-				layers[lastMutatedLayer].Mutate(mutagen);
+			layers[lastMutatedLayer].Mutate(mutagen);
+		}
+
+		public static void Demutate(float mutagen)
+		{
+			layers[lastMutatedLayer].Demutate(mutagen);
 		}
 	}
 }

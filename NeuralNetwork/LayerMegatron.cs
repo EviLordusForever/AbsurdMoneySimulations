@@ -18,8 +18,8 @@ namespace AbsurdMoneySimulations
 			subs = new Node[subsCount];
 			for (int sub = 0; sub < subsCount; sub++)
 			{
-				subs[sub] = new Node();
-				subs[sub].FillRandomly(weightsCount);
+				subs[sub] = new Node(weightsCount);
+				subs[sub].FillRandomly();
 			}
 		}
 
@@ -55,6 +55,11 @@ namespace AbsurdMoneySimulations
 		{
 			lastMutatedSub = Storage.rnd.Next(subs.Count());
 			subs[lastMutatedSub].Mutate(mutagen);
+		}
+
+		public override void Demutate(float mutagen)
+		{
+			subs[lastMutatedSub].Demutate(mutagen);
 		}
 
 		public override float[][] GetValues(int test)

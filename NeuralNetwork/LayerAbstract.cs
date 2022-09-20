@@ -21,6 +21,8 @@ namespace AbsurdMoneySimulations
 
 		public abstract void Mutate(float mutagen);
 
+		public abstract void Demutate(float mutagen);
+
 		public abstract float[][] GetValues(int test);
 
 		public abstract int WeightsCount { get; }
