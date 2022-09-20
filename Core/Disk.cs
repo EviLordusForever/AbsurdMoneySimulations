@@ -34,9 +34,9 @@ namespace AbsurdMoneySimulations
 			Directory.CreateDirectory(path);
 		}
 
-		public static async void WriteToProgramFiles(string path, string text, bool savebefore) //Имя файла без пути или относительный путь, и без .txt
+		public static async void WriteToProgramFiles(string path, string extension, string text, bool savebefore) //Имя файла без пути или относительный путь, и без .txt
 		{
-			path = $"{programFiles}\\{path}.txt";
+			path = $"{programFiles}\\{path}.{extension}";
 
 			Thread writerThread = new Thread(WriterThread);
 			writerThread.Start();

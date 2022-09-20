@@ -44,7 +44,7 @@ namespace AbsurdMoneySimulations
 					l++; g++;
 				}
 
-				Log($"Загружен график: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
+				Log($"Load: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
 			}
 
 			unnormalizedgrafic = graficL.ToArray();
@@ -54,10 +54,10 @@ namespace AbsurdMoneySimulations
 				grafic[i] = Brain.Normalize(unnormalizedgrafic[i]);
 
 
-			Log("График (сборный) для обучения загружен.");
-			Log("График нормализирован.");
-			Log("По совместимости также загружены доступные точки на графике.");
-			Log("Длина графика: " + grafic.Length);
+			Log("Grafic (discrete) for education loaded.");
+			Log("Grafic is normalized.");
+			Log("Also available grafic points are loaded.");
+			Log("Grafic length: " + grafic.Length);
 		}
 
 		public static void FillTests()
@@ -82,7 +82,7 @@ namespace AbsurdMoneySimulations
 				i++;
 			}
 
-			Log($"Тесты и ответы для нейросети заполнены. ({tests.Length})");
+			Log($"Tests and answers for NN are filled. ({tests.Length})");
 		}
 	}
 }

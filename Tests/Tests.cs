@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestTests);
+			Thread myThread = new Thread(TestEvolution);
 			myThread.Start();			
 		}
 
@@ -173,6 +173,19 @@ namespace AbsurdMoneySimulations
 			File.WriteAllText(Disk.programFiles + "tests.csv", csv);
 
 			Log("Done!");
+		}
+
+		public static void TestEvolution()
+		{
+			NN.Create();
+			NN.Init();
+			NN.Save();
+			NN.Load();
+
+			NNTester.LoadGrafic();
+			NNTester.FillTests();
+
+			NN.Evolve();
 		}
 	}
 }

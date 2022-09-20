@@ -11,20 +11,20 @@ namespace AbsurdMoneySimulations
         public static int logSize = 100000;
         public static string logText;
         public static StreamWriter writer;
+        public static bool updated;
 
         public static void Log(string text)
         {
             FormsManager.mainForm.Invoke(new Action(() =>
             {
                 FormsManager.OpenLogForm();
-                string msg = CreateMessageToShout(text);
-                string date = GetDateToShow(System.DateTime.Now);
-                string time = GetTimeToShow(System.DateTime.Now);
-                LogToFile($"[{date}][{time}] {msg}");
-                LogToWindow($"[{date}][{time}] {msg}");
-                CutVisibleLog();
-                VisualiseLog();
             }));
+            string msg = CreateMessageToShout(text);
+            string date = GetDateToShow(System.DateTime.Now);
+            string time = GetTimeToShow(System.DateTime.Now);
+            LogToFile($"[{date}][{time}] {msg}");
+            LogToWindow($"[{date}][{time}] {msg}");
+            CutVisibleLog();
 
             void LogToFile(string text)
             {
@@ -34,6 +34,7 @@ namespace AbsurdMoneySimulations
             void LogToWindow(string text)
             {
                 logText = $"{text}\r\n{logText}";
+                updated = true;
             }
 
             void CutVisibleLog()
@@ -50,11 +51,11 @@ namespace AbsurdMoneySimulations
                 string whoe = "   ";
                 string duringe = "   ";
                 string placee = "   ";
-                                
+
                 string timee = "          ";
                 string datee = "            ";
-                                
-             
+
+
                 text = ModyfyText(text);
 
                 if (whoe.Length > who.Length)
@@ -122,7 +123,30 @@ namespace AbsurdMoneySimulations
             Log(text.ToString());
         }
 
-        public static void VisualiseLog()
+        public static void Visualiser()
+        {
+            Thread myThread = new Thread(VisualiserThread);
+            myThread.Name = "LogVisuliser";
+            myThread.Start();
+
+            void VisualiserThread()
+            {
+                while (true)
+                {
+                    if (updated)
+                    {
+                        FormsManager.mainForm.Invoke(new Action(() =>
+                        {
+                            Visualise();
+                        }));
+                        updated = false;
+                    }
+                    Thread.Sleep(250);
+                }
+            }
+        }
+
+        public static void Visualise()
         {
             FormsManager.logForm.rtb.Text = logText;
         }
@@ -157,6 +181,7 @@ namespace AbsurdMoneySimulations
         static void Flusher()
         {
             Thread myThread = new Thread(FlushThread);
+            myThread.Name = "LogFlusher";
             myThread.Start();
 
             void FlushThread()
@@ -171,6 +196,7 @@ namespace AbsurdMoneySimulations
             logText = "";
             writer = new StreamWriter(Disk.programFiles + "Logs\\log.log", true);
             Flusher();
+            Visualiser();
         }
     }
 }

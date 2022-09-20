@@ -15,7 +15,7 @@ namespace AbsurdMoneySimulations
 		public const int horizon = 29;
 		public const int inputWindow = 300;
 		public static int layersCount = 7;
-		public const float randomPower = 1.4f;
+		public const float randomPower = 0.4f;
 		public const int jumpLimit = 9000;
 
 		public static List<LayerAbstract> layers;
@@ -154,7 +154,7 @@ namespace AbsurdMoneySimulations
 			Log("Ссылки на все веса поставлены. Весов: " + linksToLayersToMutate.Count);
 		}
 
-		public static void Educate()
+		public static void Evolve()
 		{
 			Thread myThread = new Thread(SoThread);
 			myThread.Start();
@@ -164,43 +164,37 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				NN.Init();
-				//float error_rate = 0; //?
 				short previous = 0;
 				string history = "";
-				float record = FindErrorRate();
-				Log("Получен текущий er_fb: " + record);
-				//int previous_mutated_layer = 0;
-				//int previous_mutated_node = 0;
-				//lastMutatedLayer = 0;
 				float er = 0;
+				float record = FindErrorRate();
+				Log("Received current er_fb: " + record);
 
 				for (int Generation = 0; ; Generation++)
 				{
-					Log("Поколение " + Generation);
-
-					///////////////////
-					//previous_mutated_layer = lastMutatedLayer;
-					//previous_mutated_node = lastMutatedNode;
-					//////////////////////////////////
+					Log("Generation " + Generation);
 
 					SelectLayerForMutation();
 					Mutate();
 
 					er = RefindErrorRate();
-
 					Log("er_nfb: " + er.ToString());
 
 					if (er < record)
 					{
-						Log(" ▲ Хорошая мутация.");
+						Log(" ▲ Good mutation.");
 						record = er;
-						//Optimize();
+					}
+					else if (er == record)
+					{
+						Log(" - Neutral mutation. Leave it as it is.");
 					}
 					else
 					{
-						Log(" ▽ Плохая мутация. Откат.");
+						Log(" ▽ Bad mutation. Go back.");
 						Demutate();
+						er = RefindErrorRate();
+						Log("er_nfb back: " + er.ToString());
 					}
 
 					history += record + "\r\n";
@@ -208,12 +202,10 @@ namespace AbsurdMoneySimulations
 					if (Generation % 100 == 99)
 					{
 						Save();
-						Disk.WriteToProgramFiles("Trading\\history", history, true);
+						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
 						GetStatistics();
-
-						//Test();
 
 						void Test()
 						{
@@ -258,7 +250,7 @@ namespace AbsurdMoneySimulations
 
 
 			}
-		} //
+		}
 
 		public static float FindErrorRate()
 		{
@@ -296,7 +288,8 @@ namespace AbsurdMoneySimulations
 
 		private static void SelectLayerForMutation()
 		{
-			int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
+			//int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
+			int number = Storage.rnd.Next(layersCount);
 
 			lastMutatedLayer = number;
 		}
@@ -351,7 +344,7 @@ namespace AbsurdMoneySimulations
 			SelectLayerForMutation();
 			mutagen = randomMutates[Storage.rnd.Next(randomMutates.Length)];
 			layers[lastMutatedLayer].Mutate(mutagen);
-			Log("Mutated");
+			Log($"Layer {lastMutatedLayer} is mutated");
 		}
 
 		public static void Demutate()
