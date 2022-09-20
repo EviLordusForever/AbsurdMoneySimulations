@@ -29,7 +29,7 @@ namespace AbsurdMoneySimulations
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			NN.Test();
+			Tests.StartTest();
 		}
 
 		private void MainForm_Load(object sender, EventArgs e)

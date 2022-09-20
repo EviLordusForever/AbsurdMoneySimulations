@@ -56,7 +56,7 @@ namespace AbsurdMoneySimulations
 		public static void FillTests()
 		{
 			int maximalDelta = availableGraficPoints.Count();
-			float delta_delta = 1.02f * maximalDelta / testsCount;
+			float delta_delta = 1.00f * maximalDelta / testsCount;
 
 			tests = new float[testsCount][];
 

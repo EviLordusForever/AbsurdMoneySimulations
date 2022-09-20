@@ -20,38 +20,11 @@ namespace AbsurdMoneySimulations
 
 		public static List<LayerAbstract> layers;
 
+		public static float mutagen;
 		public static float[] randomMutates;
 		public static List<byte> linksToLayersToMutate;
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
-
-		public static void Test()
-		{
-			Thread myThread = new Thread(TestThread);
-			myThread.Start();
-
-			void TestThread()
-			{
-  				Create();
-				//Init();
-				//Save();
-				//Load();
-				Init();
-				NNTester.LoadGrafic();
-				NNTester.FillTests();
-				NNTester.FillAnswersForTests();
-				SelectLayerForMutation();
-				Log("LML: " + lastMutatedLayer);
-				//Log(String.Concat(linksToLayersToMutate));
-				Log("До: " + Calculate(0, NNTester.tests[0]).ToString());
-				Mutate(randomMutates[0]);
-				Log("Recalculate после мутации: " + Recalculate(0).ToString());
-				Log("Сalculate после мутации: " + Calculate(0, NNTester.tests[0]).ToString());
-				Demutate(randomMutates[0]);
-				Log("Recalculate после демутации: " + Recalculate(0).ToString());
-				Log("Сalculate: " + Calculate(0, NNTester.tests[0]).ToString());
-			}
-		}
 
 		public static void Create()
 		{
@@ -118,6 +91,7 @@ namespace AbsurdMoneySimulations
 				layers[l].Calculate(test, layers[l - 1].GetValues(test));
 
 			return layers[layers.Count - 1].values[test][0][0] * 1000;
+			//What? |
 		}
 
 		public static float Recalculate(int test)
@@ -208,12 +182,13 @@ namespace AbsurdMoneySimulations
 
 					mutationSeed = Storage.rnd.Next(1000000000);
 					mutagen = randomMutates[mutationSeed % randomMutates.Length];
+					///////////////////
 					previous_mutated_layer = lastMutatedLayer;
 					//previous_mutated_node = lastMutatedNode;
 					//////////////////////////////////
 					SelectLayerForMutation();
 
-					Mutate(mutagen);
+					Mutate();
 
 					er = FindErrorRateNotFromBeginning();
 
@@ -228,7 +203,7 @@ namespace AbsurdMoneySimulations
 					else
 					{
 						Log(" ▽ Плохая мутация. Откат.");
-						Mutate(-mutagen);
+						Demutate();
 					}
 
 					history += record + "\r\n";
@@ -404,14 +379,17 @@ namespace AbsurdMoneySimulations
 			return 404;
 		}
 
-		public static void Mutate(float mutagen)
+		public static void Mutate()
 		{
+			mutagen = randomMutates[Storage.rnd.Next(randomMutates.Length)];
 			layers[lastMutatedLayer].Mutate(mutagen);
+			Log("Mutated");
 		}
 
-		public static void Demutate(float mutagen)
+		public static void Demutate()
 		{
 			layers[lastMutatedLayer].Demutate(mutagen);
+			Log("Demutated");
 		}
 	}
 }
