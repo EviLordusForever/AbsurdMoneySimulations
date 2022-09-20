@@ -8,7 +8,7 @@ namespace AbsurdMoneySimulations
 {
     public static class Logger
     {
-        public static int logSize = 100000;
+        public static int logSize = 8000;
         public static string logText;
         public static StreamWriter writer;
         public static bool updated;

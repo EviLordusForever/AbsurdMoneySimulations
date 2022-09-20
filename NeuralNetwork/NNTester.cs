@@ -63,13 +63,13 @@ namespace AbsurdMoneySimulations
 		public static void FillTests()
 		{
 			int maximalDelta = availableGraficPoints.Count();
-			float delta_delta = 1.00f * maximalDelta / testsCount;
+			float delta_delta = 0.990f * maximalDelta / testsCount;
 
 			tests = new float[testsCount][];
 			answers = new float[testsCount];
 
 			int i = 0;
-			for (float delta = 0; delta < maximalDelta; delta += delta_delta)
+			for (float delta = 0; delta < maximalDelta && i < testsCount; delta += delta_delta)
 			{
 				int offset = availableGraficPoints[Convert.ToInt32(delta)];
 
