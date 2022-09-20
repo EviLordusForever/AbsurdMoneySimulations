@@ -165,32 +165,29 @@ namespace AbsurdMoneySimulations
 			void SoThread()
 			{
 				NN.Init();
-				float error_rate = 0;
-				float mutagen = 0;
+				//float error_rate = 0; //?
 				short previous = 0;
 				string history = "";
 				float record = FindErrorRate();
 				Log("Получен текущий er_fb: " + record);
-				int previous_mutated_layer = 0;
-				int previous_mutated_node = 0;
-				lastMutatedLayer = 0;
+				//int previous_mutated_layer = 0;
+				//int previous_mutated_node = 0;
+				//lastMutatedLayer = 0;
 				float er = 0;
 
 				for (int Generation = 0; ; Generation++)
 				{
 					Log("Поколение " + Generation);
 
-					mutationSeed = Storage.rnd.Next(1000000000);
-					mutagen = randomMutates[mutationSeed % randomMutates.Length];
 					///////////////////
-					previous_mutated_layer = lastMutatedLayer;
+					//previous_mutated_layer = lastMutatedLayer;
 					//previous_mutated_node = lastMutatedNode;
 					//////////////////////////////////
-					SelectLayerForMutation();
 
+					SelectLayerForMutation();
 					Mutate();
 
-					er = FindErrorRateNotFromBeginning();
+					er = RefindErrorRate();
 
 					Log("er_nfb: " + er.ToString());
 
@@ -223,7 +220,7 @@ namespace AbsurdMoneySimulations
 							Log("ПРОВЕДУ ТЕСТ!");
 							Log("Часть 1:");
 							Log("Провека: ");
-							float error1 = FindErrorRateNotFromBeginning();
+							float error1 = RefindErrorRate();
 							Log("er not from beginning: " + error1);
 							float error2 = FindErrorRate();
 							Log("er from beginning: " + error2);
@@ -235,7 +232,7 @@ namespace AbsurdMoneySimulations
 							Log("Теперь загружу ее.");
 							Load();
 							Log("Провека: ");
-							float error3 = FindErrorRateNotFromBeginning();
+							float error3 = RefindErrorRate();
 							Log("er not from beginning: " + error3);
 							float error4 = FindErrorRate();
 							Log("er from beginning: " + error4);
@@ -245,11 +242,11 @@ namespace AbsurdMoneySimulations
 							Log("Теперь переинициализирую: ");
 							Init();
 							Log("Провека: ");
-							float error5 = FindErrorRateNotFromBeginning();
+							float error5 = RefindErrorRate();
 							Log("er not from beginning: " + error5);
 							float error6 = FindErrorRate();
 							Log("er from beginning: " + error6);
-							float error7 = FindErrorRateNotFromBeginning();
+							float error7 = RefindErrorRate();
 							Log("er not from beginning: " + error7);
 							Log("Теперь статистика: ");
 							GetStatistics();
@@ -259,75 +256,45 @@ namespace AbsurdMoneySimulations
 					}
 				}
 
-				float FindErrorRateNotFromBeginning()
-				{ //По поводу l n запутанно получилось, но это крутая оптимизация
 
-					int l_;
-					int n_;
-
-					//Вершина запутанности, но она таки нужна для оптимизации
-					if (previous_mutated_layer < lastMutatedLayer)
-					{
-						l_ = previous_mutated_layer;
-						n_ = previous_mutated_node;
-					}
-					else if (previous_mutated_layer > lastMutatedLayer)
-					{
-						l_ = lastMutatedLayer;
-						//n_ = lastMutatedNode;
-						/////////////////////////
-					}
-					else
-					{
-						l_ = previous_mutated_layer;
-						n_ = previous_mutated_node;
-
-						//for (int test = 0; test < NNTester.testsCount; test++)
-						//	RecalcOnlyOneNode(test, NNTester.testStartPoints[test], l_, n_);
-						////////////////////////////
-						l_ = lastMutatedLayer;
-						//n_ = lastMutatedNode;
-						////////////////////////////////
-					}
-
-					error_rate = 0;
-					for (int test = 0; test < NNTester.testsCount; test++)
-					{
-						//float prediction = ThinkNotFromBeginning(test, deltas[test], l_, n_);
-						////////////////////////
-
-						float reality = NNTester.answers[test];
-
-						//error_rate += Math.Abs(prediction - reality);
-						/////////////////////////////////
-					}
-
-					error_rate /= NNTester.testsCount;
-
-					return error_rate;
-				}
-
-				float FindErrorRate()
-				{
-					error_rate = 0;
-					for (int test = 0; test < NNTester.testsCount; test++)
-					{
-						float prediction = 0;// Calculate(test, NNTester.testStartPoints[test]);
-						///////////////////////////////////
-
-						float reality = NNTester.answers[test];
-
-						error_rate += MathF.Abs(prediction - reality);
-					}
-
-					error_rate /= NNTester.testsCount;
-
-					return error_rate;
-				}
 			}
 		} //
 
-		public static void SelectLayerForMutation()
+		public static float FindErrorRate()
+		{
+			float er = 0;
+			for (int test = 0; test < NNTester.testsCount; test++)
+			{
+				float prediction = Calculate(test, NNTester.tests[test]);
+
+				float reality = NNTester.answers[test];
+
+				er += MathF.Abs(prediction - reality);
+			}
+
+			er /= NNTester.testsCount;
+
+			return er;
+		}
+
+		public static float RefindErrorRate()
+		{
+			float er = 0;
+			for (int test = 0; test < NNTester.testsCount; test++)
+			{
+				float prediction = Recalculate(test);
+
+				float reality = NNTester.answers[test];
+
+				er += MathF.Abs(prediction - reality);
+			}
+
+			er /= NNTester.testsCount;
+
+			return er;
+		}
+
+		private static void SelectLayerForMutation()
 		{
 			int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
 
@@ -381,6 +348,7 @@ namespace AbsurdMoneySimulations
 
 		public static void Mutate()
 		{
+			SelectLayerForMutation();
 			mutagen = randomMutates[Storage.rnd.Next(randomMutates.Length)];
 			layers[lastMutatedLayer].Mutate(mutagen);
 			Log("Mutated");

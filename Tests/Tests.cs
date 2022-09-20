@@ -31,7 +31,6 @@ namespace AbsurdMoneySimulations
 			NNTester.LoadGrafic();
 			NNTester.FillTests();
 
-			NN.SelectLayerForMutation();
 			Log("LML: " + NN.lastMutatedLayer);
 			int goods = 0;
 			int bads = 0;
@@ -71,9 +70,6 @@ namespace AbsurdMoneySimulations
 			NNTester.LoadGrafic();
 			NNTester.FillTests();
 
-			NN.SelectLayerForMutation();
-
-			Log("LML: " + NN.lastMutatedLayer);
 			int goods = 0;
 			int bads = 0;
 			int neutral = 0;
