@@ -30,7 +30,6 @@ namespace AbsurdMoneySimulations
 
 			NNTester.LoadGrafic();
 			NNTester.FillTests();
-			NNTester.FillAnswersForTests();
 
 			NN.SelectLayerForMutation();
 			Log("LML: " + NN.lastMutatedLayer);
@@ -71,7 +70,6 @@ namespace AbsurdMoneySimulations
 
 			NNTester.LoadGrafic();
 			NNTester.FillTests();
-			NNTester.FillAnswersForTests();
 
 			NN.SelectLayerForMutation();
 
@@ -143,7 +141,6 @@ namespace AbsurdMoneySimulations
 			string[] subcsv = new string[NNTester.testsCount];
 			NNTester.LoadGrafic();
 			NNTester.FillTests();
-			NNTester.FillAnswersForTests();
 
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{
@@ -168,7 +165,6 @@ namespace AbsurdMoneySimulations
 
 			string csv = "";
 			string[] subcsv = new string[NNTester.grafic.Length];
-
 
 			for (int i = 0; i < NNTester.grafic.Length; i++)
 				subcsv[i] = NNTester.grafic[i] + ",0\r\n";
