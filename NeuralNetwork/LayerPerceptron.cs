@@ -33,6 +33,55 @@ namespace AbsurdMoneySimulations
 				values[test][0][node] = nodes[node].Calculate(input, 0);
 		}
 
+		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		{
+			if (lrs == LayerRecalculateStatus.First)
+			{
+				values[test][0][lastMutatedNode] = nodes[lastMutatedNode].CalculateOnlyOneWeight(input[0][lastMutatedNode], nodes[lastMutatedNode].lastMutatedWeight);
+				lrs = LayerRecalculateStatus.OneNodeChanged;
+				lrs.lastMutatedNode = lastMutatedNode;
+				return lrs;
+			}
+			else if (lrs == LayerRecalculateStatus.OneNodeChanged)
+			{
+				for (int n = 0; n < nodes.Length; n++)
+					values[test][0][n] = nodes[n].CalculateOnlyOneWeight(input[0][lrs.lastMutatedNode], lrs.lastMutatedNode);
+				return LayerRecalculateStatus.Full;
+			}
+			else if (lrs == LayerRecalculateStatus.OneSubChanged)
+			{
+				for (int n = 0; n < nodes.Length; n++)
+				{
+					for (int subnode = lrs.lastMutatedSub * lrs.subSize; subnode < lrs.lastMutatedSub * lrs.subSize + lrs.subSize; subnode++)
+						nodes[n].CalculateOnlyOneWeight(input[0][subnode], subnode);
+					
+					values[test][0][n] = Brain.Normalize(nodes[n].summ);
+				}
+				return LayerRecalculateStatus.Full;
+			}
+			else
+			{
+				Calculate(test, input);
+				return LayerRecalculateStatus.Full;
+			}
+		}
+
+		public LayerRecalculateStatus Recalculate(int test, float[] input, LayerRecalculateStatus lrs)
+		{
+			if (lrs == LayerRecalculateStatus.First)
+			{
+				values[test][0][lastMutatedNode] = nodes[lastMutatedNode].CalculateOnlyOneWeight(input[lastMutatedNode], nodes[lastMutatedNode].lastMutatedWeight);
+				lrs = LayerRecalculateStatus.OneNodeChanged;
+				lrs.lastMutatedNode = lastMutatedNode;
+				return lrs;
+			}
+			else
+			{
+				Calculate(test, input);
+				return LayerRecalculateStatus.Full;
+			}
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedNode = Storage.rnd.Next(nodes.Count());
@@ -50,11 +99,6 @@ namespace AbsurdMoneySimulations
 			{
 				return nodes.Count() * nodes[0].weights.Count();
 			}
-		}
-
-		public void CalculateOneNode(int test)
-		{
-			values[test][0][lastMutatedNode] = nodes[lastMutatedNode].Calculate(NNTester.tests[test], 0);
 		}
 
 		public LayerPerceptron(int nodesCount)

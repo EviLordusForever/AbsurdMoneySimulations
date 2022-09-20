@@ -28,6 +28,28 @@ namespace AbsurdMoneySimulations
 			//Test me
 		}
 
+		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		{
+			if (lrs == LayerRecalculateStatus.First)
+			{
+				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.First);
+				lastMutatedSub = lastMutatedSub;
+				return LayerRecalculateStatus.OneSubChanged;
+			}
+			else if (lrs == LayerRecalculateStatus.OneSubChanged)
+			{
+				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.Full);
+				lastMutatedSub = lastMutatedSub;
+				return LayerRecalculateStatus.OneSubChanged;
+			}
+			else
+			{
+				Calculate(test, input);
+				return LayerRecalculateStatus.Full;
+			}
+		}
+
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(perceptrons.Count());

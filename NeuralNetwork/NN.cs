@@ -32,9 +32,11 @@ namespace AbsurdMoneySimulations
 
 			void TestThread()
 			{
-				Create();
-				Save();
+/*				Create();
+				Init();
+				Save();*/
 				Load();
+				Init();
 				NNTester.LoadGrafic();
 				NNTester.FillTests();
 				NNTester.FillAnswersForTests();
@@ -108,9 +110,10 @@ namespace AbsurdMoneySimulations
 			return layers[layers.Count - 1].values[test][0][0] * 1000;
 		}
 
-/*		public static float ThinkNotFromBeginning(int test)
+		public static float ThinkNotFromBeginning(int test)
 		{
-*//*			RecalcOnlyOneNode(test);
+			layers[lastMutatedLayer].CalculateOneNode(test); /////
+
 
 			l++;
 
@@ -118,19 +121,8 @@ namespace AbsurdMoneySimulations
 				layers[l].Calculate(test, layers[l - 1].values[test]);
 				/////////////////////////////////
 
-			return layers[l - 1].values[test][0][0] * 1000;*//*
-		}*/
-
-		public static void RecalcOnlyOneNode(int test)
-		{
-			int l = lastMutatedLayer;
-
-			if (l == 1)
-				(layers[l] as LayerPerceptron).CalculateOneNode(test); /////
-			//else
-				//(layers[l] as LayerPerceptron).CalculateOneNode(test, layers[l + 1].values[test][], 0, n);
-				////////////////////////////////
-			}
+			return layers[l - 1].values[test][0][0] * 1000;
+		}
 
 		public static void Init()
 		{

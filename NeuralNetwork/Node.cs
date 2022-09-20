@@ -9,6 +9,8 @@ namespace AbsurdMoneySimulations
 	public class Node
 	{
 		public float[] weights;
+		public float[] subvalues;
+		public float summ;
 		public int lastMutatedWeight;
 
 		public void FillRandomly(int weightsCount)
@@ -20,12 +22,24 @@ namespace AbsurdMoneySimulations
 
 		public float Calculate(float[] input, int start)
 		{
-			float res = 0;
+			summ = 0;
 
 			for (int i = 0; i < weights.Count(); i++)
-				res += weights[i] * input[start + i];
+			{
+				subvalues[i] = weights[i] * input[start + i];
+				summ += subvalues[i];
+			}
 
-			return Brain.Normalize(res);
+			return Brain.Normalize(summ);
+		}
+
+		public float CalculateOnlyOneWeight(float input, int w)
+		{
+			summ -= subvalues[w];
+			subvalues[w] = weights[w] * input;
+			summ += subvalues[w];
+
+			return Brain.Normalize(summ);
 		}
 
 		public void Mutate(float mutagen)

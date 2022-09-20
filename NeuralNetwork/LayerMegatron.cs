@@ -26,8 +26,29 @@ namespace AbsurdMoneySimulations
 		public override void Calculate(int test, float[][] input)
 		{
 			for (int sub = 0; sub < subs.Length; sub++)
-				for (int node = 0; node < values[test][sub].Length; node++)
-					values[test][sub][node] = subs[sub].Calculate(input[0], node * d);
+				CalculateOneSub(test, input, sub);
+		}
+
+		private void CalculateOneSub(int test, float[][] input, int sub)
+		{
+			for (int node = 0; node < values[test][sub].Length; node++)
+				values[test][sub][node] = subs[sub].Calculate(input[0], node * d);
+		}
+
+		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		{
+			if (lrs == LayerRecalculateStatus.First)
+			{
+				CalculateOneSub(test, input, lastMutatedSub);
+				lrs = LayerRecalculateStatus.OneSubChanged;
+				lrs.lastMutatedSub = lastMutatedSub;
+				return lrs;
+			}
+			else
+			{
+				Calculate(test, input);
+				return LayerRecalculateStatus.Full;
+			}
 		}
 
 		public override void Mutate(float mutagen)
