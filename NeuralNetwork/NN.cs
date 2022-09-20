@@ -14,7 +14,6 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public static int layersCount = 7;
 		public const float randomPower = 0.4f;
 		public const int jumpLimit = 9000;
 
@@ -289,7 +288,7 @@ namespace AbsurdMoneySimulations
 		private static void SelectLayerForMutation()
 		{
 			//int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
-			int number = Storage.rnd.Next(layersCount);
+			int number = Storage.rnd.Next(layers.Count);
 
 			lastMutatedLayer = number;
 		}
