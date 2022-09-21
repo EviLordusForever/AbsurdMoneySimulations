@@ -273,8 +273,6 @@ namespace AbsurdMoneySimulations
 						}
 					}
 				}
-
-
 			}
 		}
 
@@ -290,7 +288,7 @@ namespace AbsurdMoneySimulations
 
 			int alive = coresCount;
 
-			Thread[] subThreads = new Thread[4];
+			Thread[] subThreads = new Thread[coresCount];
 
 			for (int core = 0; core < coresCount; core++)
 			{
@@ -335,7 +333,6 @@ namespace AbsurdMoneySimulations
 				er += suber[core];
 
 			er /= NNTester.testsCount;
-			Thread.Sleep(1000);
 
 			return er;
 		}
@@ -352,7 +349,7 @@ namespace AbsurdMoneySimulations
 
 			int alive = coresCount;
 
-			Thread[] subThreads = new Thread[4];
+			Thread[] subThreads = new Thread[coresCount];
 
 			for (int core = 0; core < coresCount; core++)
 			{
@@ -392,12 +389,10 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-
 			for (int core = 0; core < coresCount; core++)
 				er += suber[core];
 
 			er /= NNTester.testsCount;
-			Thread.Sleep(1000);
 
 			return er;
 		}

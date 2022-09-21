@@ -183,8 +183,8 @@ namespace AbsurdMoneySimulations
 
 		public static void TestEvolution()
 		{
-			NN.Create();
-			NN.Save();
+			//NN.Create();
+			//NN.Save();
 			NN.Load();
 			NN.Init();
 
