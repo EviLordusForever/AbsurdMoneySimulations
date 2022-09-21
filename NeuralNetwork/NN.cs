@@ -151,7 +151,7 @@ namespace AbsurdMoneySimulations
 					randomMutates[i] += (float)Storage.rnd.NextSingle();
 
 				randomMutates[i] -= 5000;
-				randomMutates[i] *= 0.0002f;
+				randomMutates[i] *= 0.05f;
 			}
 
 			Log("Случайные мутации заполнены.");
@@ -197,7 +197,7 @@ namespace AbsurdMoneySimulations
 					SelectLayerForMutation();
 					Mutate();
 
-					er = FindErrorRate();
+					er = RefindErrorRate();
 					Log("er_nfb: " + er.ToString());
 
 					if (er < record)
@@ -219,14 +219,17 @@ namespace AbsurdMoneySimulations
 
 					history += record + "\r\n";
 
-					if (Generation % 100 == 99)
+					if (Generation % 100 == 0)
 					{
 						Save();
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
+						er = FindErrorRate();
+						Log("(!) er_fb: " + er.ToString());
+
 						GetStatistics();
-						Test();
+						//Test();
 
 						void Test()
 						{
@@ -244,6 +247,8 @@ namespace AbsurdMoneySimulations
 							Save();
 							Log("Теперь загружу ее.");
 							Load();
+							Log("Инит занчений.");
+							InitValues();
 							Log("Провека: ");
 							float error3 = RefindErrorRate();
 							Log("er not from beginning: " + error3);
