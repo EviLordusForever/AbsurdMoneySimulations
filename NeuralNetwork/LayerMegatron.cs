@@ -16,10 +16,44 @@ namespace AbsurdMoneySimulations
 		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
 		{
 			subs = new Node[subsCount];
+			FillByLogic(subsCount, nodesCount, weightsCount);
+			return;
+			//////////////////////////////
+
 			for (int sub = 0; sub < subsCount; sub++)
 			{
-				subs[sub] = new Node(weightsCount);
+				subs[sub] = new Node(NNTester.testsCount, weightsCount);
 				subs[sub].FillRandomly();
+			}
+		}
+
+		public void FillByLogic(int subsCount, int nodesCount, int weightsCount)
+		{
+			float[][] ars = new float[15][];
+
+			ars[0] = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			ars[1] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+			ars[2] = new float[] { 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1 };
+			ars[3] = new float[] { 0, 0, 0, 0, 0,  0, 0, 0, 0.1f, 0.2f,  0.5f, 0.65f, 0.8f, 0.9f, 1,  1, 0.9f, 0.8f, 0.65f, 0.5f,  0.2f, 0.1f, 0, 0, 0,  0, 0, 0, 0, 0 };
+			ars[4] = new float[] { -1.5f, -1.4f, -1.3f, -1.2f, -1.1f, -1f, -0.9f, -0.8f, -0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f };
+
+			ars[5] = new float[] { -1, -1, -1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, -1, -1, -1, -1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 };
+			ars[6] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
+			ars[7] = new float[] { 0, 0.5f, 1, 1, 1, 1, 0.5f, -0.5f, -1, -1, -1, -1, -0.5f, 0, 0, 0, 0, -0.5f, -1, -1, -1, -1, -0.5f, 0.5f, 1, 1, 1, 1, 0.5f, 0 };
+			ars[8] = new float[] { 0, 0.5f, -1, -1, -1, -1, -0.5f, 0.5f, 1, 1, 1, 1, 0.5f, 0, 0, 0, 0, 0.5f, -1, -1, -1, -1, -0.5f, 0.5f, 1, 1, 1, 1, 0.5f, 0 };
+			ars[9] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+
+			ars[10] = new float[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+			ars[11] = new float[] { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 };
+			ars[12] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+			ars[13] = new float[] { 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1 };
+			ars[14] = new float[] { 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1 };
+
+			for (int s = 0; s < subs.Count(); s++)
+			{
+				subs[s] = new Node(NNTester.testsCount, weightsCount);
+				for (int w = 0; w < 30; w++)
+					subs[s].weights[w] = ars[s][w];
 			}
 		}
 
@@ -48,7 +82,7 @@ namespace AbsurdMoneySimulations
 		private void CalculateOneSub(int test, float[][] input, int sub)
 		{
 			for (int node = 0; node < values[test][sub].Length; node++)
-				values[test][sub][node] = subs[sub].Calculate(input[0], node * d);
+				values[test][sub][node] = subs[sub].Calculate(test, input[0], node * d);
 		}
 	
 		public override void Mutate(float mutagen)

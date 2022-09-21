@@ -14,7 +14,7 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public const float randomPower = 2f;
+		public const float randomPower = 1.4f;
 		public const int jumpLimit = 9000;
 
 		public static List<LayerAbstract> layers;
@@ -40,20 +40,29 @@ namespace AbsurdMoneySimulations
 			//15
 			//1
 
-			layers.Add(new LayerMegatron(15, 55, 5));   //55 x 30 x 15 = 24750
-			layers[0].FillRandomly(15, 55, 30);
+			/*			layers.Add(new LayerMegatron(15, 55, 5));   //55 x 30 x 15 = 24750
+						layers[0].FillRandomly(15, 55, 30);
 
-			layers.Add(new LayerCybertron(150)); //15 x 55 x 10 = 8250
-			layers[1].FillRandomly(15, 10, 55);
+						layers.Add(new LayerCybertron(150)); //15 x 55 x 10 = 8250
+						layers[1].FillRandomly(15, 10, 55);
 
-			layers.Add(new LayerPerceptron(40)); //150 x 40 = 6000
-			layers[2].FillRandomly(1, 40, 150);
+						layers.Add(new LayerPerceptron(40)); //150 x 40 = 6000
+						layers[2].FillRandomly(1, 40, 150);
+
+						layers.Add(new LayerPerceptron(15)); //40 x 15 = 600
+						layers[3].FillRandomly(1, 15, 40);
+
+						layers.Add(new LayerPerceptron(1)); //15 x 1 = 15
+						layers[4].FillRandomly(1, 1, 15);*/
+
+			layers.Add(new LayerPerceptron(40));
+			layers[0].FillRandomly(1, 40, 300);
 
 			layers.Add(new LayerPerceptron(15)); //40 x 15 = 600
-			layers[3].FillRandomly(1, 15, 40);
+			layers[1].FillRandomly(1, 15, 40);
 
 			layers.Add(new LayerPerceptron(1)); //15 x 1 = 15
-			layers[4].FillRandomly(1, 1, 15);
+			layers[2].FillRandomly(1, 1, 15);
 
 			Log("Neural Network created!");
 		}
@@ -94,7 +103,7 @@ namespace AbsurdMoneySimulations
 			for (int l = 1; l < layers.Count; l++)
 				layers[l].Calculate(test, layers[l - 1].GetValues(test));
 
-			return layers[layers.Count - 1].GetAnswer(test) * 1000;
+			return layers[layers.Count - 1].GetAnswer(test) * 100;
 			//What? |
 		}
 
@@ -116,7 +125,7 @@ namespace AbsurdMoneySimulations
 					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
 			}
 
-			return layers[layers.Count - 1].GetAnswer(test) * 1000;
+			return layers[layers.Count - 1].GetAnswer(test) * 100;
 		}
 
 		public static void Init()
@@ -135,7 +144,7 @@ namespace AbsurdMoneySimulations
 					randomMutates[i] += (float)Storage.rnd.NextSingle();
 
 				randomMutates[i] -= 5000;
-				randomMutates[i] *= 0.1f;
+				randomMutates[i] *= 0.0002f;
 			}
 
 			Log("Случайные мутации заполнены.");
@@ -181,7 +190,7 @@ namespace AbsurdMoneySimulations
 					SelectLayerForMutation();
 					Mutate();
 
-					er = RefindErrorRate();
+					er = FindErrorRate();
 					Log("er_nfb: " + er.ToString());
 
 					if (er < record)
@@ -197,7 +206,7 @@ namespace AbsurdMoneySimulations
 					{
 						Log(" ▽ Bad mutation. Go back.");
 						Demutate();
-						er = RefindErrorRate();
+						er = FindErrorRate();
 						Log("er_nfb back: " + er.ToString());
 					}
 
@@ -210,6 +219,7 @@ namespace AbsurdMoneySimulations
 						history = "";
 
 						GetStatistics();
+						Test();
 
 						void Test()
 						{
@@ -261,11 +271,12 @@ namespace AbsurdMoneySimulations
 			restart:
 
 			int coresCount = 4;
-			int testsPerThreadCount = NNTester.testsCount / coresCount;
+			int testsPerCoreCount = NNTester.testsCount / coresCount;
 
 			float er = 0;
+			float[] suber = new float[coresCount];
 
-			int alive = 4;
+			int alive = coresCount;
 
 			Thread[] subThreads = new Thread[4];
 
@@ -273,23 +284,24 @@ namespace AbsurdMoneySimulations
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
 				subThreads[core].Priority = ThreadPriority.Highest;
-				subThreads[core].Start(core * testsPerThreadCount);
+				subThreads[core].Start(core);
 			}
 
 			void SubThread(object obj)
 			{
-				int x = (int)obj;
+				int core = (int)obj;
 
-				for (int test = x; test < x + testsPerThreadCount; test++)
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
 					float prediction = Calculate(test, NNTester.tests[test]);
 
 					float reality = NNTester.answers[test];
 
-					er += MathF.Abs(prediction - reality);
+					suber[core] += MathF.Abs(prediction - reality);
 				}
 
 				alive--;
+				Log($"core{core}:" + suber[core]);
 			}
 
 			long ms = DateTime.Now.Ticks; 
@@ -306,7 +318,12 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
+
+			for (int core = 0; core < coresCount; core++)
+				er += suber[core];
+
 			er /= NNTester.testsCount;
+			Thread.Sleep(1000);
 
 			return er;
 		}
@@ -369,7 +386,7 @@ namespace AbsurdMoneySimulations
 		private static void SelectLayerForMutation()
 		{
 			//int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
-			int number = Storage.rnd.Next(layers.Count);
+			int number = Storage.rnd.Next(layers.Count - 0) + 0;
 
 			lastMutatedLayer = number;
 		}

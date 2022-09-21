@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestNeuralBattle);
+			Thread myThread = new Thread(StupiedTest);
 			myThread.Start();			
 		}
 
@@ -48,12 +48,18 @@ namespace AbsurdMoneySimulations
 
 				bool good = (before == again1 && before == again2) && (after1 == after2);
 
-				if (before != after1)
-					if (good)
+
+
+				if (good)
+					if (before != after1)
 						goods++;
-					else
-						bads++;
-				else neutral++;
+					else neutral++;
+				else
+				{
+					bads++;
+					Log($"ERROR: {before} {after1} {after2} {again1} {again2}");
+				}
+
 
 			}
 
@@ -177,8 +183,8 @@ namespace AbsurdMoneySimulations
 
 		public static void TestEvolution()
 		{
-			//NN.Create();
-			//NN.Save();
+			NN.Create();
+			NN.Save();
 			NN.Load();
 			NN.Init();
 
@@ -191,6 +197,18 @@ namespace AbsurdMoneySimulations
 		public static void TestNeuralBattle()
 		{
 			NN.NeuralBattle();
+		}
+
+		public static void StupiedTest()
+		{
+			NN.Create();
+			NN.Init();
+			NNTester.LoadGrafic();
+			NNTester.FillTests();
+			NN.Mutate();
+
+			for (int i =0; i < 100; i++)
+				Log(NN.FindErrorRate());
 		}
 	}
 }

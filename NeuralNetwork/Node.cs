@@ -9,8 +9,8 @@ namespace AbsurdMoneySimulations
 	public class Node
 	{
 		public float[] weights;
-		public float[] subvalues;
-		public float summ;
+		public float[][] subvalues;
+		public float[] summ;
 		public int lastMutatedWeight;
 
 		public void FillRandomly()
@@ -19,26 +19,26 @@ namespace AbsurdMoneySimulations
 				weights[i] = (Storage.rnd.NextSingle() * 2 - 1) * NN.randomPower; /////////////////
 		}
 
-		public float Calculate(float[] input, int start)
+		public float Calculate(int test, float[] input, int start)
 		{
-			summ = 0;
+			summ[test] = 0;
 
 			for (int i = 0; i < weights.Count(); i++)
 			{
-				subvalues[i] = weights[i] * input[start + i];
-				summ += subvalues[i];
+				subvalues[test][i] = weights[i] * input[start + i];
+				summ[test] += subvalues[test][i];
 			}
 
-			return Brain.Normalize(summ);
+			return Brain.Normalize(summ[test]);
 		}
 
-		public float CalculateOnlyOneWeight(float input, int w)
+		public float CalculateOnlyOneWeight(int test, float input, int w)
 		{
-			summ -= subvalues[w];
-			subvalues[w] = weights[w] * input;
-			summ += subvalues[w];
+			summ[test] -= subvalues[test][w];
+			subvalues[test][w] = weights[w] * input;
+			summ[test] += subvalues[test][w];
 
-			return Brain.Normalize(summ);
+			return Brain.Normalize(summ[test]);
 		}
 
 		public void Mutate(float mutagen)
@@ -52,10 +52,16 @@ namespace AbsurdMoneySimulations
 			weights[lastMutatedWeight] -= mutagen;
 		}
 
-		public Node(int weightsCount)
+		public Node(int testsCount, int weightsCount)
 		{
 			weights = new float[weightsCount];
-			subvalues = new float[weightsCount];
+
+			summ = new float[testsCount];
+
+			subvalues = new float[testsCount][];
+
+			for (int test = 0; test < testsCount; test++)
+				subvalues[test] = new float[weightsCount];
 		}
 	}
 }
