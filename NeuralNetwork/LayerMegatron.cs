@@ -9,25 +9,21 @@ namespace AbsurdMoneySimulations
 	public class LayerMegatron : LayerAbstract
 	{
 		public Node[] subs; //[sub]
-		public float[][][] values; //[test][sub][node]
 		public int d;
+		public int nodesPerSubCount;
 		public int lastMutatedSub;
 
-		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
+		public override void FillWeightsRandomly()
 		{
-			subs = new Node[subsCount];
-			FillByLogic(subsCount, nodesCount, weightsCount);
+			FillByLogic();
 			return;
 			//////////////////////////////
-
-			for (int sub = 0; sub < subsCount; sub++)
-			{
-				subs[sub] = new Node(NNTester.testsCount, weightsCount);
+			//or
+			for (int sub = 0; sub < subs.Count(); sub++)
 				subs[sub].FillRandomly();
-			}
 		}
 
-		public void FillByLogic(int subsCount, int nodesCount, int weightsCount)
+		public void FillByLogic()
 		{
 			float[][] ars = new float[15][];
 
@@ -51,7 +47,6 @@ namespace AbsurdMoneySimulations
 
 			for (int s = 0; s < subs.Count(); s++)
 			{
-				subs[s] = new Node(NNTester.testsCount, weightsCount);
 				for (int w = 0; w < 30; w++)
 					subs[s].weights[w] = ars[s][w];
 			}
@@ -114,20 +109,28 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public LayerMegatron(int subsCount, int nodesCount, int d)
+		public LayerMegatron(int subsCount, int outsPerSubCount, int weightsPerSubCount, int d)
 		{
+			type = 2;
 			this.d = d;
+			this.nodesPerSubCount = outsPerSubCount;
+
+			subs = new Node[subsCount];
+			for (int sub = 0; sub < subs.Count(); sub++)
+				subs[sub] = new Node(weightsPerSubCount);
+
+			InitValues();
+		}
+
+		public override void InitValues()
+		{
 			values = new float[NNTester.testsCount][][];
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{
-				values[test] = new float[subsCount][];
-				for (int sub = 0; sub < subsCount; sub++)
-				{
-					values[test][sub] = new float[nodesCount];
-				}
+				values[test] = new float[subs.Count()][];
+				for (int sub = 0; sub < subs.Count(); sub++)
+					values[test][sub] = new float[nodesPerSubCount];
 			}
-
-			type = 2;
 		}
 	}
 }

@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
 	public abstract class LayerAbstract
 	{
+		[JsonIgnore]
 		public float[][][] values;
 
 		public int type;
 
-		public abstract void FillRandomly(int subsCount, int nodesCount, int weightsCount);
+		public abstract void FillWeightsRandomly();
 
 		public abstract void Calculate(int test, float[][] input);
 
@@ -28,6 +30,8 @@ namespace AbsurdMoneySimulations
 		public abstract float GetAnswer(int test);
 
 		public abstract int WeightsCount { get; }
+
+		public abstract void InitValues();
 
 	}
 }

@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
 	public class Node
 	{
 		public float[] weights;
+
+		[JsonIgnore]
 		public float[][] subvalues;
+
+		[JsonIgnore]
 		public float[] summ;
+
 		public int lastMutatedWeight;
 
 		public void FillRandomly()
@@ -52,16 +58,21 @@ namespace AbsurdMoneySimulations
 			weights[lastMutatedWeight] -= mutagen;
 		}
 
-		public Node(int testsCount, int weightsCount)
+		public Node(int weightsCount)
 		{
 			weights = new float[weightsCount];
 
-			summ = new float[testsCount];
+			InitValues();
+		}
 
-			subvalues = new float[testsCount][];
+		public void InitValues()
+		{
+			summ = new float[NNTester.testsCount];
 
-			for (int test = 0; test < testsCount; test++)
-				subvalues[test] = new float[weightsCount];
+			subvalues = new float[NNTester.testsCount][];
+
+			for (int test = 0; test < NNTester.testsCount; test++)
+				subvalues[test] = new float[weights.Count()];
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(StupiedTestR);
+			Thread myThread = new Thread(TestEvolution);
 			myThread.Start();			
 		}
 

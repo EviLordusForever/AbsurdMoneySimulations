@@ -10,15 +10,12 @@ namespace AbsurdMoneySimulations
 	{
 		public LayerPerceptron[] perceptrons;
 		public int lastMutatedSub;
+		public int outNodesSummCount;
 
-		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
+		public override void FillWeightsRandomly()
 		{
-			perceptrons = new LayerPerceptron[subsCount];
-			for (int i = 0; i < subsCount; i++)
-			{
-				perceptrons[i] = new LayerPerceptron(nodesCount);
-				perceptrons[i].FillRandomly(subsCount, nodesCount, weightsCount);
-			}
+			for (int i = 0; i < perceptrons.Count(); i++)
+				perceptrons[i].FillWeightsRandomly();
 		}
 
 		public override void Calculate(int test, float[][] input)
@@ -48,7 +45,6 @@ namespace AbsurdMoneySimulations
 				return LayerRecalculateStatus.Full;
 			}
 		}
-
 
 		public override void Mutate(float mutagen)
 		{
@@ -88,16 +84,27 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public LayerCybertron(int valueNodesCount)
+		public LayerCybertron(int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount)
+		{
+			type = 3;
+
+			this.outNodesSummCount = outNodesSummCount;
+
+			perceptrons = new LayerPerceptron[perceptronsCount];
+			for (int p = 0; p < perceptrons.Count(); p++)
+				perceptrons[p] = new LayerPerceptron(nodesPerPerceptronCount, weightsPerNodePerceptronCount);
+
+			InitValues();
+		}
+
+		public override void InitValues()
 		{
 			values = new float[NNTester.testsCount][][];
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{
 				values[test] = new float[1][];
-				values[test][0] = new float[valueNodesCount];
+				values[test][0] = new float[outNodesSummCount];
 			}
-
-			type = 3;
 		}
 	}
 }

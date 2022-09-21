@@ -11,14 +11,10 @@ namespace AbsurdMoneySimulations
 		public Node[] nodes;
 		public int lastMutatedNode;
 
-		public override void FillRandomly(int subsCount, int nodesCount, int weightsCount)
+		public override void FillWeightsRandomly()
 		{
-			nodes = new Node[nodesCount];
-			for (int i = 0; i < nodesCount; i++)
-			{
-				nodes[i] = new Node(NNTester.testsCount, weightsCount);
+			for (int i = 0; i < nodes.Length; i++)
 				nodes[i].FillRandomly();
-			}
 		}
 
 		public override void Calculate(int test, float[][] input)
@@ -111,16 +107,28 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public LayerPerceptron(int nodesCount)
+		public LayerPerceptron(int nodesCount, int weightsCount)
+		{
+			type = 1;
+
+			nodes = new Node[nodesCount];
+			for (int i = 0; i < nodes.Count(); i++)
+				nodes[i] = new Node(weightsCount);
+
+			InitValues();
+		}
+
+		public override void InitValues()
 		{
 			values = new float[NNTester.testsCount][][];
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{
 				values[test] = new float[1][];
-				values[test][0] = new float[nodesCount];
+				values[test][0] = new float[nodes.Count()];
 			}
 
-			type = 1;
+			for (int n = 0; n < nodes.Count(); n++)
+				nodes[n].InitValues();
 		}
 	}
 }
