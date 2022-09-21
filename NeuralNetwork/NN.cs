@@ -301,7 +301,7 @@ namespace AbsurdMoneySimulations
 				}
 
 				alive--;
-				Log($"core{core}:" + suber[core]);
+				//Log($"core{core}:" + suber[core]);
 			}
 
 			long ms = DateTime.Now.Ticks; 
@@ -309,7 +309,7 @@ namespace AbsurdMoneySimulations
 			{
 				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
 				{
-					Log("THREAD IS STACKED");
+					Log("THE THREAD IS STACKED");
 					for (int core = 0; core < coresCount; core++)
 						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
 					Log("AGAIN");
@@ -333,11 +333,12 @@ namespace AbsurdMoneySimulations
 			restart:
 
 			int coresCount = 4;
-			int testsPerThreadCount = NNTester.testsCount / coresCount;
+			int testsPerCoreCount = NNTester.testsCount / coresCount;
 
 			float er = 0;
+			float[] suber = new float[coresCount];
 
-			int alive = 4;
+			int alive = coresCount;
 
 			Thread[] subThreads = new Thread[4];
 
@@ -345,23 +346,24 @@ namespace AbsurdMoneySimulations
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
 				subThreads[core].Priority = ThreadPriority.Highest;
-				subThreads[core].Start(core * testsPerThreadCount);
+				subThreads[core].Start(core);
 			}
 
 			void SubThread(object obj)
 			{
-				int x = (int)obj;
+				int core = (int)obj;
 
-				for (int test = x; test < x + testsPerThreadCount; test++)
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
 					float prediction = Recalculate(test);
 
 					float reality = NNTester.answers[test];
 
-					er += MathF.Abs(prediction - reality);
+					suber[core] += MathF.Abs(prediction - reality);
 				}
 
 				alive--;
+				//Log($"core{core}:" + suber[core]);
 			}
 
 			long ms = DateTime.Now.Ticks;
@@ -369,7 +371,7 @@ namespace AbsurdMoneySimulations
 			{
 				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
 				{
-					Log("THREAD IS STACKED");
+					Log("THE THREAD IS STACKED");
 					for (int core = 0; core < coresCount; core++)
 						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
 					Log("AGAIN");
@@ -378,7 +380,12 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
+
+			for (int core = 0; core < coresCount; core++)
+				er += suber[core];
+
 			er /= NNTester.testsCount;
+			Thread.Sleep(1000);
 
 			return er;
 		}

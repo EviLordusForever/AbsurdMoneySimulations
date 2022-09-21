@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(StupiedTest);
+			Thread myThread = new Thread(StupiedTestR);
 			myThread.Start();			
 		}
 
@@ -209,6 +209,20 @@ namespace AbsurdMoneySimulations
 
 			for (int i =0; i < 100; i++)
 				Log(NN.FindErrorRate());
+		}
+
+		public static void StupiedTestR()
+		{
+			NN.Create();
+			NN.Init();
+			NNTester.LoadGrafic();
+			NNTester.FillTests();
+			NN.Mutate();
+
+			Log("er_fb " + NN.FindErrorRate());
+
+			for (int i = 0; i < 100; i++)
+				Log("er_nfb " + NN.RefindErrorRate());
 		}
 	}
 }
