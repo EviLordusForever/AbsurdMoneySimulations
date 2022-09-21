@@ -14,7 +14,7 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public const float randomPower = 0.4f;
+		public const float randomPower = 2f;
 		public const int jumpLimit = 9000;
 
 		public static List<LayerAbstract> layers;
@@ -374,45 +374,45 @@ namespace AbsurdMoneySimulations
 			lastMutatedLayer = number;
 		}
 
-		public static void Neural_battle()
+		public static void NeuralBattle()
 		{
 			Thread myThread = new Thread(SoThread);
 			myThread.Start();
 
 			void SoThread()
 			{
-/*				if (NNTester.testStartPoints == null)
-					Init();*/
+				//Create(); ///////////
+				//Save();
+				//Load();
+				Init();
+				NNTester.LoadGrafic();
+				NNTester.FillTests();
 
-				Load();
+				float record = FindErrorRate();
+				Log($"record {record}");
+				var files = Directory.GetFiles(Disk.programFiles + "NN");
 
-				float record = GetStatistics();
-
-				for (int n = 0; n < 30; n++)
+				for (int n = 0; ; n++)
 				{
-					var files = Directory.GetFiles(Disk.programFiles + "Trading\\NN");
-					string recordsmen = File.ReadAllText(files[0]);
-
 					Create();
-					Save();
-					Load();
-					var er = GetStatistics();
+					Init();
+
+					float er = FindErrorRate();
+					Log($"er {er}");
+
 					if (er < record)
 					{
 						Logger.Log("Эта лучше!");
 						record = er;
-						recordsmen = File.ReadAllText(files[0]);
-						File.WriteAllText(files[0] + "_recordsmen_copy.txt", recordsmen);
+						Save();						
 					}
 					else
 					{
 						Log("Эта не лучше!");
-						File.WriteAllText(files[0], recordsmen);
-						File.WriteAllText(files[0] + "_recordsmen_copy.txt", recordsmen);
 					}
 				}
 			}
-		} //
+		}
 
 		public static float GetStatistics()
 		{

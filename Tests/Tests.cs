@@ -11,7 +11,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestEvolution);
+			Thread myThread = new Thread(TestNeuralBattle);
 			myThread.Start();			
 		}
 
@@ -186,6 +186,11 @@ namespace AbsurdMoneySimulations
 			NNTester.FillTests();
 
 			NN.Evolve();
+		}
+
+		public static void TestNeuralBattle()
+		{
+			NN.NeuralBattle();
 		}
 	}
 }
