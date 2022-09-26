@@ -131,6 +131,9 @@ namespace AbsurdMoneySimulations
 				for (int sub = 0; sub < subs.Count(); sub++)
 					values[test][sub] = new float[nodesPerSubCount];
 			}
+
+			for (int s = 0; s < subs.Count(); s++)
+				subs[s].InitValues();
 		}
 	}
 }

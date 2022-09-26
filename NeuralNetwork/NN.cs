@@ -40,7 +40,7 @@ namespace AbsurdMoneySimulations
 			//15
 			//1
 
-/*			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
+			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
 			layers[0].FillWeightsRandomly();
 
 			layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
@@ -53,16 +53,16 @@ namespace AbsurdMoneySimulations
 			layers[3].FillWeightsRandomly();
 
 			layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-			layers[4].FillWeightsRandomly();*/
+			layers[4].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(40, 300));
-			layers[0].FillWeightsRandomly();
+			/*			layers.Add(new LayerPerceptron(40, 300));
+						layers[0].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
-			layers[1].FillWeightsRandomly();
+						layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
+						layers[1].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-			layers[2].FillWeightsRandomly();
+						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
+						layers[2].FillWeightsRandomly();*/
 
 			Log("Neural Network created!");
 		}
@@ -219,17 +219,17 @@ namespace AbsurdMoneySimulations
 
 					history += record + "\r\n";
 
-					if (Generation % 100 == 0)
+					if (Generation % 100 == 99)
 					{
 						Save();
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
+						Log("(!) er_nfb: " + er.ToString());
 						er = FindErrorRate();
 						Log("(!) er_fb: " + er.ToString());
 
 						GetStatistics();
-						//Test();
 
 						void Test()
 						{

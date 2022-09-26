@@ -105,6 +105,9 @@ namespace AbsurdMoneySimulations
 				values[test] = new float[1][];
 				values[test][0] = new float[outNodesSummCount];
 			}
+
+			for (int p = 0; p < perceptrons.Count(); p++)
+				perceptrons[p].InitValues();
 		}
 	}
 }

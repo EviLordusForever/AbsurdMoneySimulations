@@ -26,7 +26,7 @@ namespace AbsurdMoneySimulations
 		public void Calculate(int test, float[] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
-				values[test][0][node] = nodes[node].Calculate(NNTester.testsCount, input, 0);
+				values[test][0][node] = nodes[node].Calculate(test, input, 0);
 		}
 
 		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
@@ -96,7 +96,7 @@ namespace AbsurdMoneySimulations
 
 		public override float GetAnswer(int test)
 		{
-			return Brain.Normalize(nodes[0].summ[test]);
+			return nodes[0].summ[test];
 		}
 
 		public override int WeightsCount
