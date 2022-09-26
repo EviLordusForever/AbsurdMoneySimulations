@@ -53,6 +53,7 @@ namespace AbsurdMoneySimulations
 				logForm.Show();
 				logForm.WindowState = FormWindowState.Normal;				
 				logForm.Location = new Point(-7, 0);
+				logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
 			}));
 		}
 	}

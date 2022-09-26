@@ -8,7 +8,7 @@ namespace AbsurdMoneySimulations
 {
 	public static class MinimalWinrateFinder
 	{
-		public static void Do()
+		public static void MakeTable()
 		{
 			FormsManager.OpenShowForm();
 			FormsManager.showForm.Text = "winrate, prize and profit table";

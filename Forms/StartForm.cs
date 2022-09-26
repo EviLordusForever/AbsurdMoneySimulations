@@ -5,7 +5,7 @@ namespace AbsurdMoneySimulations
 		public StartForm()
 		{
 			InitializeComponent();
-			Core.Starting();			
+			Core.OnAppStarting();			
 		}
 
 		private void StartForm_Shown(object sender, EventArgs e)

@@ -24,15 +24,20 @@ namespace AbsurdMoneySimulations
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			MinimalWinrateFinder.Do();
+			MinimalWinrateFinder.MakeTable();
 		}
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			Tests.StartTest();
+			Core.StartEvolution();
 		}
 
-		private void MainForm_Load(object sender, EventArgs e)
+		private void button4_Click(object sender, EventArgs e)
+		{
+			Core.StartTrader();
+		}
+
+		private void MainForm_Load_1(object sender, EventArgs e)
 		{
 
 		}

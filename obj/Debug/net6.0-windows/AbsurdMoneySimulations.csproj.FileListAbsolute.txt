@@ -21,3 +21,7 @@ E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Newtonsoft.Json.dl
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.csproj.CopyComplete
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.LogForm.resources
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.BetsSimulatorForm.resources
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\WebDriver.dll
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AngleSharp.dll
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\ICSharpCode.SharpZipLib.dll
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\WebDriverManager.dll

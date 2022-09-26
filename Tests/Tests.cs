@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static AbsurdMoneySimulations.Logger;
+using static AbsurdMoneySimulations.BrowserManager;
 
 namespace AbsurdMoneySimulations
 {
@@ -11,7 +12,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestEvolution);
+			Thread myThread = new Thread(TestTrader);
 			myThread.Start();			
 		}
 
@@ -185,6 +186,7 @@ namespace AbsurdMoneySimulations
 		{
 			/*			NN.Create();
 						NN.Save();*/
+
 			NN.Load();
 			NN.Init();
 
@@ -223,6 +225,17 @@ namespace AbsurdMoneySimulations
 
 			for (int i = 0; i < 100; i++)
 				Log("er_nfb " + NN.RefindErrorRate());
+		}
+
+		public static void TestTrader()
+		{
+			LoadBrowser("https://google.com");
+			Thread.Sleep(3000);
+			Navi("https://vk.com");
+			Thread.Sleep(3000);
+			Navi("https://yandex.com");
+			Thread.Sleep(1000);
+			Navi("https://reddit.com");
 		}
 	}
 }
