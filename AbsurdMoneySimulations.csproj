@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,15 @@
     <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="105.0.5195.5200" />
     <PackageReference Include="WebDriverManager" Version="2.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Scripts\Test1.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scripts\Test2.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

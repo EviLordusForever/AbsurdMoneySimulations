@@ -25,3 +25,5 @@ E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\WebDriver.dll
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AngleSharp.dll
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\ICSharpCode.SharpZipLib.dll
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\WebDriverManager.dll
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Scripts\Test1.js
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Scripts\Test2.js

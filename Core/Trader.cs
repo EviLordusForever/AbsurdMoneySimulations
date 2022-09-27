@@ -13,13 +13,12 @@ namespace AbsurdMoneySimulations
 	{
         public static void DoIt()
 		{
-            LoadBrowser("https://google.com");
-			Thread.Sleep(3000);
-			Navi("https://vk.com");
-			Thread.Sleep(3000);
-			Navi("https://yandex.com");
-			Thread.Sleep(1000);
-			Navi("https://reddit.com");
+			LoadBrowser("https://google.com");
+			MessageBox.Show("So, let's we begin");
+			Thread.Sleep(100);
+			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
+			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("SUSLIK");
+			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
 		}
-    }
+	}
 }

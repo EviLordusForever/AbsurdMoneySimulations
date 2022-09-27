@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static AbsurdMoneySimulations.Logger;
 using static AbsurdMoneySimulations.BrowserManager;
+using OpenQA.Selenium;
 
 namespace AbsurdMoneySimulations
 {
@@ -236,6 +237,16 @@ namespace AbsurdMoneySimulations
 			Navi("https://yandex.com");
 			Thread.Sleep(1000);
 			Navi("https://reddit.com");
+		}
+
+		public static void TestSelenium()
+		{
+			LoadBrowser("https://google.com");
+			MessageBox.Show("So, let's we begin");
+			Thread.Sleep(100);
+			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
+			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("SUSLIK");
+			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
 		}
 	}
 }

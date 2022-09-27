@@ -21,7 +21,6 @@ namespace AbsurdMoneySimulations
 
 		public static float mutagen;
 		public static float[] randomMutates;
-		public static List<byte> linksToLayersToMutate;
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
@@ -129,7 +128,6 @@ namespace AbsurdMoneySimulations
 		public static void Init()
 		{
 			FillRandomMutations();
-			FillLinksToAllWeights();
 			InitValues();
 		}
 
@@ -154,24 +152,7 @@ namespace AbsurdMoneySimulations
 				randomMutates[i] *= 0.05f;
 			}
 
-			Log("Случайные мутации заполнены.");
-		}
-
-		public static void FillLinksToAllWeights()
-		{
-			//PLEASE, JUST BELIVE THAT IS NORMAL
-
-			linksToLayersToMutate = new List<byte>();
-
-			for (byte l = 0; l < layers.Count; l++)
-			{
-				int weightsCount = layers[l].WeightsCount;
-
-				for (int w = 0; w < weightsCount; w++)
-					linksToLayersToMutate.Add(l);
-			}
-
-			Log("Ссылки на все веса поставлены. Весов: " + linksToLayersToMutate.Count);
+			Log("Random mutations are filled.");
 		}
 
 		public static void Evolve()

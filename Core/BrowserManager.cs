@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support;
 
 namespace AbsurdMoneySimulations
 {
@@ -27,6 +28,18 @@ namespace AbsurdMoneySimulations
         public static void Navi(string Link)
         {
             driver.Navigate().GoToUrl(Link);
+            Thread.Sleep(100);
+        }
+
+        public static void ExecuteScript(string scriptName)
+        {
+            string script = File.ReadAllText(Disk.currentDirectory + "\\Scripts\\" + scriptName + ".js");
+            driver.Scripts().ExecuteScript(script);
+        }
+
+        private static IJavaScriptExecutor Scripts(this IWebDriver driver)
+        {
+            return (IJavaScriptExecutor)driver;
         }
     }
 }
