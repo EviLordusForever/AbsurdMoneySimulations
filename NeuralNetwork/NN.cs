@@ -170,9 +170,22 @@ namespace AbsurdMoneySimulations
 				float er = 0;
 				float record = FindErrorRate();
 				Log("Received current er_fb: " + record);
+				Log("1\n2\n3\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
 				for (int Generation = 0; ; Generation++)
 				{
+					Log("er_nfb: " + RefindErrorRate());
+					Log("er_fb: " + FindErrorRate());
+					Log("er_nfb: " + RefindErrorRate());
+					Log(NNStatManager.GetStatistics());
+					Log("er_nfb: " + RefindErrorRate());
+					Log("er_fb: " + FindErrorRate());
+					Log("er_nfb: " + RefindErrorRate());
+					Log(NNStatManager.GetStatistics());
+					Log(NNStatManager.GetStatistics());
+					Log(NNStatManager.GetStatistics());
+					Thread.Sleep(666000);
+
 					Log("Generation " + Generation);
 
 					SelectLayerForMutation();

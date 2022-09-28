@@ -82,7 +82,7 @@ namespace AbsurdMoneySimulations
 
                         if (indexOfR < size - 1 && indexOfR != -1 && indexOfR + 2 < str.Length)
                         {
-                            res += str.Remove(indexOfR + 1).Replace('\r', ' ').Replace('\n', ' ') + "\r" + whoe + duringe + placee + "        ";
+                            res += str.Remove(indexOfR + 1).Replace('\r', ' ').Replace('\n', ' ') + "\r" + datee + timee + whoe + duringe + placee + " ";
                             str = str.Substring(indexOfR + 1);
                         }
                         else if (str.Length <= size)
@@ -98,7 +98,7 @@ namespace AbsurdMoneySimulations
                             if (strRemoveSize.Contains(" "))
                                 lastSpaceIndex = strRemoveSize.LastIndexOf(' ');
 
-                            res += str.Remove(lastSpaceIndex) + "\r" + timee + datee + whoe + duringe + placee + " ";
+                            res += str.Remove(lastSpaceIndex) + "\r" + datee + timee + whoe + duringe + placee + " ";
                             str = str.Substring(lastSpaceIndex + 1);
                         }
                         else
