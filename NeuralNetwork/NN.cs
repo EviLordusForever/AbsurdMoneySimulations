@@ -18,6 +18,9 @@ namespace AbsurdMoneySimulations
 		public const int inputWindow = 300;
 		public const float randomPower = 1.4f;
 		public const int jumpLimit = 9000;
+		public const int randomMutatesCount = 1019;
+		public const float randomMutatesPower = 0.05f;
+		public const int randomMutatesScale = 10000;
 
 		public static List<LayerAbstract> layers;
 
@@ -103,7 +106,6 @@ namespace AbsurdMoneySimulations
 				layers[l].Calculate(test, layers[l - 1].GetValues(test));
 
 			return layers[layers.Count - 1].GetAnswer(test) * 100;
-			//What? |
 		}
 
 		public static float Recalculate(int test)
@@ -143,15 +145,15 @@ namespace AbsurdMoneySimulations
 
 		public static void FillRandomMutations()
 		{
-			randomMutates = new float[1019];
+			randomMutates = new float[randomMutatesCount];
 
-			for (int i = 0; i < 1019; i++)
+			for (int m = 0; m < randomMutatesCount; m++)
 			{
-				for (int j = 0; j < 10000; j++)
-					randomMutates[i] += (float)Storage.rnd.NextSingle();
+				for (int i = 0; i < randomMutatesScale; i++)
+					randomMutates[m] += rnd.NextSingle();
 
-				randomMutates[i] -= 5000;
-				randomMutates[i] *= 0.05f;
+				randomMutates[m] -= randomMutatesScale / 2.0f;
+				randomMutates[m] *= randomMutatesPower;
 			}
 
 			Log("Random mutations are filled.");
@@ -177,14 +179,14 @@ namespace AbsurdMoneySimulations
 				{
 					Log("normal " + NNStatManager.GetStatistics());
 					Log("normal " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics());
+					Log("zero v " + NNStatManager.GetStatistics0());
+					Log("zero v " + NNStatManager.GetStatistics0());
+					Log("zero v " + NNStatManager.GetStatistics0());
 					Log("normal " + NNStatManager.GetStatistics());
 					Log("normal " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics());
+					Log("zero v " + NNStatManager.GetStatistics0());
+					Log("zero v " + NNStatManager.GetStatistics0());
+					Log("zero v " + NNStatManager.GetStatistics0());
 					Log("Sleep 30 seconds...");
 					Thread.Sleep(30000);
 
@@ -225,48 +227,7 @@ namespace AbsurdMoneySimulations
 						er = FindErrorRate();
 						Log("(!) er_fb: " + er.ToString());
 
-						GetStatistics();
-
-						void Test()
-						{
-							Log("ПРОВЕДУ ТЕСТ!");
-							Log("Часть 1:");
-							Log("Провека: ");
-							float error1 = RefindErrorRate();
-							Log("er not from beginning: " + error1);
-							float error2 = FindErrorRate();
-							Log("er from beginning: " + error2);
-							Log("Теперь статистика: ");
-							GetStatistics();
-							Log("Часть 2:");
-							Log("Сохраню ее.");
-							Save();
-							Log("Теперь загружу ее.");
-							Load();
-							Log("Инит занчений.");
-							InitValues();
-							Log("Провека: ");
-							float error3 = RefindErrorRate();
-							Log("er not from beginning: " + error3);
-							float error4 = FindErrorRate();
-							Log("er from beginning: " + error4);
-							Log("Теперь статистика: ");
-							GetStatistics();
-							Log("Часть 3:");
-							Log("Теперь переинициализирую: ");
-							Init();
-							Log("Провека: ");
-							float error5 = RefindErrorRate();
-							Log("er not from beginning: " + error5);
-							float error6 = FindErrorRate();
-							Log("er from beginning: " + error6);
-							float error7 = RefindErrorRate();
-							Log("er not from beginning: " + error7);
-							Log("Теперь статистика: ");
-							GetStatistics();
-							Log("Такие дела. Жду 60 сек.");
-							Thread.Sleep(60000);
-						}
+						Log(NNStatManager.GetStatistics());
 					}
 				}
 			}
@@ -437,11 +398,6 @@ namespace AbsurdMoneySimulations
 				}
 			}
 		}
-
-		public static float GetStatistics()
-		{
-			return 404;
-		} //
 
 		public static void Mutate()
 		{

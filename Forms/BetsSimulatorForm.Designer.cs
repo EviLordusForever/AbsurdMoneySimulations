@@ -33,7 +33,7 @@
 			this.money = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.bet = new System.Windows.Forms.TextBox();
+			this.betPercent = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.prize = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
@@ -44,7 +44,7 @@
 			this.label7 = new System.Windows.Forms.Label();
 			this.martingaleChain = new System.Windows.Forms.TextBox();
 			this.antimartingaleChain = new System.Windows.Forms.TextBox();
-			this.simulationTime = new System.Windows.Forms.TextBox();
+			this.betsCount = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.height = new System.Windows.Forms.TextBox();
@@ -97,12 +97,12 @@
 			// 
 			// bet
 			// 
-			this.bet.Location = new System.Drawing.Point(171, 113);
-			this.bet.Name = "bet";
-			this.bet.Size = new System.Drawing.Size(225, 23);
-			this.bet.TabIndex = 4;
-			this.bet.Text = "4";
-			this.bet.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.betPercent.Location = new System.Drawing.Point(171, 113);
+			this.betPercent.Name = "bet";
+			this.betPercent.Size = new System.Drawing.Size(225, 23);
+			this.betPercent.TabIndex = 4;
+			this.betPercent.Text = "4";
+			this.betPercent.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// label3
 			// 
@@ -211,12 +211,12 @@
 			// 
 			// simulationTime
 			// 
-			this.simulationTime.Location = new System.Drawing.Point(171, 9);
-			this.simulationTime.Name = "simulationTime";
-			this.simulationTime.Size = new System.Drawing.Size(225, 23);
-			this.simulationTime.TabIndex = 18;
-			this.simulationTime.Text = "1920";
-			this.simulationTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.betsCount.Location = new System.Drawing.Point(171, 9);
+			this.betsCount.Name = "simulationTime";
+			this.betsCount.Size = new System.Drawing.Size(225, 23);
+			this.betsCount.TabIndex = 18;
+			this.betsCount.Text = "1920";
+			this.betsCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// label8
 			// 
@@ -268,7 +268,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(408, 539);
 			this.Controls.Add(this.label10);
-			this.Controls.Add(this.simulationTime);
+			this.Controls.Add(this.betsCount);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.height);
@@ -282,7 +282,7 @@
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.prize);
 			this.Controls.Add(this.label3);
-			this.Controls.Add(this.bet);
+			this.Controls.Add(this.betPercent);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.money);
@@ -302,7 +302,7 @@
 		public TextBox money;
 		private Label label1;
 		private Label label2;
-		public TextBox bet;
+		public TextBox betPercent;
 		private Label label3;
 		public TextBox prize;
 		private Label label5;
@@ -313,7 +313,7 @@
 		private Label label7;
 		public TextBox martingaleChain;
 		public TextBox antimartingaleChain;
-		public TextBox simulationTime;
+		public TextBox betsCount;
 		private Label label8;
 		private Label label9;
 		public TextBox height;

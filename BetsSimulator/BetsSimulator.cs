@@ -18,9 +18,9 @@ namespace AbsurdMoneySimulations
 
 			void SimulateThread()
 			{
-				int width = Convert.ToInt16(FormsManager.betsSimulatorForm.simulationTime.Text);
+				int betsCount = Convert.ToInt16(FormsManager.betsSimulatorForm.betsCount.Text);
 				int heigh = Convert.ToInt16(FormsManager.betsSimulatorForm.height.Text);
-				Storage.bmp = new Bitmap(width, heigh);
+				Storage.bmp = new Bitmap(betsCount, heigh);
 
 				Graphics gr = Graphics.FromImage(Storage.bmp);
 				gr.Clear(Color.White);
@@ -29,14 +29,14 @@ namespace AbsurdMoneySimulations
 				int martingaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.martingaleChain.Text);
 				int antimaringaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.antimartingaleChain.Text);
 				double startMoney = Convert.ToDouble(FormsManager.betsSimulatorForm.money.Text);
-				double bet = Convert.ToDouble(FormsManager.betsSimulatorForm.bet.Text) / 100;
+				double betPercent = Convert.ToDouble(FormsManager.betsSimulatorForm.betPercent.Text) / 100;
 				double prize = Convert.ToDouble(FormsManager.betsSimulatorForm.prize.Text) / 100;
 				double winrate = Convert.ToDouble(FormsManager.betsSimulatorForm.winrate.Text) / 100;
 				double simulationsCount = Convert.ToDouble(FormsManager.betsSimulatorForm.simulationsCount.Text);
 				double money;
 				double oldmoney;
-				double[] avarageMoney = new double[width];
-				double[] risk = new double[width];
+				double[] avarageMoney = new double[betsCount];
+				double[] risk = new double[betsCount];
 				Pen pen;
 				bool win = true;
 				bool winBefore = true;
@@ -55,42 +55,43 @@ namespace AbsurdMoneySimulations
 
 					pen = new Pen(Color.FromArgb(Storage.rnd.Next(255), Storage.rnd.Next(255), Storage.rnd.Next(255)));
 
-					for (int i = 0; i < width; i++)
+					for (int b = 0; b < betsCount; b++)
 					{
 						y0 = (int)(heigh - 300 - money);
 
 						Play();
 
-						avarageMoney[i] += money;
+
+						avarageMoney[b] += money;
 
 						if (money > startMoney)
-							risk[i]++;
+							risk[b]++;
 						else
-							risk[i]--;
+							risk[b]--;
 
 						y = (int)(heigh - 300 - money);
 
 						if (y > -5000000 && y0 > -5000000)
 							if (y < 5000000 && y0 < 5000000)
-								gr.DrawLine(pen, i - 1, y0, i, y);
+								gr.DrawLine(pen, b - 1, y0, b, y);
 					}
 				}
 
 				int y1 = (int)(heigh - 300 - startMoney);
 				pen = new Pen(Color.Green, 2);
-				gr.DrawLine(Pens.Black, 0, y1, width, y1);
+				gr.DrawLine(Pens.Black, 0, y1, betsCount, y1);
 				y1 = heigh - 300;
-				gr.DrawLine(Pens.Black, 0, y1, width, y1);
+				gr.DrawLine(Pens.Black, 0, y1, betsCount, y1);
 
 				Brush br = new SolidBrush(Color.FromArgb(50, 0, 255, 0));
-				gr.FillRectangle(br, 0, heigh - 130, width, 100);
-				gr.DrawLine(pen, 0, heigh - 130, width, heigh - 130);
-				gr.DrawLine(pen, 0, heigh - 30, width, heigh - 30);
-				gr.DrawLine(Pens.Green, 0, heigh - 80, width, heigh - 80);
+				gr.FillRectangle(br, 0, heigh - 130, betsCount, 100);
+				gr.DrawLine(pen, 0, heigh - 130, betsCount, heigh - 130);
+				gr.DrawLine(pen, 0, heigh - 30, betsCount, heigh - 30);
+				gr.DrawLine(Pens.Green, 0, heigh - 80, betsCount, heigh - 80);
 
 
 				pen = new Pen(Color.Black, 5);
-				for (int i = 1; i < width; i++)
+				for (int i = 1; i < betsCount; i++)
 				{
 					y0 = (int)(heigh - 300 - avarageMoney[i - 1] / simulationsCount);
 					y = (int)(heigh - 300 - avarageMoney[i] / simulationsCount);
@@ -108,10 +109,10 @@ namespace AbsurdMoneySimulations
 				Storage.bmp = Brain.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
 				gr = Graphics.FromImage(Storage.bmp);
 				gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
-				gr.DrawString($"So, {Math.Round(100.0 * (risk[width - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
+				gr.DrawString($"So, {Math.Round(100.0 * (risk[betsCount - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
 				gr.FillRectangle(Brushes.Cyan, Storage.bmp.Width - 270, 17, 270, 26);
 				gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17 + 27, 270, 26);
-				double ap = Math.Round(avarageMoney[width - 1] / simulationsCount - startMoney, 2);
+				double ap = Math.Round(avarageMoney[betsCount - 1] / simulationsCount - startMoney, 2);
 				string apStr = ap.ToString() + "$";
 				if (ap > 10000000)
 					apStr = "fucking ∞";
@@ -119,7 +120,7 @@ namespace AbsurdMoneySimulations
 					apStr = "fucking -∞";
 
 				gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 270, 17);
-				gr.DrawString($"After {width} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
+				gr.DrawString($"After {betsCount} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
 
 				Storage.bmp = Brain.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
 
@@ -175,7 +176,7 @@ namespace AbsurdMoneySimulations
 					if (looseCombo > 0 && looseCombo <= martingaleChain)
 						res = loosedProfit / prize * 1;
 					else
-						res = Math.Max(1, money * bet);
+						res = Math.Max(1, money * betPercent);
 
 					return res;
 				}
