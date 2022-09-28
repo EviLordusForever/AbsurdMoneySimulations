@@ -30,5 +30,15 @@ namespace AbsurdMoneySimulations
 						.Take(length)
 						.ToArray();
 		}
+
+		public static Bitmap RescaleBitmap (Bitmap bmp0, int width, int height)
+		{
+			Bitmap bmp = new Bitmap(width, height);
+			using (Graphics g = Graphics.FromImage(bmp))
+			{
+				g.DrawImage(bmp0, new Rectangle(0, 0, bmp.Width, bmp.Height));
+			}
+			return bmp;
+		}
 	}
 }

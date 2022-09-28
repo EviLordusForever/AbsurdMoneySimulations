@@ -41,5 +41,11 @@ namespace AbsurdMoneySimulations
         {
             return (IJavaScriptExecutor)driver;
         }
+
+        public static void Quit()
+        {
+            if (driver != null)
+                BrowserManager.driver.Quit();
+        }
     }
 }

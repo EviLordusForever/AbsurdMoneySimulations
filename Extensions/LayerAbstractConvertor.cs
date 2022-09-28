@@ -15,7 +15,6 @@ namespace AbsurdMoneySimulations
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
-			//System.Text.Json.JsonSerializerOptions options = new System.Text.Json.JsonSerializerOptions(JsonSerializerDefaults.Web);
 			reader.SupportMultipleContent = true;
 
 			JObject jo = JObject.Load(reader);

@@ -10,7 +10,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void Simulate()
 		{
-			FormsManager.OpenShowForm();
+			FormsManager.OpenShowForm("Bets simulation");
 
 			Thread myThread = new Thread(SimulateThread);
 			myThread.Name = "BetsSimulator";
@@ -105,7 +105,7 @@ namespace AbsurdMoneySimulations
 					gr.DrawLine(Pens.Red, i - 1, y0, i, y);
 				}
 
-				Storage.bmp = GetFormBackgroundImage(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
+				Storage.bmp = Brain.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
 				gr = Graphics.FromImage(Storage.bmp);
 				gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
 				gr.DrawString($"So, {Math.Round(100.0 * (risk[width - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
@@ -121,11 +121,11 @@ namespace AbsurdMoneySimulations
 				gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 270, 17);
 				gr.DrawString($"After {width} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
 
-				Storage.bmp = GetFormBackgroundImage(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
+				Storage.bmp = Brain.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
 
 				FormsManager.mainForm.Invoke(new Action(() =>
 				{
-					FormsManager.showForm.BackgroundImage = GetFormBackgroundImage(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
+					FormsManager.showForm.BackgroundImage = Storage.bmp;
 					FormsManager.betsSimulatorForm.BringToFront();
 				}));
 
@@ -180,16 +180,6 @@ namespace AbsurdMoneySimulations
 					return res;
 				}
 			}
-		}
-
-		public static Bitmap GetFormBackgroundImage(Bitmap bmp0, int width, int height)
-		{
-			Bitmap bmp = new Bitmap(width, height);
-			using (Graphics g = Graphics.FromImage(bmp))
-			{
-				g.DrawImage(bmp0, new Rectangle(0, 0, bmp.Width, bmp.Height));
-			}
-			return bmp;
 		}
 	}
 }

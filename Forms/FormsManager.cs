@@ -12,8 +12,9 @@ namespace AbsurdMoneySimulations
 		public static BetsSimulatorForm betsSimulatorForm;
 		public static ShowForm showForm;
 		public static LogForm logForm;
+		public static StartForm startForm;
 
-		public static void OpenMartingaleForm()
+		public static void OpenBetsSimulatorForm()
 		{
 			if (betsSimulatorForm == null || betsSimulatorForm.IsDisposed)
 				betsSimulatorForm = new BetsSimulatorForm();
@@ -23,7 +24,7 @@ namespace AbsurdMoneySimulations
 			betsSimulatorForm.BringToFront();
 		}
 
-		public static void OpenShowForm()
+		public static void OpenShowForm(string text)
 		{
 			if (showForm == null || showForm.IsDisposed)
 			{
@@ -38,6 +39,7 @@ namespace AbsurdMoneySimulations
 			showForm.BackgroundImageLayout = ImageLayout.Stretch;
 
 			showForm.BackgroundImage = Storage.bmp;
+			showForm.Text = text;
 		}
 
 		public static void OpenLogForm()
@@ -48,12 +50,11 @@ namespace AbsurdMoneySimulations
 				{
 					logForm = new LogForm();
 					logForm.BringToFront();
+					logForm.Show();
+					logForm.WindowState = FormWindowState.Normal;
+					logForm.Location = new Point(-7, 0);
+					logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
 				}
-
-				logForm.Show();
-				logForm.WindowState = FormWindowState.Normal;				
-				logForm.Location = new Point(-7, 0);
-				logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
 			}));
 		}
 	}

@@ -19,7 +19,7 @@ namespace AbsurdMoneySimulations
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			FormsManager.OpenMartingaleForm();
+			FormsManager.OpenBetsSimulatorForm();
 		}
 
 		private void button2_Click(object sender, EventArgs e)
@@ -40,6 +40,17 @@ namespace AbsurdMoneySimulations
 		private void MainForm_Load_1(object sender, EventArgs e)
 		{
 
+		}
+
+		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+		}
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			BrowserManager.Quit();
+			Logger.Quit();
+			FormsManager.startForm.Close();
 		}
 	}
 }

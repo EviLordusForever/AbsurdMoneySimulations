@@ -10,8 +10,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void MakeTable()
 		{
-			FormsManager.OpenShowForm();
-			FormsManager.showForm.Text = "winrate, prize and profit table";
+			FormsManager.OpenShowForm("winrate, prize and profit table");
 
 			double[,] table = new double[120, 120];
 
@@ -52,7 +51,7 @@ namespace AbsurdMoneySimulations
 
 			FormsManager.mainForm.Invoke(new Action(() =>
 			{
-				FormsManager.showForm.BackgroundImage = BetsSimulator.GetFormBackgroundImage(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
+				FormsManager.showForm.BackgroundImage = Brain.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
 			}));
 		}
 	}

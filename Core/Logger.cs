@@ -13,6 +13,10 @@ namespace AbsurdMoneySimulations
         public static StreamWriter writer;
         public static bool updated;
 
+        public static Thread flusherThread;
+        public static Thread visualizerThread;
+
+
         public static void Log(string text)
         {
             FormsManager.mainForm.Invoke(new Action(() =>
@@ -126,30 +130,54 @@ namespace AbsurdMoneySimulations
 
         public static void Visualiser()
         {
-            Thread myThread = new Thread(VisualiserThread);
-            myThread.Name = "LogVisuliser";
-            myThread.Start();
+            visualizerThread = new Thread(VisualiserThread);
+            visualizerThread.Name = "LogVisuliser";
+            visualizerThread.Start();
 
             void VisualiserThread()
             {
-                while (true)
+                try
                 {
-                    if (updated)
+                    while (true)
                     {
-                        FormsManager.mainForm.Invoke(new Action(() =>
+                        if (updated)
                         {
-                            Visualise();
-                        }));
-                        updated = false;
+                            FormsManager.mainForm.Invoke(new Action(() =>
+                            {
+                                FormsManager.logForm.rtb.Text = logText;
+                            }));
+                            updated = false;
+                        }
+                        Thread.Sleep(250);
                     }
-                    Thread.Sleep(250);
+                }
+                catch (ThreadInterruptedException ex)
+                {
                 }
             }
         }
 
-        public static void Visualise()
+        static void Flusher()
         {
-            FormsManager.logForm.rtb.Text = logText;
+            flusherThread = new Thread(FlusherThread);
+            flusherThread.Name = "LogFlusher";
+            flusherThread.Start();
+
+            void FlusherThread()
+            {
+                try
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(20000);
+                        writer.Flush();
+                    }
+                }
+                catch (ThreadInterruptedException ex)
+                {
+                    writer.Flush();
+                }
+            }
         }
 
         public static string GetTimeToShow(DateTime dateTime)
@@ -179,17 +207,10 @@ namespace AbsurdMoneySimulations
             return d + "." + m + "." + y;
         }
 
-        static void Flusher()
+        public static void Quit()
         {
-            Thread myThread = new Thread(FlushThread);
-            myThread.Name = "LogFlusher";
-            myThread.Start();
-
-            void FlushThread()
-            {
-                Thread.Sleep(20000);
-                writer.Flush();
-            }
+            visualizerThread.Interrupt();
+            flusherThread.Interrupt();
         }
 
         static Logger()

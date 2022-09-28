@@ -5,7 +5,8 @@ namespace AbsurdMoneySimulations
 		public StartForm()
 		{
 			InitializeComponent();
-			Core.OnAppStarting();			
+			FormsManager.startForm = this;
+			Core.OnAppStarting();
 		}
 
 		private void StartForm_Shown(object sender, EventArgs e)
@@ -15,7 +16,10 @@ namespace AbsurdMoneySimulations
 
 		private void StartForm_Load(object sender, EventArgs e)
 		{
+		}
 
+		private void StartForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
 		}
 	}
 }

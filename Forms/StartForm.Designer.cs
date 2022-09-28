@@ -38,6 +38,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "StartForm";
 			this.Text = "Starting ...";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartForm_FormClosing);
 			this.Load += new System.EventHandler(this.StartForm_Load);
 			this.Shown += new System.EventHandler(this.StartForm_Shown);
 			this.ResumeLayout(false);
