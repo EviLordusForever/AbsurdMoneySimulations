@@ -8,7 +8,7 @@ namespace AbsurdMoneySimulations
 {
     public static class Logger
     {
-        public static int logSize = 8000;
+        public static int logSize = 48000;
         public static string logText;
         public static StreamWriter writer;
         public static bool updated;
@@ -19,6 +19,7 @@ namespace AbsurdMoneySimulations
             {
                 FormsManager.OpenLogForm();
             }));
+
             string msg = CreateMessageToShout(text);
             string date = GetDateToShow(System.DateTime.Now);
             string time = GetTimeToShow(System.DateTime.Now);

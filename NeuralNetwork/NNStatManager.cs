@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static AbsurdMoneySimulations.Logger;
+using static AbsurdMoneySimulations.Storage;
 
 namespace AbsurdMoneySimulations
 {
@@ -10,8 +12,12 @@ namespace AbsurdMoneySimulations
 	{
 		public static float er;
 		public static List<float[]> sections;
+
+		public static float[,] winsPerCore;
 		public static float[] wins;
+		public static float[,] testsPerCore;
 		public static float[] tests;
+
 		public static float[] scores;
 
 		static NNStatManager()
@@ -39,12 +45,126 @@ namespace AbsurdMoneySimulations
 			sections.Add(new float[] { 7, 10 });
 			sections.Add(new float[] { 10, 15 });
 
+			winsPerCore = new float[coresCount, sections.Count];
 			wins = new float[sections.Count];
+			testsPerCore = new float[coresCount, sections.Count];
 			tests = new float[sections.Count];
 			scores = new float[sections.Count];
 		}
 
 		public static string GetStatistics()
+		{
+			restart:
+
+			ClearStat();
+
+			int testsPerCoreCount = NNTester.testsCount / coresCount;
+
+			float[] suber = new float[coresCount];
+
+			int alive = coresCount;
+
+			Thread[] subThreads = new Thread[coresCount];
+
+			for (int core = 0; core < coresCount; core++)
+			{
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core);
+			}
+
+			void SubThread(object obj)
+			{
+				int core = (int)obj;
+
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
+				{
+					float prediction = NN.Calculate(test, NNTester.tests[test]);
+
+					float reality = NNTester.answers[test];
+
+					suber[core] += MathF.Abs(prediction - reality);
+
+					bool win = prediction > 0 && reality > 0 || prediction < 0 && reality < 0;
+
+					PlusToStatistics(core, prediction, win);
+				}
+
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks;
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THE THREAD IS STACKED");
+					for (int core = 0; core < coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
+			}
+
+
+			for (int core = 0; core < coresCount; core++)
+				er += suber[core];
+
+			er /= NNTester.testsCount;
+
+			CalculateScores();
+
+			return StatToString();
+		}
+
+		public static void PlusToStatistics(int core, float prediction, bool win)
+		{
+			for (int section = 0; section < sections.Count; section++)
+			{
+				if (prediction >= sections[section][0] && prediction <= sections[section][1])
+				{
+					testsPerCore[core, section]++;
+					if (win)
+						winsPerCore[core, section]++;
+				}
+			}
+		}
+
+		public static void CalculateScores()
+		{
+			for (int section = 0; section < sections.Count; section++)
+			{
+				for (int core = 0; core < coresCount; core++)
+				{
+					wins[section] += winsPerCore[core, section];
+					tests[section] += testsPerCore[core, section];
+				}
+				scores[section] = MathF.Round(wins[section] / tests[section], 3);
+			}
+		}
+
+		public static void ClearStat()
+		{
+			for (int section = 0; section < sections.Count; section++)
+			{
+				wins[section] = 0;
+				tests[section] = 0;
+				scores[section] = 0;
+
+				for (int core = 0; core < coresCount; core++)
+				{
+					winsPerCore[core, section] = 0;
+					testsPerCore[core, section] = 0;
+				}
+			}
+
+			er = 0;
+		}
+
+
+
+		public static string GetStatistics0()
 		{
 			ClearStat();
 
@@ -56,19 +176,19 @@ namespace AbsurdMoneySimulations
 
 				bool win = prediction > 0 && reality > 0 || prediction < 0 && reality < 0;
 
-				PlusToStatistics(prediction, win);
+				PlusToStatistics0(prediction, win);
 
 				er += MathF.Abs(prediction - reality);
 			}
 
 			er /= NNTester.testsCount;
 
-			CalculateScores();
+			CalculateScores0();
 
 			return StatToString();
 		}
 
-		public static void PlusToStatistics(float prediction, bool win)
+		public static void PlusToStatistics0(float prediction, bool win)
 		{
 			for (int section = 0; section < sections.Count; section++)
 			{
@@ -81,21 +201,12 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void CalculateScores()
+		public static void CalculateScores0()
 		{
 			for (int s = 0; s < sections.Count; s++)
 				scores[s] = MathF.Round(wins[s] / tests[s], 3);
 		}
 
-		public static void ClearStat()
-		{
-			for (int s = 0; s < sections.Count; s++)
-			{
-				wins[s] = 0;
-				tests[s] = 0;
-				scores[s] = 0;
-			}
-		}
 
 		static string StatToString()
 		{
