@@ -215,9 +215,11 @@ namespace AbsurdMoneySimulations
 						Log("(!) er_fb: " + er.ToString());
 
 						Log("Evolution dataset:\n" + NNStatManager.GetStatistics());
+						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Evolution"), true);
 
 						NNTester.InitForTesting();
 						Log("Testing dataset:\n" + NNStatManager.GetStatistics());
+						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Testing") + "\n", true);
 						NNTester.InitForEvolution();
 					}
 				}

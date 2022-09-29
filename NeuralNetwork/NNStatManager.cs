@@ -174,5 +174,13 @@ namespace AbsurdMoneySimulations
 			stat += $"========================";
 			return stat;
 		}
+
+		public static string StatToCsv(string name)
+		{
+			string stat = name + ",";
+			for (int section = 0; section < wins.Length; section++)
+				stat += $"{scores[section]},";
+			return stat;
+		}
 	}
 }
