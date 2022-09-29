@@ -22,11 +22,16 @@ namespace AbsurdMoneySimulations
 
 		static NNStatManager()
 		{
+			Init();
+		}
+
+		public static void Init()
+		{
 			sections = new List<float[]>();
 
+			sections.Add(new float[] { -1000, 1000 });
 			sections.Add(new float[] { -1000, 0 });
 			sections.Add(new float[] { 0, 1000 });
-			sections.Add(new float[] { -1000, 1000 });
 
 			sections.Add(new float[] { -15, -10 });
 			sections.Add(new float[] { -10, -7 });
@@ -121,14 +126,12 @@ namespace AbsurdMoneySimulations
 		public static void PlusToStatistics(int core, float prediction, bool win)
 		{
 			for (int section = 0; section < sections.Count; section++)
-			{
 				if (prediction >= sections[section][0] && prediction <= sections[section][1])
 				{
 					testsPerCore[core, section]++;
 					if (win)
 						winsPerCore[core, section]++;
 				}
-			}
 		}
 
 		public static void CalculateScores()
@@ -162,59 +165,13 @@ namespace AbsurdMoneySimulations
 			er = 0;
 		}
 
-
-
-		public static string GetStatistics0()
-		{
-			ClearStat();
-
-			for (int test = 0; test < NNTester.testsCount; test++)
-			{
-				float prediction = NN.Calculate(test, NNTester.tests[test]);
-
-				float reality = NNTester.answers[test];
-
-				bool win = prediction > 0 && reality > 0 || prediction < 0 && reality < 0;
-
-				PlusToStatistics0(prediction, win);
-
-				er += MathF.Abs(prediction - reality);
-			}
-
-			er /= NNTester.testsCount;
-
-			CalculateScores0();
-
-			return StatToString();
-		}
-
-		public static void PlusToStatistics0(float prediction, bool win)
-		{
-			for (int section = 0; section < sections.Count; section++)
-			{
-				if (prediction >= sections[section][0] && prediction <= sections[section][1])
-				{
-					tests[section]++;
-					if (win)
-						wins[section]++;
-				}
-			}
-		}
-
-		public static void CalculateScores0()
-		{
-			for (int s = 0; s < sections.Count; s++)
-				scores[s] = MathF.Round(wins[s] / tests[s], 3);
-		}
-
-
 		static string StatToString()
 		{
 			string stat = "========================\n";
 			for (int section = 0; section < wins.Length; section++)
 				stat += $"({sections[section][0]}, {sections[section][1]}): {wins[section]} / {tests[section]} ({scores[section]})\n";
-			stat += $"er: {er}\n";
-			stat += $"========================\n";
+			stat += $"er_fb: {er}\n";
+			stat += $"========================";
 			return stat;
 		}
 	}

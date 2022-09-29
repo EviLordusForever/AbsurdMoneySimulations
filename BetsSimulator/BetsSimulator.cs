@@ -25,7 +25,6 @@ namespace AbsurdMoneySimulations
 				Graphics gr = Graphics.FromImage(Storage.bmp);
 				gr.Clear(Color.White);
 
-
 				int martingaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.martingaleChain.Text);
 				int antimaringaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.antimartingaleChain.Text);
 				double startMoney = Convert.ToDouble(FormsManager.betsSimulatorForm.money.Text);
@@ -106,7 +105,7 @@ namespace AbsurdMoneySimulations
 					gr.DrawLine(Pens.Red, i - 1, y0, i, y);
 				}
 
-				Storage.bmp = Brain.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
+				Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
 				gr = Graphics.FromImage(Storage.bmp);
 				gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
 				gr.DrawString($"So, {Math.Round(100.0 * (risk[betsCount - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
@@ -122,7 +121,7 @@ namespace AbsurdMoneySimulations
 				gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 270, 17);
 				gr.DrawString($"After {betsCount} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
 
-				Storage.bmp = Brain.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
+				Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
 
 				FormsManager.mainForm.Invoke(new Action(() =>
 				{

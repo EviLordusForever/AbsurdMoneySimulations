@@ -10,8 +10,6 @@ namespace AbsurdMoneySimulations
 	{
 		public static void OnAppStarting()
 		{
-			FormsManager.mainForm = new MainForm();
-			FormsManager.mainForm.Show();
 			Logger.Log("I am starting...");
 			FormsManager.mainForm.BringToFront();
 			Logger.Log("Hello my dear!");

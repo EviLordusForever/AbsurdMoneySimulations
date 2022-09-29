@@ -5,7 +5,6 @@ E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AbsurdMoneySimulat
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AbsurdMoneySimulations.pdb
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.csproj.AssemblyReference.cache
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.MainForm.resources
-E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.StartForm.resources
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.csproj.GenerateResource.cache
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.GeneratedMSBuildEditorConfig.editorconfig
 E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.AssemblyInfoInputs.cache

@@ -51,7 +51,7 @@ namespace AbsurdMoneySimulations
 			grafic = new float[unnormalizedgrafic.Length];
 
 			for (int i = 0; i < grafic.Length; i++)
-				grafic[i] = Brain.Normalize(unnormalizedgrafic[i]);
+				grafic[i] = Extensions.Normalize(unnormalizedgrafic[i]);
 
 
 			Log("Grafic (discrete) for education loaded.");
@@ -73,9 +73,9 @@ namespace AbsurdMoneySimulations
 			{
 				int offset = availableGraficPoints[Convert.ToInt32(delta)];
 
-				tests[i] = Brain.SubArray(grafic, offset, NN.inputWindow);
+				tests[i] = Extensions.SubArray(grafic, offset, NN.inputWindow);
 				
-				float[] ar = Brain.SubArray(unnormalizedgrafic, offset + NN.inputWindow, NN.horizon);
+				float[] ar = Extensions.SubArray(unnormalizedgrafic, offset + NN.inputWindow, NN.horizon);
 				for (int j = 0; j < ar.Length; j++)
 					answers[i] += ar[j];
 

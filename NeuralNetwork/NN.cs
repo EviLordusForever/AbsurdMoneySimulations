@@ -177,19 +177,6 @@ namespace AbsurdMoneySimulations
 
 				for (int Generation = 0; ; Generation++)
 				{
-					Log("normal " + NNStatManager.GetStatistics());
-					Log("normal " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics0());
-					Log("zero v " + NNStatManager.GetStatistics0());
-					Log("zero v " + NNStatManager.GetStatistics0());
-					Log("normal " + NNStatManager.GetStatistics());
-					Log("normal " + NNStatManager.GetStatistics());
-					Log("zero v " + NNStatManager.GetStatistics0());
-					Log("zero v " + NNStatManager.GetStatistics0());
-					Log("zero v " + NNStatManager.GetStatistics0());
-					Log("Sleep 30 seconds...");
-					Thread.Sleep(30000);
-
 					Log("Generation " + Generation);
 
 					SelectLayerForMutation();

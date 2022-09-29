@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestTrader);
+			Thread myThread = new Thread(TestSelenium);
 			myThread.Start();			
 		}
 

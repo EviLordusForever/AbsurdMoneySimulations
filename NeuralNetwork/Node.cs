@@ -35,7 +35,7 @@ namespace AbsurdMoneySimulations
 				summ[test] += subvalues[test][i];
 			}
 
-			return Brain.Normalize(summ[test]);
+			return Extensions.Normalize(summ[test]);
 		}
 
 		public float CalculateOnlyOneWeight(int test, float input, int w)
@@ -44,7 +44,7 @@ namespace AbsurdMoneySimulations
 			subvalues[test][w] = weights[w] * input;
 			summ[test] += subvalues[test][w];
 
-			return Brain.Normalize(summ[test]);
+			return Extensions.Normalize(summ[test]);
 		}
 
 		public void Mutate(float mutagen)

@@ -51,7 +51,7 @@ namespace AbsurdMoneySimulations
 
 			FormsManager.mainForm.Invoke(new Action(() =>
 			{
-				FormsManager.showForm.BackgroundImage = Brain.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
+				FormsManager.showForm.BackgroundImage = Extensions.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
 			}));
 		}
 	}

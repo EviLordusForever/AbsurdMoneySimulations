@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 	{
         public static IWebDriver driver = null;
 
-        public static void LoadBrowser(string Link)
+        public static void LoadBrowser(string link)
         {
             var DeviceDriver = ChromeDriverService.CreateDefaultService();
             DeviceDriver.HideCommandPromptWindow = true;
@@ -21,14 +21,13 @@ namespace AbsurdMoneySimulations
             options.AddArguments("--disable-infobars");
             driver = new ChromeDriver(DeviceDriver, options);
             driver.Manage().Window.Maximize();
-            driver.Navigate().GoToUrl(Link);
+            Navi(link);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
         }
 
-        public static void Navi(string Link)
+        public static void Navi(string link)
         {
-            driver.Navigate().GoToUrl(Link);
-            Thread.Sleep(100);
+            driver.Navigate().GoToUrl(link);
         }
 
         public static void ExecuteScript(string scriptName)

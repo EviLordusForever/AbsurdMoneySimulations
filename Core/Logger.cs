@@ -19,24 +19,24 @@ namespace AbsurdMoneySimulations
 
         public static void Log(string text)
         {
-            FormsManager.mainForm.Invoke(new Action(() =>
-            {
-                FormsManager.OpenLogForm();
-            }));
+            FormsManager.OpenLogForm();
 
             string msg = CreateMessageToShout(text);
             string date = GetDateToShow(System.DateTime.Now);
             string time = GetTimeToShow(System.DateTime.Now);
-            LogToFile($"[{date}][{time}] {msg}");
-            LogToWindow($"[{date}][{time}] {msg}");
+			LogToFile($"[{date}][{time}] {msg}");
+			LogToWindow($"[{date}][{time}] {msg}");
             CutVisibleLog();
 
-            void LogToFile(string text)
-            {
-                writer.Write($"{text}\r\n");
-            }
+			void LogToFile(string text)
+			{
+                FormsManager.mainForm.Invoke(new Action(() =>
+                {
+                    writer.Write($"{text}\r\n");
+                }));
+			}
 
-            void LogToWindow(string text)
+			void LogToWindow(string text)
             {
                 logText = $"{text}\r\n{logText}";
                 updated = true;
