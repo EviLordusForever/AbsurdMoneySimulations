@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestSelenium);
+			Thread myThread = new Thread(TestCoresCountSpeed);
 			myThread.Start();			
 		}
 
@@ -247,6 +247,30 @@ namespace AbsurdMoneySimulations
 			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
 			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");
 			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
+		}
+
+		public static void TestCoresCountSpeed()
+		{
+			NN.Load();
+			NN.Init();
+			NNTester.LoadGrafic();
+			NNTester.FillTests();
+
+			So(1);
+			So(2);
+			So(4);
+			So(8);
+			So(16);
+			So(50);
+
+			void So(int coresCount)
+			{
+				Storage.coresCount = coresCount;
+				long ms = DateTime.Now.Ticks;
+				for (int i = 0; i < 10; i++)
+					NN.FindErrorRate();
+				Log($"{Storage.coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
+			}
 		}
 	}
 }
