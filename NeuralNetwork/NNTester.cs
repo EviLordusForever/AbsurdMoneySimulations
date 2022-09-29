@@ -17,13 +17,31 @@ namespace AbsurdMoneySimulations
 		public static float[][] tests;
 		public static float[] answers;
 
-
-
 		public static List<float> realGrafic;
 
-		public static void LoadGrafic()
+		public static void InitForEvolution()
 		{
-			var files = Directory.GetFiles(Disk.programFiles + "Grafic");
+			LoadGrafic("Grafic\\ForEvolution");
+			Log("Grafic (discrete) for EVOLUTION loaded.");
+			Log("Grafic is normalized.");
+			Log("Also available grafic points are loaded.");
+			Log("Grafic length: " + grafic.Length);
+			FillTests();
+		}
+
+		public static void InitForTesting()
+		{
+			LoadGrafic("Grafic\\ForTesting");
+			Log("Grafic (discrete) for TESTING loaded.");
+			Log("Grafic is normalized.");
+			Log("Also available grafic points are loaded.");
+			Log("Grafic length: " + grafic.Length);
+			FillTests();
+		}
+
+		private static void LoadGrafic(string graficFolder)
+		{
+			var files = Directory.GetFiles(Disk.programFiles + graficFolder);
 			var graficL = new List<float>();
 			availableGraficPoints = new List<int>();
 
@@ -44,7 +62,7 @@ namespace AbsurdMoneySimulations
 					l++; g++;
 				}
 
-				Log($"Load: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
+				Log($"Loaded grafic: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
 			}
 
 			unnormalizedgrafic = graficL.ToArray();
@@ -52,15 +70,9 @@ namespace AbsurdMoneySimulations
 
 			for (int i = 0; i < grafic.Length; i++)
 				grafic[i] = Extensions.Normalize(unnormalizedgrafic[i]);
-
-
-			Log("Grafic (discrete) for education loaded.");
-			Log("Grafic is normalized.");
-			Log("Also available grafic points are loaded.");
-			Log("Grafic length: " + grafic.Length);
 		}
 
-		public static void FillTests()
+		private static void FillTests()
 		{
 			int maximalDelta = availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / testsCount;

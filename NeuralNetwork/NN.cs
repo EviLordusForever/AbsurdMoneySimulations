@@ -214,7 +214,11 @@ namespace AbsurdMoneySimulations
 						er = FindErrorRate();
 						Log("(!) er_fb: " + er.ToString());
 
-						Log(NNStatManager.GetStatistics());
+						Log("Evolution dataset:\n" + NNStatManager.GetStatistics());
+
+						NNTester.InitForTesting();
+						Log("Testing dataset:\n" + NNStatManager.GetStatistics());
+						NNTester.InitForEvolution();
 					}
 				}
 			}
@@ -353,12 +357,8 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				//Create(); ///////////
-				//Save();
-				//Load();
 				Init();
-				NNTester.LoadGrafic();
-				NNTester.FillTests();
+				NNTester.InitForEvolution();
 
 				float record = FindErrorRate();
 				Log($"record {record}");

@@ -25,8 +25,7 @@ namespace AbsurdMoneySimulations
 				NN.Load();
 				NN.Init();
 
-				NNTester.LoadGrafic();
-				NNTester.FillTests();
+				NNTester.InitForEvolution();
 
 				NN.Evolve();
 			}

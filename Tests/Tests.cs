@@ -30,8 +30,7 @@ namespace AbsurdMoneySimulations
 			NN.Create();
 			NN.Init();
 
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 
 			Log("LML: " + NN.lastMutatedLayer);
 			int goods = 0;
@@ -75,8 +74,7 @@ namespace AbsurdMoneySimulations
 			NN.Create();
 			NN.Init();
 
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 
 			int goods = 0;
 			int bads = 0;
@@ -143,8 +141,7 @@ namespace AbsurdMoneySimulations
 		{
 			string csv = "";
 			string[] subcsv = new string[NNTester.testsCount];
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{
@@ -165,7 +162,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestAvailableGP()
 		{
-			NNTester.LoadGrafic();
+			NNTester.InitForEvolution();
 
 			string csv = "";
 			string[] subcsv = new string[NNTester.grafic.Length];
@@ -185,14 +182,13 @@ namespace AbsurdMoneySimulations
 
 		public static void TestEvolution()
 		{
-			/*			NN.Create();
-						NN.Save();*/
+			//NN.Create();
+			//NN.Save();
 
 			NN.Load();
 			NN.Init();
 
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 
 			NN.Evolve();
 		}
@@ -206,8 +202,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN.Create();
 			NN.Init();
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 			NN.Mutate();
 
 			for (int i =0; i < 100; i++)
@@ -218,8 +213,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN.Create();
 			NN.Init();
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 			NN.Mutate();
 
 			Log("er_fb " + NN.FindErrorRate());
@@ -253,8 +247,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN.Load();
 			NN.Init();
-			NNTester.LoadGrafic();
-			NNTester.FillTests();
+			NNTester.InitForEvolution();
 
 			So(1);
 			So(2);
