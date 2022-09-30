@@ -42,6 +42,11 @@ namespace AbsurdMoneySimulations
 			Core.OnAppStarting();
 		}
 
+		private void button6_Click(object sender, EventArgs e)
+		{
+			Core.RecreateNN();
+		}
+
 		private void button5_Click(object sender, EventArgs e)
 		{
 			Tests.StartTest();
@@ -52,6 +57,5 @@ namespace AbsurdMoneySimulations
 			BrowserManager.Quit();
 			Logger.Quit();
 		}
-
 	}
 }

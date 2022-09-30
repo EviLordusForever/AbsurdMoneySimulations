@@ -15,6 +15,22 @@ namespace AbsurdMoneySimulations
 			Logger.Log("Hello my dear!");
 		}
 
+		public static void RecreateNN()
+		{
+			Thread myThread = new Thread(StartEvolutionThread);
+			myThread.Start();
+
+			void StartEvolutionThread()
+			{
+				if (UserAsker.Ask("Are you shure?"))
+				{
+					NN.Create();
+					NN.Save();
+					NN.Init();
+				}
+			}
+		}
+
 		public static void StartEvolution()
 		{
 			Thread myThread = new Thread(StartEvolutionThread);
