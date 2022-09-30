@@ -30,8 +30,8 @@ namespace AbsurdMoneySimulations
 			sections = new List<float[]>();
 
 			sections.Add(new float[] { -1000, 1000 });
-			sections.Add(new float[] { -1000, 0 });
-			sections.Add(new float[] { 0, 1000 });
+			sections.Add(new float[] { -1000, -3 });
+			sections.Add(new float[] { 3, 1000 });
 
 			sections.Add(new float[] { -15, -10 });
 			sections.Add(new float[] { -10, -7 });

@@ -18,8 +18,8 @@ namespace AbsurdMoneySimulations
 		public const int inputWindow = 300;
 		public const float randomPower = 1.4f;
 		public const int jumpLimit = 9000;
-		public const int randomMutatesCount = 1019;
-		public const float randomMutatesPower = 0.05f;
+		public const int randomMutatesCount = 2022;
+		public const float randomMutatesPower = 0.02f;
 		public const int randomMutatesScale = 10000;
 
 		public static List<LayerAbstract> layers;
@@ -177,29 +177,28 @@ namespace AbsurdMoneySimulations
 
 				for (int Generation = 0; ; Generation++)
 				{
-					Log("Generation " + Generation);
+					Log("G" + Generation);
 
 					SelectLayerForMutation();
 					Mutate();
 
 					er = RefindErrorRate();
-					Log("er_nfb: " + er.ToString());
 
 					if (er < record)
 					{
-						Log(" ▲ Good mutation.");
+						Log("er_nfb: " + er.ToString());
+						Log($" ▲ Good mutation. (mutagen {mutagen})");
 						record = er;
 					}
 					else if (er == record)
 					{
-						Log(" - Neutral mutation. Leave it as it is.");
+						Log(" - Neutral mutation. Leave it.");
 					}
 					else
 					{
 						Log(" ▽ Bad mutation. Go back.");
 						Demutate();
 						er = FindErrorRate();
-						Log("er_nfb back: " + er.ToString());
 					}
 
 					history += record + "\r\n";
@@ -393,13 +392,12 @@ namespace AbsurdMoneySimulations
 			SelectLayerForMutation();
 			mutagen = randomMutates[Storage.rnd.Next(randomMutates.Length)];
 			layers[lastMutatedLayer].Mutate(mutagen);
-			Log($"Layer {lastMutatedLayer} is mutated");
+			Log($"Layer {lastMutatedLayer} is mutated.");
 		}
 
 		public static void Demutate()
 		{
 			layers[lastMutatedLayer].Demutate(mutagen);
-			Log("Demutated");
 		}
 	}
 }
