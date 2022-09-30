@@ -256,7 +256,7 @@ namespace AbsurdMoneySimulations
 
 					float reality = NNTester.answers[test];
 
-					suber[core] += MathF.Abs(prediction - reality);
+					suber[core] += MathF.Pow(prediction - reality, 2);
 				}
 
 				alive--;
@@ -315,7 +315,7 @@ namespace AbsurdMoneySimulations
 
 					float reality = NNTester.answers[test];
 
-					suber[core] += MathF.Abs(prediction - reality);
+					suber[core] += MathF.Pow(prediction - reality, 2);
 				}
 
 				alive--;
