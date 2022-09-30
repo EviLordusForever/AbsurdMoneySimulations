@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestCoresCountSpeed);
+			Thread myThread = new Thread(TestMegatronLayers);
 			myThread.Start();			
 		}
 
@@ -165,13 +165,13 @@ namespace AbsurdMoneySimulations
 			NNTester.InitForEvolution();
 
 			string csv = "";
-			string[] subcsv = new string[NNTester.grafic.Length];
+			string[] subcsv = new string[NNTester.OriginalGrafic.Length];
 
-			for (int i = 0; i < NNTester.grafic.Length; i++)
-				subcsv[i] = NNTester.grafic[i] + ",0\r\n";
+			for (int i = 0; i < NNTester.OriginalGrafic.Length; i++)
+				subcsv[i] = NNTester.OriginalGrafic[i] + ",0\r\n";
 
 			for (int i = 0; i < NNTester.availableGraficPoints.Count; i++)
-				subcsv[NNTester.availableGraficPoints[i]] = NNTester.grafic[NNTester.availableGraficPoints[i]] + ",1\r\n";
+				subcsv[NNTester.availableGraficPoints[i]] = NNTester.OriginalGrafic[NNTester.availableGraficPoints[i]] + ",1\r\n";
 
 			csv = string.Concat(subcsv);
 
@@ -264,6 +264,39 @@ namespace AbsurdMoneySimulations
 					NN.FindErrorRate();
 				Log($"{Storage.coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
+		}
+
+		public static void TestMegatronLayers()
+		{
+			NNTester.InitForEvolutionFromNormalizedDerivativeGrafic();
+
+			int test = 88;
+			string[] strings = new string[NN.inputWindow];
+
+			for (int i = 0; i < NNTester.tests[test].Length; i++)
+				strings[i] += NNTester.tests[test][i].ToString();
+
+			NNTester.InitForEvolutionFromNormalizedOriginalGrafic();
+
+			for (int i = 0; i < NNTester.tests[test].Length; i++)
+				strings[i] += "," + NNTester.tests[test][i].ToString();
+
+			//NNTester.InitForEvolution();
+			NN.Load();
+			NN.Init();
+			NN.Calculate(test, NNTester.tests[test]);
+
+			for (int sub = 0; sub < 15; sub++)
+			{
+				for (int i = 0 + 16; i < NNTester.tests[test].Length - 16; i++)
+				{
+					int j = (int)Math.Round(((i - 16) / (300.0 - 30.0)) * 55.0);
+					strings[i] += "," + NN.layers[0].values[test][sub][j];
+				}
+			}
+
+			Disk.WriteToProgramFiles("MegatronTest", "csv", string.Join('\n', strings), false);
+			Log("done");
 		}
 	}
 }
