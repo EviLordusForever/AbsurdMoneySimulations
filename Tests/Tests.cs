@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestMegatronLayers);
+			Thread myThread = new Thread(TestMutations);
 			myThread.Start();			
 		}
 
@@ -270,7 +270,7 @@ namespace AbsurdMoneySimulations
 		{
 			NNTester.InitForEvolutionFromNormalizedDerivativeGrafic();
 
-			int test = 88;
+			int test = Storage.rnd.Next(NNTester.testsCount);
 			string[] strings = new string[NN.inputWindow];
 
 			for (int i = 0; i < NNTester.tests[test].Length; i++)
@@ -297,6 +297,27 @@ namespace AbsurdMoneySimulations
 
 			Disk.WriteToProgramFiles("MegatronTest", "csv", string.Join('\n', strings), false);
 			Log("done");
+		}
+
+		public static void TestMutations()
+		{
+			FormsManager.OpenShowForm("normal distribution");
+			int width = 800;
+			NN.randomMutatesCount = 202200;
+			NN.randomMutatesScaleV2 = width / 2;
+			NN.FillRandomMutations();
+			float[] distribution = new float[width];
+			for (int m = 0; m < NN.randomMutates.Count(); m++)
+				distribution[Convert.ToInt32(NN.randomMutates[m]*0.99f) + width / 2]++;
+			float max = Extensions.Max(distribution);
+			Storage.bmp = new Bitmap(width, (int)max);
+			Graphics gr = Graphics.FromImage(Storage.bmp);
+			for (int i = 0; i < distribution.Count(); i++)
+				gr.DrawLine(Pens.Black, i, max, i, max - distribution[i]);
+			FormsManager.mainForm.Invoke(new Action(() =>
+			{
+				FormsManager.showForm.BackgroundImage = Extensions.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
+			}));
 		}
 	}
 }

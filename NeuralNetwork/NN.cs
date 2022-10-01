@@ -18,9 +18,12 @@ namespace AbsurdMoneySimulations
 		public const int inputWindow = 300;
 		public const float randomPower = 1.4f;
 		public const int jumpLimit = 9000;
-		public const int randomMutatesCount = 2022;
-		public const float randomMutatesPower = 0.02f;
-		public const int randomMutatesScale = 10000;
+
+		public static int randomMutatesCount = 2022;
+
+		public static float randomMutatesSharpness =  10;
+		public static float randomMutatesScaleV2 = 10;
+		public static float randomMutatesSmoothing = 0.03f;
 
 		public static List<LayerAbstract> layers;
 
@@ -148,13 +151,7 @@ namespace AbsurdMoneySimulations
 			randomMutates = new float[randomMutatesCount];
 
 			for (int m = 0; m < randomMutatesCount; m++)
-			{
-				for (int i = 0; i < randomMutatesScale; i++)
-					randomMutates[m] += rnd.NextSingle();
-
-				randomMutates[m] -= randomMutatesScale / 2.0f;
-				randomMutates[m] *= randomMutatesPower;
-			}
+				randomMutates[m] = Extensions.NormalD(randomMutatesScaleV2, randomMutatesSharpness, randomMutatesSmoothing);
 
 			Log("Random mutations are filled.");
 		}
@@ -192,11 +189,11 @@ namespace AbsurdMoneySimulations
 					}
 					else if (er == record)
 					{
-						Log(" - Neutral mutation. Leave it.");
+						Log($" - Neutral mutation. Leave it. ({mutagen})");
 					}
 					else
 					{
-						Log(" ▽ Bad mutation. Go back.");
+						Log($" ▽ Bad mutation. Go back. ({mutagen})");
 						Demutate();
 						er = FindErrorRate();
 					}

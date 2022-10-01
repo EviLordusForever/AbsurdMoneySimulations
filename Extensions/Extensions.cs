@@ -58,5 +58,15 @@ namespace AbsurdMoneySimulations
 					min = array[i];
 			return min;
 		}
+
+		public static float NormalD(float scale, float centralization, float lowing)
+		{
+			//centalization = 3, 5, 7, 19, ect.
+			float x = Storage.rnd.NextSingle();
+			int sign = (Storage.rnd.Next(2) * 2 - 1);
+			float a = (MathF.Pow(x, centralization) + x * lowing) / (lowing + 1);
+ 
+			return scale * a * sign;
+		}
 	}
 }
