@@ -44,29 +44,13 @@
               "target": "Package",
               "version": "[13.0.1, )"
             },
-            "NumSharp": {
-              "target": "Package",
-              "version": "[0.30.0, )"
-            },
-            "SciSharp.TensorFlow.Redist": {
-              "target": "Package",
-              "version": "[2.7.0, )"
-            },
             "Selenium.WebDriver": {
               "target": "Package",
               "version": "[4.4.0, )"
             },
             "Selenium.WebDriver.ChromeDriver": {
               "target": "Package",
-              "version": "[105.0.5195.5200, )"
-            },
-            "TensorFlow.Keras": {
-              "target": "Package",
-              "version": "[0.7.0, )"
-            },
-            "TensorFlow.NET": {
-              "target": "Package",
-              "version": "[0.70.1, )"
+              "version": "[106.0.5249.6100, )"
             },
             "WebDriverManager": {
               "target": "Package",

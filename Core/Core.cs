@@ -57,16 +57,5 @@ namespace AbsurdMoneySimulations
 				Trader.DoIt();
 			}
 		}
-
-		public static void TF()
-		{
-			Thread myThread = new Thread(TFThread);
-			myThread.Start();
-
-			void TFThread()
-			{
-				AbsurdMoneySimulations.TF.LetsGo();
-			}
-		}
 	}
 }

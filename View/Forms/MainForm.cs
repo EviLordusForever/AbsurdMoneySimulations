@@ -57,10 +57,5 @@ namespace AbsurdMoneySimulations
 			BrowserManager.Quit();
 			Logger.Quit();
 		}
-
-		private void button7_Click(object sender, EventArgs e)
-		{
-			Core.TF();
-		}
 	}
 }
