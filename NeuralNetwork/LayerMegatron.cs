@@ -74,6 +74,10 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public override void GoBack(float[][] output)
+		{
+		}
+
 		private void CalculateOneSub(int test, float[][] input, int sub)
 		{
 			for (int node = 0; node < values[test][sub].Length; node++)

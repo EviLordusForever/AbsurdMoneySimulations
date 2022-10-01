@@ -20,7 +20,7 @@ namespace AbsurdMoneySimulations
 
 		public static float Normalize(float input)
 		{
-			float a = (2f * 1 / (1 + MathF.Pow(1.1f, -input)) - 1);
+			float a = (2f / (1 + MathF.Pow(1.1f, -input)) - 1);
 			return a;
 		}
 
@@ -31,7 +31,7 @@ namespace AbsurdMoneySimulations
 						.ToArray();
 		}
 
-		public static Bitmap RescaleBitmap (Bitmap bmp0, int width, int height)
+		public static Bitmap RescaleBitmap(Bitmap bmp0, int width, int height)
 		{
 			Bitmap bmp = new Bitmap(width, height);
 			using (Graphics g = Graphics.FromImage(bmp))
@@ -65,8 +65,18 @@ namespace AbsurdMoneySimulations
 			float x = Storage.rnd.NextSingle();
 			int sign = (Storage.rnd.Next(2) * 2 - 1);
 			float a = (MathF.Pow(x, centralization) + x * lowing) / (lowing + 1);
- 
+
 			return scale * a * sign;
+		}
+
+		public static T[] Convert2DArrayTo1D<T>(T[][] array2D)
+		{
+			List<T> lst = new List<T>();
+			foreach (T[] a in array2D)
+			{
+				lst.AddRange(a);
+			}
+			return lst.ToArray();
 		}
 	}
 }

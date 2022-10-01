@@ -78,6 +78,10 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public override void GoBack(float[][] output)
+		{
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedNode = Storage.rnd.Next(nodes.Count());

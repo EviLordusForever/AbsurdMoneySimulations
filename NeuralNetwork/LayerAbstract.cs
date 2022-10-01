@@ -21,6 +21,9 @@ namespace AbsurdMoneySimulations
 		public abstract LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs);
 		//You don't need to calculate whole NN if only part of it is mutated
 
+		public abstract void GoBack(float[][] output);
+		
+
 		public abstract void Mutate(float mutagen);
 
 		public abstract void Demutate(float mutagen);

@@ -46,6 +46,10 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public override void GoBack(float[][] output)
+		{
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(perceptrons.Count());
