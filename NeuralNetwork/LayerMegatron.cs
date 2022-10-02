@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
 	public class LayerMegatron : LayerAbstract
 	{
+		[JsonIgnore]
+		public float[][][] unnormalizedValues;
+
 		public Node[] subs; //[sub]
 		public int d;
-		public int nodesPerSubCount;
+		public int valuesPerSubCount; //should be
 		public int lastMutatedSub;
 
 		public override void FillWeightsRandomly()
@@ -74,14 +78,31 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void GoBack(float[][] output)
+		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
 		{
+			int gradientsPerSubCount = innerBPGradients.Count() / subs.Count();
+			for (int sub = 0; sub < subs.Count(); sub++)
+				FindBPGradientOneSub(test, sub, Extensions.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Extensions.SubArray(innerWeights, sub * valuesPerSubCount, valuesPerSubCount) );
+		}
+
+		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
+		{
+			subs[sub].BPgradient = 0;
+
+			for (int n = 0; n < valuesPerSubCount; n++)
+			{
+				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
+				//subs[sub].BPgradient += gwsumm * ActivationFunctions.DerivativeOfNormilize(summ[test]);
+			}
 		}
 
 		private void CalculateOneSub(int test, float[][] input, int sub)
 		{
-			for (int node = 0; node < values[test][sub].Length; node++)
-				values[test][sub][node] = subs[sub].Calculate(test, input[0], node * d);
+			for (int v = 0; v < values[test][sub].Length; v++)
+			{
+				unnormalizedValues[test][sub][v] = subs[sub].CalculateNotNormalized(test, input[0], v * d);
+				values[test][sub][v] = ActivationFunctions.Normalize(unnormalizedValues[test][sub][v]);
+			}
 		}
 	
 		public override void Mutate(float mutagen)
@@ -117,7 +138,7 @@ namespace AbsurdMoneySimulations
 		{
 			type = 2;
 			this.d = d;
-			this.nodesPerSubCount = outsPerSubCount;
+			this.valuesPerSubCount = outsPerSubCount;
 
 			subs = new Node[subsCount];
 			for (int sub = 0; sub < subs.Count(); sub++)
@@ -133,11 +154,19 @@ namespace AbsurdMoneySimulations
 			{
 				values[test] = new float[subs.Count()][];
 				for (int sub = 0; sub < subs.Count(); sub++)
-					values[test][sub] = new float[nodesPerSubCount];
+					values[test][sub] = new float[valuesPerSubCount];
+			}
+
+			unnormalizedValues = new float[NNTester.testsCount][][];
+			for (int test = 0; test < NNTester.testsCount; test++)
+			{
+				unnormalizedValues[test] = new float[subs.Count()][];
+				for (int sub = 0; sub < subs.Count(); sub++)
+					unnormalizedValues[test][sub] = new float[valuesPerSubCount];
 			}
 
 			for (int s = 0; s < subs.Count(); s++)
-				subs[s].InitValues();
+				subs[s].InitValues(); //does we need you?
 		}
 	}
 }

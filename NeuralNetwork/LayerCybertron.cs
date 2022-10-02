@@ -46,8 +46,11 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void GoBack(float[][] output)
+		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
 		{
+			//very hard to explain without drawing
+			for (int n = 0; n < perceptrons.Count(); n++)
+				perceptrons[n].FindBPGradient(test, innerBPGradients, Extensions.SubArray(innerWeights, n * perceptrons[0].nodes.Count(), perceptrons[0].nodes.Count()));
 		}
 
 		public override void Mutate(float mutagen)

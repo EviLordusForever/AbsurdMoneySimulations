@@ -21,8 +21,7 @@ namespace AbsurdMoneySimulations
 		public abstract LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs);
 		//You don't need to calculate whole NN if only part of it is mutated
 
-		public abstract void GoBack(float[][] output);
-		
+		public abstract void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights);
 
 		public abstract void Mutate(float mutagen);
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using static AbsurdMoneySimulations.Normalizator;
+using static AbsurdMoneySimulations.ActivationFunctions;
 
 namespace AbsurdMoneySimulations
 {
@@ -29,7 +29,7 @@ namespace AbsurdMoneySimulations
 				weights[i] = (Storage.rnd.NextSingle() * 2 - 1) * NN.randomPower; /////////////////
 		}
 
-		public float Calculate(int test, float[] input, int start)
+		public float CalculateNormalized(int test, float[] input, int start)
 		{
 			summ[test] = 0;
 
@@ -42,13 +42,35 @@ namespace AbsurdMoneySimulations
 			return Normalize(summ[test]);
 		}
 
-		public float CalculateOnlyOneWeight(int test, float input, int w)
+		public float CalculateOnlyOneWeightNormalized(int test, float input, int w)
 		{
 			summ[test] -= subvalues[test][w];
 			subvalues[test][w] = weights[w] * input;
 			summ[test] += subvalues[test][w];
 
 			return Normalize(summ[test]);
+		}
+
+		public float CalculateNotNormalized(int test, float[] input, int start)
+		{
+			summ[test] = 0;
+
+			for (int i = 0; i < weights.Count(); i++)
+			{
+				subvalues[test][i] = weights[i] * input[start + i];
+				summ[test] += subvalues[test][i];
+			}
+
+			return summ[test];
+		}
+
+		public float CalculateOnlyOneWeightNotNormalized(int test, float input, int w)
+		{
+			summ[test] -= subvalues[test][w];
+			subvalues[test][w] = weights[w] * input;
+			summ[test] += subvalues[test][w];
+
+			return summ[test];
 		}
 
 		public void Mutate(float mutagen)
@@ -67,19 +89,20 @@ namespace AbsurdMoneySimulations
 			BPgradient = (Normalize(summ[test]) - desiredValue) * DerivativeOfNormilize(summ[test]);
 		}
 
-		public void FindBPGradient(int test, float gradient, float weight)
+		public void FindBPGradient(int test, float[] gradients, float[] weights)
 		{
-			BPgradient = gradient * weight * DerivativeOfNormilize(summ[test]);
+			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
+			BPgradient = gwsumm * DerivativeOfNormilize(summ[test]);
 		}
 
-		public void FindBPGradient(int test, float[] gradient, float[] weight)
+		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)
 		{
 			float gwsumm = 0;
 
-			for (int gw = 0; gw < gradient.Count(); gw++)
-				gwsumm += gradient[gw] * weight[gw];
+			for (int gw = 0; gw < gradients.Count(); gw++)
+				gwsumm += gradients[gw] * weights[gw];
 
-			BPgradient = gwsumm * DerivativeOfNormilize(summ[test]);
+			return gwsumm;
 		}
 
 		public void CorrectWeightsByBP(int test, float[] input)

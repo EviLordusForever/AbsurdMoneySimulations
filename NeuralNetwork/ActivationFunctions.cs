@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbsurdMoneySimulations
 {
-	public static class Normalizator
+	public static class ActivationFunctions
 	{
 		public static float Normalize(float x)
 		{
