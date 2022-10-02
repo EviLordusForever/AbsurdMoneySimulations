@@ -13,22 +13,21 @@ namespace AbsurdMoneySimulations
 			return (actual - from) / (to - from);
 		}
 
-		public static double Normalize(double input)
-		{
-			return (double)(2 * 1 / (1 + Math.Pow(1.1, -input)) - 1);
-		}
-
-		public static float Normalize(float input)
-		{
-			float a = (2f / (1 + MathF.Pow(1.1f, -input)) - 1);
-			return a;
-		}
-
 		public static T[] SubArray<T>(this T[] array, int offset, int length)
 		{
 			return array.Skip(offset)
 						.Take(length)
 						.ToArray();
+		}
+
+		public static T[] Convert2DArrayTo1D<T>(T[][] array2D)
+		{
+			List<T> lst = new List<T>();
+			foreach (T[] a in array2D)
+			{
+				lst.AddRange(a);
+			}
+			return lst.ToArray();
 		}
 
 		public static Bitmap RescaleBitmap(Bitmap bmp0, int width, int height)
@@ -59,24 +58,15 @@ namespace AbsurdMoneySimulations
 			return min;
 		}
 
-		public static float NormalD(float scale, float centralization, float lowing)
-		{
-			//centalization = 3, 5, 7, 19, ect.
+		public static float NormalDistribution(float scale, float centralization, float smoothing)
+		{   
+			//actually this is not normal distribution, but who cares
 			float x = Storage.rnd.NextSingle();
-			int sign = (Storage.rnd.Next(2) * 2 - 1);
-			float a = (MathF.Pow(x, centralization) + x * lowing) / (lowing + 1);
+			float y = (MathF.Pow(x, centralization) + x * smoothing) / (smoothing + 1);
+			int sign = Storage.rnd.Next(2) * 2 - 1;
 
-			return scale * a * sign;
+			return sign * scale * y;
 		}
 
-		public static T[] Convert2DArrayTo1D<T>(T[][] array2D)
-		{
-			List<T> lst = new List<T>();
-			foreach (T[] a in array2D)
-			{
-				lst.AddRange(a);
-			}
-			return lst.ToArray();
-		}
 	}
 }

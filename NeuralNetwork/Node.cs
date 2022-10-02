@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using static AbsurdMoneySimulations.Normalizator;
 
 namespace AbsurdMoneySimulations
 {
@@ -16,6 +17,9 @@ namespace AbsurdMoneySimulations
 
 		[JsonIgnore]
 		public float[] summ;
+
+		[JsonIgnore]
+		public float BPgradient;
 
 		public int lastMutatedWeight;
 
@@ -35,7 +39,7 @@ namespace AbsurdMoneySimulations
 				summ[test] += subvalues[test][i];
 			}
 
-			return Extensions.Normalize(summ[test]);
+			return Normalize(summ[test]);
 		}
 
 		public float CalculateOnlyOneWeight(int test, float input, int w)
@@ -44,7 +48,7 @@ namespace AbsurdMoneySimulations
 			subvalues[test][w] = weights[w] * input;
 			summ[test] += subvalues[test][w];
 
-			return Extensions.Normalize(summ[test]);
+			return Normalize(summ[test]);
 		}
 
 		public void Mutate(float mutagen)
@@ -56,6 +60,32 @@ namespace AbsurdMoneySimulations
 		public void Demutate(float mutagen)
 		{
 			weights[lastMutatedWeight] -= mutagen;
+		}
+
+		public void FindBPGradient(int test, float desiredValue)
+		{
+			BPgradient = (Normalize(summ[test]) - desiredValue) * DerivativeOfNormilize(summ[test]);
+		}
+
+		public void FindBPGradient(int test, float gradient, float weight)
+		{
+			BPgradient = gradient * weight * DerivativeOfNormilize(summ[test]);
+		}
+
+		public void FindBPGradient(int test, float[] gradient, float[] weight)
+		{
+			float gwsumm = 0;
+
+			for (int gw = 0; gw < gradient.Count(); gw++)
+				gwsumm += gradient[gw] * weight[gw];
+
+			BPgradient = gwsumm * DerivativeOfNormilize(summ[test]);
+		}
+
+		public void CorrectWeightsByBP(int test, float[] input)
+		{
+			for (int w = 0; w < weights.Count(); w++)
+				weights[w] -= NN.LYAMBDA * BPgradient * input[w];
 		}
 
 		public Node(int weightsCount)

@@ -51,7 +51,7 @@ namespace AbsurdMoneySimulations
 					for (int subnode = lrs.lastMutatedSub * lrs.subSize; subnode < lrs.lastMutatedSub * lrs.subSize + lrs.subSize; subnode++)
 						nodes[n].CalculateOnlyOneWeight(NNTester.testsCount, input[0][subnode], subnode);
 					
-					values[test][0][n] = Extensions.Normalize(nodes[n].summ[test]);
+					values[test][0][n] = Normalizator.Normalize(nodes[n].summ[test]);
 				}
 				return LayerRecalculateStatus.Full;
 			}
@@ -80,6 +80,7 @@ namespace AbsurdMoneySimulations
 
 		public override void GoBack(float[][] output)
 		{
+
 		}
 
 		public override void Mutate(float mutagen)

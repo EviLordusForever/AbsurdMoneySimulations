@@ -32,6 +32,8 @@ namespace AbsurdMoneySimulations
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
+		public static float LYAMBDA;
+
 		public static void Create()
 		{
 			layers = new List<LayerAbstract>();
@@ -151,7 +153,7 @@ namespace AbsurdMoneySimulations
 			randomMutates = new float[randomMutatesCount];
 
 			for (int m = 0; m < randomMutatesCount; m++)
-				randomMutates[m] = Extensions.NormalD(randomMutatesScaleV2, randomMutatesSharpness, randomMutatesSmoothing);
+				randomMutates[m] = Extensions.NormalDistribution(randomMutatesScaleV2, randomMutatesSharpness, randomMutatesSmoothing);
 
 			Log("Random mutations are filled.");
 		}
