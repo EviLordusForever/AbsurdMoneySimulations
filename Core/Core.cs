@@ -31,9 +31,10 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void StartEvolution()
+		public static void StartEvolutionByRandomMutations()
 		{
 			Thread myThread = new Thread(StartEvolutionThread);
+			myThread.Name = "EVOLUTION thread";
 			myThread.Start();
 
 			void StartEvolutionThread()
@@ -43,7 +44,24 @@ namespace AbsurdMoneySimulations
 
 				NNTester.InitForEvolution();
 
-				NN.Evolve();
+				NN.EvolveByRandomMutations();
+			}
+		}
+
+		public static void StartEvolutionByBackPropgation()
+		{
+			Thread myThread = new Thread(StartEvolutionThread);
+			myThread.Name = "EVOLUTION thread";
+			myThread.Start();
+
+			void StartEvolutionThread()
+			{
+				NN.Load();
+				NN.Init();
+
+				NNTester.InitForEvolution();
+
+				NN.EvolveByBackPropagtion();
 			}
 		}
 

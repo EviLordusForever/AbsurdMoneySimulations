@@ -51,7 +51,7 @@ namespace AbsurdMoneySimulations
 					for (int subnode = lrs.lastMutatedSub * lrs.subSize; subnode < lrs.lastMutatedSub * lrs.subSize + lrs.subSize; subnode++)
 						nodes[n].CalculateOnlyOneWeightNormalized(NNTester.testsCount, input[0][subnode], subnode);
 					
-					values[test][0][n] = ActivationFunctions.Normalize(nodes[n].summ[test]);
+					values[test][0][n] = ActivationFunctions.ActivationFunction(nodes[n].summ[test]);
 				}
 				return LayerRecalculateStatus.Full;
 			}
@@ -84,6 +84,11 @@ namespace AbsurdMoneySimulations
 				nodes[n].FindBPGradient(test, innerBPGradients, innerWeights[n]);
 		}
 
+		public override void FindBPGradient(int test, float desiredValue)
+		{
+			nodes[0].FindBPGradient(test, desiredValue);
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedNode = Storage.rnd.Next(nodes.Count());
@@ -93,6 +98,18 @@ namespace AbsurdMoneySimulations
 		public override void Demutate(float mutagen)
 		{
 			nodes[lastMutatedNode].Demutate(mutagen);
+		}
+
+		public override void CorrectWeightsByBP(int test, float[][] input)
+		{
+			for (int node = 0; node < nodes.Length; node++)
+				nodes[node].CorrectWeightsByBP(test, input[0], 0);
+		}
+
+		public void CorrectWeightsByBP(int test, float[] input)
+		{
+			for (int node = 0; node < nodes.Length; node++)
+				nodes[node].CorrectWeightsByBP(test, input, 0);
 		}
 
 		public override float[][] GetValues(int test)
@@ -111,6 +128,29 @@ namespace AbsurdMoneySimulations
 			{
 				return nodes.Count() * nodes[0].weights.Count();
 			}
+		}
+
+		public override float[][] AllWeights
+		{
+			get
+			{
+				float[][] allWeights = new float[nodes[0].weights.Length][];
+				for (int weight = 0; weight < nodes[0].weights.Length; weight++)
+				{
+					allWeights[weight] = new float[nodes.Length];
+					for (int node = 0; node < nodes.Length; node++)
+						allWeights[weight][node] = nodes[node].weights[weight];
+				}
+				return allWeights;
+			}
+		}
+
+		public override float[] AllBPGradients(int test)
+		{
+			float[] BPGradients = new float[nodes.Length];
+			for (int node = 0; node < nodes.Length; node++)
+				BPGradients[node] = nodes[node].BPgradient[test];
+			return BPGradients;
 		}
 
 		public LayerPerceptron(int nodesCount, int weightsCount)

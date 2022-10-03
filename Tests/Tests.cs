@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using static AbsurdMoneySimulations.Logger;
 using static AbsurdMoneySimulations.BrowserManager;
 using OpenQA.Selenium;
+using static AbsurdMoneySimulations.Extensions;
 
 namespace AbsurdMoneySimulations
 {
@@ -13,7 +14,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestMutations);
+			Thread myThread = new Thread(TestRefs);
 			myThread.Start();			
 		}
 
@@ -190,7 +191,7 @@ namespace AbsurdMoneySimulations
 
 			NNTester.InitForEvolution();
 
-			NN.Evolve();
+			NN.EvolveByRandomMutations();
 		}
 
 		public static void TestNeuralBattle()
@@ -318,6 +319,37 @@ namespace AbsurdMoneySimulations
 			{
 				FormsManager.showForm.BackgroundImage = Extensions.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
 			}));
+		}
+
+		public static void TestRefs()
+		{
+			float a = 111;
+			ref float b = ref a;
+			Log($"a = {a}; b = {b}.");
+			a += 5;
+			Log($"a = {a}; b = {b}.");
+			b += 5;
+			Log($"a = {a}; b = {b}.");
+
+			float[] ar = new float[] { 60, 61, 62, 63, 64, 65 };
+
+			Log($"ar {ar[0]} {ar[1]} {ar[2]} {ar[3]} {ar[4]} {ar[5]}.");
+
+			ref float c = ref ar[2];
+
+			Log($"ar {ar[0]} {ar[1]} {ar[2]} {ar[3]} {ar[4]} {ar[5]}.");
+			Log($"c {c}");
+
+			c += 5;
+
+			Log($"ar {ar[0]} {ar[1]} {ar[2]} {ar[3]} {ar[4]} {ar[5]}.");
+			Log($"c {c}");
+
+			ar[2] -= 3;
+			ar[3] -= 3;
+
+			Log($"ar {ar[0]} {ar[1]} {ar[2]} {ar[3]} {ar[4]} {ar[5]}.");
+			Log($"c {c}");
 		}
 	}
 }

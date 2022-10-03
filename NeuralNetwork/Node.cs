@@ -19,7 +19,7 @@ namespace AbsurdMoneySimulations
 		public float[] summ;
 
 		[JsonIgnore]
-		public float BPgradient;
+		public float[] BPgradient;
 
 		public int lastMutatedWeight;
 
@@ -33,13 +33,13 @@ namespace AbsurdMoneySimulations
 		{
 			summ[test] = 0;
 
-			for (int i = 0; i < weights.Count(); i++)
+			for (int w = 0; w < weights.Count(); w++)
 			{
-				subvalues[test][i] = weights[i] * input[start + i];
-				summ[test] += subvalues[test][i];
+				subvalues[test][w] = weights[w] * input[start + w];
+				summ[test] += subvalues[test][w];
 			}
 
-			return Normalize(summ[test]);
+			return ActivationFunction(summ[test]);
 		}
 
 		public float CalculateOnlyOneWeightNormalized(int test, float input, int w)
@@ -48,17 +48,17 @@ namespace AbsurdMoneySimulations
 			subvalues[test][w] = weights[w] * input;
 			summ[test] += subvalues[test][w];
 
-			return Normalize(summ[test]);
+			return ActivationFunction(summ[test]);
 		}
 
 		public float CalculateNotNormalized(int test, float[] input, int start)
 		{
 			summ[test] = 0;
 
-			for (int i = 0; i < weights.Count(); i++)
+			for (int w = 0; w < weights.Count(); w++)
 			{
-				subvalues[test][i] = weights[i] * input[start + i];
-				summ[test] += subvalues[test][i];
+				subvalues[test][w] = weights[w] * input[start + w];
+				summ[test] += subvalues[test][w];
 			}
 
 			return summ[test];
@@ -86,13 +86,13 @@ namespace AbsurdMoneySimulations
 
 		public void FindBPGradient(int test, float desiredValue)
 		{
-			BPgradient = (Normalize(summ[test]) - desiredValue) * DerivativeOfNormilize(summ[test]);
+			BPgradient[test] = (ActivationFunction(summ[test]) - desiredValue) * DerivativeOfActivationFunction(summ[test]);
 		}
 
 		public void FindBPGradient(int test, float[] gradients, float[] weights)
 		{
 			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
-			BPgradient = gwsumm * DerivativeOfNormilize(summ[test]);
+			BPgradient[test] = gwsumm * DerivativeOfActivationFunction(summ[test]);
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)
@@ -105,10 +105,10 @@ namespace AbsurdMoneySimulations
 			return gwsumm;
 		}
 
-		public void CorrectWeightsByBP(int test, float[] input)
+		public void CorrectWeightsByBP(int test, float[] input, int start)
 		{
 			for (int w = 0; w < weights.Count(); w++)
-				weights[w] -= NN.LYAMBDA * BPgradient * input[w];
+				weights[w] -= NN.LYAMBDA * BPgradient[test] * input[start + w];
 		}
 
 		public Node(int weightsCount)
@@ -126,6 +126,8 @@ namespace AbsurdMoneySimulations
 
 			for (int test = 0; test < NNTester.testsCount; test++)
 				subvalues[test] = new float[weights.Count()];
+
+			BPgradient = new float[NNTester.testsCount];
 		}
 	}
 }

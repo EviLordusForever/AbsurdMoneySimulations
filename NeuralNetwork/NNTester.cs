@@ -109,7 +109,7 @@ namespace AbsurdMoneySimulations
 		{
 			normalizedDerivativeOfGrafic = new float[originalGrafic.Length];
 			for (int i = 1; i < derivativeOfGrafic.Length; i++)
-				normalizedDerivativeOfGrafic[i] = ActivationFunctions.Normalize(derivativeOfGrafic[i]);
+				normalizedDerivativeOfGrafic[i] = ActivationFunctions.ActivationFunction(derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
 		}
 

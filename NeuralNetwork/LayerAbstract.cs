@@ -10,7 +10,7 @@ namespace AbsurdMoneySimulations
 	public abstract class LayerAbstract
 	{
 		[JsonIgnore]
-		public float[][][] values;
+		public float[][][] values; //[test][sub][value]
 
 		public int type;
 
@@ -23,13 +23,22 @@ namespace AbsurdMoneySimulations
 
 		public abstract void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights);
 
+		public abstract void FindBPGradient(int test, float desiredValue);
+
 		public abstract void Mutate(float mutagen);
 
 		public abstract void Demutate(float mutagen);
 
+		public abstract void CorrectWeightsByBP(int test, float[][] input);
+
 		public abstract float[][] GetValues(int test);
 
 		public abstract float GetAnswer(int test);
+
+		[JsonIgnore]
+		public abstract float[][] AllWeights { get; }
+
+		public abstract float[] AllBPGradients(int test);
 
 		public abstract int WeightsCount { get; }
 

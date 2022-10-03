@@ -53,6 +53,11 @@ namespace AbsurdMoneySimulations
 				perceptrons[n].FindBPGradient(test, innerBPGradients, Extensions.SubArray(innerWeights, n * perceptrons[0].nodes.Count(), perceptrons[0].nodes.Count()));
 		}
 
+		public override void FindBPGradient(int test, float desiredValue)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(perceptrons.Count());
@@ -62,6 +67,12 @@ namespace AbsurdMoneySimulations
 		public override void Demutate(float mutagen)
 		{
 			perceptrons[lastMutatedSub].Demutate(mutagen);
+		}
+
+		public override void CorrectWeightsByBP(int test, float[][] input)
+		{
+			for (int sub = 0; sub < perceptrons.Length; sub++)
+				perceptrons[sub].CorrectWeightsByBP(test, input[sub]);
 		}
 
 		public override float GetAnswer(int test)
@@ -89,6 +100,31 @@ namespace AbsurdMoneySimulations
 			{
 				return perceptrons.Count() * perceptrons[0].WeightsCount;
 			}
+		}
+
+		public override float[][] AllWeights
+		{
+			get
+			{
+				float[][] weights = perceptrons[0].AllWeights;
+
+				for (int p = 1; p < perceptrons.Length; p++)
+					weights = Extensions.Concatenate(weights, perceptrons[p].AllWeights);
+
+				return weights;
+				//TEST THIS !!!!!
+			}
+		}
+
+		public override float[] AllBPGradients(int test)
+		{
+			float[] gradients = perceptrons[0].AllBPGradients(test);
+
+			for (int p = 1; p < perceptrons.Length; p++)
+				gradients = Extensions.Concatenate(gradients, perceptrons[p].AllBPGradients(test));
+
+			return gradients;
+			//And this
 		}
 
 		public LayerCybertron(int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount)

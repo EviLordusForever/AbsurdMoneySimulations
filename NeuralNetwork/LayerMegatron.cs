@@ -34,7 +34,7 @@ namespace AbsurdMoneySimulations
 			ars[0] = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			ars[1] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 			ars[2] = new float[] { 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1 };
-			ars[3] = new float[] { 0, 0, 0, 0, 0,  0, 0, 0, 0.1f, 0.2f,  0.5f, 0.65f, 0.8f, 0.9f, 1,  1, 0.9f, 0.8f, 0.65f, 0.5f,  0.2f, 0.1f, 0, 0, 0,  0, 0, 0, 0, 0 };
+			ars[3] = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0.1f, 0.2f, 0.5f, 0.65f, 0.8f, 0.9f, 1, 1, 0.9f, 0.8f, 0.65f, 0.5f, 0.2f, 0.1f, 0, 0, 0, 0, 0, 0, 0, 0 };
 			ars[4] = new float[] { -1.5f, -1.4f, -1.3f, -1.2f, -1.1f, -1f, -0.9f, -0.8f, -0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f };
 
 			ars[5] = new float[] { -1, -1, -1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, -1, -1, -1, -1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 };
@@ -82,17 +82,23 @@ namespace AbsurdMoneySimulations
 		{
 			int gradientsPerSubCount = innerBPGradients.Count() / subs.Count();
 			for (int sub = 0; sub < subs.Count(); sub++)
-				FindBPGradientOneSub(test, sub, Extensions.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Extensions.SubArray(innerWeights, sub * valuesPerSubCount, valuesPerSubCount) );
+				FindBPGradientOneSub(test, sub, Extensions.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Extensions.SubArray(innerWeights, sub * valuesPerSubCount, valuesPerSubCount));
+		}
+
+		public override void FindBPGradient(int test, float desiredValue)
+		{
+			throw new NotImplementedException();
+
 		}
 
 		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
 		{
-			subs[sub].BPgradient = 0;
+			subs[sub].BPgradient[test] = 0;
 
 			for (int n = 0; n < valuesPerSubCount; n++)
 			{
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
-				//subs[sub].BPgradient += gwsumm * ActivationFunctions.DerivativeOfNormilize(summ[test]);
+				subs[sub].BPgradient[test] += gwsumm * ActivationFunctions.DerivativeOfActivationFunction(unnormalizedValues[test][sub][n]);
 			}
 		}
 
@@ -101,10 +107,10 @@ namespace AbsurdMoneySimulations
 			for (int v = 0; v < values[test][sub].Length; v++)
 			{
 				unnormalizedValues[test][sub][v] = subs[sub].CalculateNotNormalized(test, input[0], v * d);
-				values[test][sub][v] = ActivationFunctions.Normalize(unnormalizedValues[test][sub][v]);
+				values[test][sub][v] = ActivationFunctions.ActivationFunction(unnormalizedValues[test][sub][v]);
 			}
 		}
-	
+
 		public override void Mutate(float mutagen)
 		{
 			lastMutatedSub = Storage.rnd.Next(subs.Count());
@@ -114,6 +120,18 @@ namespace AbsurdMoneySimulations
 		public override void Demutate(float mutagen)
 		{
 			subs[lastMutatedSub].Demutate(mutagen);
+		}
+
+		public override void CorrectWeightsByBP(int test, float[][] input)
+		{
+			for (int sub = 0; sub < subs.Length; sub++)
+				CorrectWeightsByBPOneSub(test, sub, input[0]);
+		}
+
+		private void CorrectWeightsByBPOneSub(int test, int sub, float[] input)
+		{
+			for (int v = 0; v < values[test][sub].Length; v++)
+				subs[sub].CorrectWeightsByBP(test, input, v * d);
 		}
 
 		public override float GetAnswer(int test)
@@ -132,6 +150,21 @@ namespace AbsurdMoneySimulations
 			{
 				return subs.Count() * subs[0].weights.Count();
 			}
+		}
+
+		public override float[][] AllWeights
+		{
+			get
+			{
+				throw new NotImplementedException();
+				//maybe somewhen it will be implemented...
+				//but probably no.
+			}
+		}
+
+		public override float[] AllBPGradients(int test)
+		{
+			throw new NotImplementedException();
 		}
 
 		public LayerMegatron(int subsCount, int outsPerSubCount, int weightsPerSubCount, int d)

@@ -30,6 +30,20 @@ namespace AbsurdMoneySimulations
 			return lst.ToArray();
 		}
 
+		public static T[] Concatenate<T>(T[] first, T[] second)
+		{
+			if (first == null)
+			{
+				return second;
+			}
+			if (second == null)
+			{
+				return first;
+			}
+
+			return first.Concat(second).ToArray();
+		}
+
 		public static Bitmap RescaleBitmap(Bitmap bmp0, int width, int height)
 		{
 			Bitmap bmp = new Bitmap(width, height);
@@ -67,6 +81,5 @@ namespace AbsurdMoneySimulations
 
 			return sign * scale * y;
 		}
-
 	}
 }
