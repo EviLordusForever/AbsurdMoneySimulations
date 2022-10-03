@@ -92,7 +92,7 @@ namespace AbsurdMoneySimulations
 		public void FindBPGradient(int test, float[] gradients, float[] weights)
 		{
 			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
-			BPgradient[test] = gwsumm * DerivativeOfActivationFunction(summ[test]);
+			BPgradient[test] = NN.INERTION * BPgradient[test] + gwsumm * DerivativeOfActivationFunction(summ[test]);
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)

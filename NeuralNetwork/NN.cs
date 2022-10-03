@@ -32,7 +32,8 @@ namespace AbsurdMoneySimulations
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
-		public static float LYAMBDA = 0.001f;
+		public static float LYAMBDA = 0.0001f;
+		public static float INERTION = 0f;
 
 		public static void Create()
 		{
@@ -225,6 +226,10 @@ namespace AbsurdMoneySimulations
 				short previous = 0;
 				string history = "";
 				float er = FindErrorRate();
+				float old_er = er;
+				float speed = 0;
+				float old_speed = speed;
+				float acceleration = 0;
 				Log("Received current er_fb: " + er);
 
 				for (int Generation = 0; ; Generation++)
@@ -234,7 +239,8 @@ namespace AbsurdMoneySimulations
 					FindBPGradients();
 					CorrectWeightsByBP();
 
-					er = FindErrorRate();
+					er = FindErrorRateLogariphmic();
+
 					Log($"er: {er}");
 
 					history += er + "\r\n";
@@ -245,7 +251,7 @@ namespace AbsurdMoneySimulations
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
-						er = FindErrorRate();
+						er = FindErrorRateLogariphmic();
 						Log("(!) er_fb: " + er.ToString());
 
 						Log("Evolution dataset:\n" + NNStatManager.GetStatistics());
@@ -269,7 +275,7 @@ namespace AbsurdMoneySimulations
 				for (int layer = layers.Count - 2; layer >= 0; layer--)
 					layers[layer].FindBPGradient(test, layers[layer + 1].AllBPGradients(test), layers[layer + 1].AllWeights);
 			}
-			Log("Gradients are founded!");
+			Log("Gradients are found!");
 		}
 
 		private static void CorrectWeightsByBP()
@@ -435,7 +441,7 @@ namespace AbsurdMoneySimulations
 
 					float reality = NNTester.answers[test];
 
-					suber[core] += MathF.Pow(MathF.Log(prediction + 1) - MathF.Log(reality + 1), 2);
+					suber[core] += MathF.Abs(prediction - reality);
 				}
 
 				alive--;

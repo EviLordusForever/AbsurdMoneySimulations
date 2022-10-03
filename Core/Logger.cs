@@ -142,11 +142,14 @@ namespace AbsurdMoneySimulations
                     {
                         if (updated)
                         {
-                            FormsManager.mainForm.Invoke(new Action(() =>
+                            if (FormsManager.logForm.WindowState != FormWindowState.Minimized)
                             {
-                                FormsManager.logForm.rtb.Text = logText;
-                            }));
-                            updated = false;
+                                FormsManager.mainForm.Invoke(new Action(() =>
+                                {
+                                    FormsManager.logForm.rtb.Text = logText;
+                                }));
+                                updated = false;
+                            }
                         }
                         Thread.Sleep(250);
                     }

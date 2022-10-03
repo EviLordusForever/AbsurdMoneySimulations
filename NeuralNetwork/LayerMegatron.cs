@@ -93,7 +93,7 @@ namespace AbsurdMoneySimulations
 
 		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
 		{
-			subs[sub].BPgradient[test] = 0;
+			subs[sub].BPgradient[test] = NN.INERTION * subs[sub].BPgradient[test];
 
 			for (int n = 0; n < valuesPerSubCount; n++)
 			{
