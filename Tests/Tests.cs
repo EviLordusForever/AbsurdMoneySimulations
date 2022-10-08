@@ -237,7 +237,7 @@ namespace AbsurdMoneySimulations
 		public static void TestSelenium()
 		{
 			LoadBrowser("https://google.com");
-			MessageBox.Show("So, let's we begin");
+			UserAsker.SayWait("So, let's we begin");
 			Thread.Sleep(100);
 			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
 			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");

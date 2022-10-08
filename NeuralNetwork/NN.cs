@@ -32,7 +32,7 @@ namespace AbsurdMoneySimulations
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
-		public static float LYAMBDA = 0.0001f;
+		public static float LYAMBDA = 0.01f;
 		public static float INERTION = 0f;
 
 		public static void Create()
@@ -50,29 +50,26 @@ namespace AbsurdMoneySimulations
 			//15
 			//1
 
-			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
-			layers[0].FillWeightsRandomly();
-
-			layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
-			layers[1].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
-			layers[2].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
-			layers[3].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-			layers[4].FillWeightsRandomly();
-
-			/*			layers.Add(new LayerPerceptron(40, 300));
+			/*			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
 						layers[0].FillWeightsRandomly();
 
-						layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
+						layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
 						layers[1].FillWeightsRandomly();
 
+						layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
+						layers[2].FillWeightsRandomly();
+
+						layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
+						layers[3].FillWeightsRandomly();
+
 						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-						layers[2].FillWeightsRandomly();*/
+						layers[4].FillWeightsRandomly();*/
+
+			layers.Add(new LayerPerceptron(10, 300)); //40 x 15 = 600
+			layers[0].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(1, 10)); //15 x 1 = 15
+			layers[1].FillWeightsRandomly();
 
 			Log("Neural Network created!");
 		}
@@ -239,7 +236,7 @@ namespace AbsurdMoneySimulations
 					FindBPGradients();
 					CorrectWeightsByBP();
 
-					er = FindErrorRateLogariphmic();
+					er = FindErrorRateLinear();
 
 					Log($"er: {er}");
 
@@ -251,7 +248,7 @@ namespace AbsurdMoneySimulations
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
-						er = FindErrorRateLogariphmic();
+						er = FindErrorRateLinear();
 						Log("(!) er_fb: " + er.ToString());
 
 						Log("Evolution dataset:\n" + NNStatManager.GetStatistics());
@@ -271,10 +268,17 @@ namespace AbsurdMoneySimulations
 			for (int test = 0; test < NNTester.tests.Length; test++)
 			{
 				layers[layers.Count - 1].FindBPGradient(test, NNTester.answers[test]);
-
 				for (int layer = layers.Count - 2; layer >= 0; layer--)
 					layers[layer].FindBPGradient(test, layers[layer + 1].AllBPGradients(test), layers[layer + 1].AllWeights);
 			}
+
+			string str = "";
+
+			for (int w = 0; w < (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights.Length;w++)
+				str += (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights[w] + ",";
+
+			Disk.WriteToProgramFiles("weights", "csv", str + "\n", true);
+
 			Log("Gradients are found!");
 		}
 
@@ -325,7 +329,7 @@ namespace AbsurdMoneySimulations
 
 					suber[core] += MathF.Pow(prediction - reality, 2);
 				}
-
+				
 				alive--;
 			}
 
@@ -411,7 +415,7 @@ namespace AbsurdMoneySimulations
 			return er;
 		}
 
-		public static float FindErrorRateLogariphmic()
+		public static float FindErrorRateLinear()
 		{
 			restart:
 

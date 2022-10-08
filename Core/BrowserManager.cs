@@ -12,7 +12,7 @@ namespace AbsurdMoneySimulations
 	public static class BrowserManager
 	{
         public static IWebDriver driver = null;
-
+        
         public static void LoadBrowser(string link)
         {
             var DeviceDriver = ChromeDriverService.CreateDefaultService();
@@ -44,7 +44,7 @@ namespace AbsurdMoneySimulations
         public static void Quit()
         {
             if (driver != null)
-                BrowserManager.driver.Quit();
+                driver.Quit();
         }
     }
 }
