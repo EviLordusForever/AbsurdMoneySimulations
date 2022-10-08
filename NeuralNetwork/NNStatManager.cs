@@ -29,30 +29,30 @@ namespace AbsurdMoneySimulations
 		{
 			sections = new List<float[]>();
 
-			sections.Add(new float[] { -1000, 1000 });
+			sections.Add(new float[] { -1, 1 });
 
-			sections.Add(new float[] { -1000, -75 });
-			sections.Add(new float[] { -1000, -50 });
-			sections.Add(new float[] { -1000, -35 });
-			sections.Add(new float[] { -1000, -25 });
-			sections.Add(new float[] { -1000, -20 });
-			sections.Add(new float[] { -1000, -15 });
-			sections.Add(new float[] { -1000, -10 });
-			sections.Add(new float[] { -1000, -7 });
-			sections.Add(new float[] { -1000, -5 });
-			sections.Add(new float[] { -1000, -3 });
-			sections.Add(new float[] { -1000, -1 });
-			sections.Add(new float[] { 1, 1000 });
-			sections.Add(new float[] { 3, 1000 });
-			sections.Add(new float[] { 5, 1000 });
-			sections.Add(new float[] { 7, 1000 });
-			sections.Add(new float[] { 10, 1000 });
-			sections.Add(new float[] { 15, 1000 });
-			sections.Add(new float[] { 20, 1000 });
-			sections.Add(new float[] { 25, 1000 });
-			sections.Add(new float[] { 35, 1000 });
-			sections.Add(new float[] { 50, 1000 });
-			sections.Add(new float[] { 75, 1000 });
+			sections.Add(new float[] { -1, -0.95f });
+			sections.Add(new float[] { -1, -0.9f });
+			sections.Add(new float[] { -1, -0.8f });
+			sections.Add(new float[] { -1, -0.7f });
+			sections.Add(new float[] { -1, -0.6f });
+			sections.Add(new float[] { -1, -0.5f });
+			sections.Add(new float[] { -1, -0.4f });
+			sections.Add(new float[] { -1, -0.3f });
+			sections.Add(new float[] { -1, -0.2f });
+			sections.Add(new float[] { -1, -0.1f });
+			sections.Add(new float[] { -1, 0 });
+			sections.Add(new float[] { 0, 1 });
+			sections.Add(new float[] { 0.1f, 1 });
+			sections.Add(new float[] { 0.2f, 1 });
+			sections.Add(new float[] { 0.3f, 1 });
+			sections.Add(new float[] { 0.4f, 1 });
+			sections.Add(new float[] { 0.5f, 1 });
+			sections.Add(new float[] { 0.6f, 1 });
+			sections.Add(new float[] { 0.7f, 1 });
+			sections.Add(new float[] { 0.8f, 1 });
+			sections.Add(new float[] { 0.9f, 1 });
+			sections.Add(new float[] { 0.95f, 1 });
 
 			winsPerCore = new float[coresCount, sections.Count];
 			wins = new float[sections.Count];

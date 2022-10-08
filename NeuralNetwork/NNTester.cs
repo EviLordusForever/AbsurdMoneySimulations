@@ -24,11 +24,13 @@ namespace AbsurdMoneySimulations
 
 		public static void InitForEvolution()
 		{
+			//InitForEvolutionFromNormalizedDerivativeGrafic();
 			InitForEvolutionFromNormalizedOriginalGrafic();
 		}
 
 		public static void InitForTesting()
 		{
+			//InitForTestingFromNormalizedDerivativeGrafic();
 			InitForTestingFromNormalizedOriginalGrafic();
 		}
 

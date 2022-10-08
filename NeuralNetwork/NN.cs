@@ -65,10 +65,10 @@ namespace AbsurdMoneySimulations
 						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
 						layers[4].FillWeightsRandomly();*/
 
-			//layers.Add(new LayerPerceptron(10, 300)); //40 x 15 = 600
-			//layers[0].FillWeightsRandomly();
+			layers.Add(new LayerPerceptron(3, 300)); //40 x 15 = 600
+			layers[0].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(1, 300)); //15 x 1 = 15
+			layers.Add(new LayerPerceptron(1, 3)); //15 x 1 = 15
 			layers[0].FillWeightsRandomly();
 
 			Log("Neural Network created!");
@@ -228,9 +228,14 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				short previous = 0;
 				string history = "";
+
+				NNTester.InitForTesting();
+				NNStatManager.CalculateStatistics();
+				float ert = NNStatManager.er;
+				NNTester.InitForEvolution();
 				float er = FindErrorRateSquared();
+
 				float old_er = er;
 				Log("Current er_fb: " + er);
 
@@ -247,7 +252,7 @@ namespace AbsurdMoneySimulations
 
 					er = FindErrorRateSquared();
 					Log($"er: {er}");
-					history += er + "\r\n";
+					history += er + ", " + ert + "\r\n";
 
 					if (Generation % 100 == 99)
 					{
@@ -260,6 +265,7 @@ namespace AbsurdMoneySimulations
 
 						NNTester.InitForTesting();
 						Log("Testing dataset:\n" + NNStatManager.CalculateStatistics());
+						ert = NNStatManager.er;
 						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Testing") + "\n", true);
 						NNTester.InitForEvolution();
 						FindErrorRateSquared();
@@ -280,7 +286,7 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-			//SaveLastLayerWeights();
+			SaveLastLayerWeights();
 			Log("Gradients are found!");
 
 			void SaveLastLayerWeights()
