@@ -98,7 +98,7 @@ namespace AbsurdMoneySimulations
 			for (int n = 0; n < valuesPerSubCount; n++)
 			{
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
-				subs[sub].BPgradient[test] += gwsumm * ActivationFunctions.DerivativeOfActivationFunction(unnormalizedValues[test][sub][n]);
+				subs[sub].BPgradient[test] += gwsumm * af.df(unnormalizedValues[test][sub][n]);
 			}
 		}
 
@@ -106,8 +106,8 @@ namespace AbsurdMoneySimulations
 		{
 			for (int v = 0; v < values[test][sub].Length; v++)
 			{
-				unnormalizedValues[test][sub][v] = subs[sub].CalculateNotNormalized(test, input[0], v * d);
-				values[test][sub][v] = ActivationFunctions.ActivationFunction(unnormalizedValues[test][sub][v]);
+				unnormalizedValues[test][sub][v] = subs[sub].Calculate(test, input[0], v * d);
+				values[test][sub][v] = af.f(unnormalizedValues[test][sub][v]);
 			}
 		}
 

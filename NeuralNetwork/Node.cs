@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using static AbsurdMoneySimulations.ActivationFunctions;
+using static AbsurdMoneySimulations.ClassicAF;
 
 namespace AbsurdMoneySimulations
 {
@@ -29,29 +29,7 @@ namespace AbsurdMoneySimulations
 				weights[i] = (Storage.rnd.NextSingle() * 2 - 1) * NN.randomPower; /////////////////
 		}
 
-		public float CalculateNormalized(int test, float[] input, int start)
-		{
-			summ[test] = 0;
-
-			for (int w = 0; w < weights.Count(); w++)
-			{
-				subvalues[test][w] = weights[w] * input[start + w];
-				summ[test] += subvalues[test][w];
-			}
-
-			return ActivationFunction(summ[test]);
-		}
-
-		public float CalculateOnlyOneWeightNormalized(int test, float input, int w)
-		{
-			summ[test] -= subvalues[test][w];
-			subvalues[test][w] = weights[w] * input;
-			summ[test] += subvalues[test][w];
-
-			return ActivationFunction(summ[test]);
-		}
-
-		public float CalculateNotNormalized(int test, float[] input, int start)
+		public float Calculate(int test, float[] input, int start)
 		{
 			summ[test] = 0;
 
@@ -64,7 +42,7 @@ namespace AbsurdMoneySimulations
 			return summ[test];
 		}
 
-		public float CalculateOnlyOneWeightNotNormalized(int test, float input, int w)
+		public float CalculateOnlyOneWeight(int test, float input, int w)
 		{
 			summ[test] -= subvalues[test][w];
 			subvalues[test][w] = weights[w] * input;
@@ -84,15 +62,15 @@ namespace AbsurdMoneySimulations
 			weights[lastMutatedWeight] -= mutagen;
 		}
 
-		public void FindBPGradient(int test, float desiredValue)
+		public void FindBPGradient(int test, ActivationFunction af, float desiredValue)
 		{
-			BPgradient[test] = (ActivationFunction(summ[test]) - desiredValue) * DerivativeOfActivationFunction(summ[test]);
+			BPgradient[test] = (af.f(summ[test]) - desiredValue) * af.df(summ[test]);
 		}
 
-		public void FindBPGradient(int test, float[] gradients, float[] weights)
+		public void FindBPGradient(int test, ActivationFunction af, float[] gradients, float[] weights)
 		{
 			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
-			BPgradient[test] = NN.INERTION * BPgradient[test] + gwsumm * DerivativeOfActivationFunction(summ[test]);
+			BPgradient[test] = NN.INERTION * BPgradient[test] + gwsumm * af.df(summ[test]); //
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)

@@ -16,7 +16,7 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public const float randomPower = 1.4f;
+		public const float randomPower = 0.4f;
 		public const int jumpLimit = 9000;
 
 		public static int randomMutatesCount = 2022;
@@ -65,11 +65,11 @@ namespace AbsurdMoneySimulations
 						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
 						layers[4].FillWeightsRandomly();*/
 
-			layers.Add(new LayerPerceptron(10, 300)); //40 x 15 = 600
-			layers[0].FillWeightsRandomly();
+			//layers.Add(new LayerPerceptron(10, 300)); //40 x 15 = 600
+			//layers[0].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(1, 10)); //15 x 1 = 15
-			layers[1].FillWeightsRandomly();
+			layers.Add(new LayerPerceptron(1, 300)); //15 x 1 = 15
+			layers[0].FillWeightsRandomly();
 
 			Log("Neural Network created!");
 		}
@@ -108,7 +108,7 @@ namespace AbsurdMoneySimulations
 			for (int l = 1; l < layers.Count; l++)
 				layers[l].Calculate(test, layers[l - 1].GetValues(test));
 
-			return layers[layers.Count - 1].GetAnswer(test) * 100;
+			return layers[layers.Count - 1].GetAnswer(test);
 		}
 
 		public static float Recalculate(int test)
@@ -129,13 +129,21 @@ namespace AbsurdMoneySimulations
 					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
 			}
 
-			return layers[layers.Count - 1].GetAnswer(test) * 100;
+			return layers[layers.Count - 1].GetAnswer(test);
 		}
 
 		public static void Init()
 		{
 			FillRandomMutations();
 			InitValues();
+			InitActivationFunctions();
+		}
+
+		public static void InitActivationFunctions()
+		{
+			for (int l = 0; l < layers.Count - 1; l++)
+				layers[l].af = new ClassicAF();
+			layers[layers.Count - 1].af = new ClassicAF();
 		}
 
 		public static void InitValues()
@@ -161,7 +169,7 @@ namespace AbsurdMoneySimulations
 			short previous = 0;
 			string history = "";
 			float er = 0;
-			float record = FindErrorRate();
+			float record = FindErrorRateSquared();
 			Log("Received current er_fb: " + record);
 
 			for (int Generation = 0; ; Generation++)
@@ -187,7 +195,7 @@ namespace AbsurdMoneySimulations
 				{
 					Log($" ▽ Bad mutation. Go back. ({mutagen})");
 					Demutate();
-					er = FindErrorRate();
+					er = FindErrorRateSquared();
 				}
 
 				history += record + "\r\n";
@@ -199,14 +207,14 @@ namespace AbsurdMoneySimulations
 					history = "";
 
 					Log("(!) er_nfb: " + er.ToString());
-					er = FindErrorRate();
+					er = FindErrorRateSquared();
 					Log("(!) er_fb: " + er.ToString());
 
-					Log("Evolution dataset:\n" + NNStatManager.GetStatistics());
+					Log("Evolution dataset:\n" + NNStatManager.CalculateStatistics());
 					Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Evolution"), true);
 
 					NNTester.InitForTesting();
-					Log("Testing dataset:\n" + NNStatManager.GetStatistics());
+					Log("Testing dataset:\n" + NNStatManager.CalculateStatistics());
 					Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Testing") + "\n", true);
 					NNTester.InitForEvolution();
 				}
@@ -222,24 +230,23 @@ namespace AbsurdMoneySimulations
 			{
 				short previous = 0;
 				string history = "";
-				float er = FindErrorRate();
+				float er = FindErrorRateSquared();
 				float old_er = er;
-				float speed = 0;
-				float old_speed = speed;
-				float acceleration = 0;
-				Log("Received current er_fb: " + er);
+				Log("Current er_fb: " + er);
 
 				for (int Generation = 0; ; Generation++)
 				{
 					Log("G" + Generation);
 
-					FindBPGradients();
-					CorrectWeightsByBP();
+					for (int b = 0; b < NNTester.batchesCount; b++)
+					{
+						NNTester.FillBatch();
+						FindBPGradients();
+						CorrectWeightsByBP();
+					}
 
-					er = FindErrorRateLinear();
-
+					er = FindErrorRateSquared();
 					Log($"er: {er}");
-
 					history += er + "\r\n";
 
 					if (Generation % 100 == 99)
@@ -248,16 +255,14 @@ namespace AbsurdMoneySimulations
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
-						er = FindErrorRateLinear();
-						Log("(!) er_fb: " + er.ToString());
-
-						Log("Evolution dataset:\n" + NNStatManager.GetStatistics());
+						Log("Evolution dataset:\n" + NNStatManager.CalculateStatistics());
 						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Evolution"), true);
 
 						NNTester.InitForTesting();
-						Log("Testing dataset:\n" + NNStatManager.GetStatistics());
+						Log("Testing dataset:\n" + NNStatManager.CalculateStatistics());
 						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Testing") + "\n", true);
 						NNTester.InitForEvolution();
+						FindErrorRateSquared();
 					}
 				}
 			}
@@ -267,37 +272,47 @@ namespace AbsurdMoneySimulations
 		{
 			for (int test = 0; test < NNTester.tests.Length; test++)
 			{
-				layers[layers.Count - 1].FindBPGradient(test, NNTester.answers[test]);
-				for (int layer = layers.Count - 2; layer >= 0; layer--)
-					layers[layer].FindBPGradient(test, layers[layer + 1].AllBPGradients(test), layers[layer + 1].AllWeights);
+				if (NNTester.batch[test] == 1)
+				{
+					layers[layers.Count - 1].FindBPGradient(test, NNTester.answers[test]);
+					for (int layer = layers.Count - 2; layer >= 0; layer--)
+						layers[layer].FindBPGradient(test, layers[layer + 1].AllBPGradients(test), layers[layer + 1].AllWeights);
+				}
 			}
 
-			string str = "";
-
-			for (int w = 0; w < (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights.Length;w++)
-				str += (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights[w] + ",";
-
-			Disk.WriteToProgramFiles("weights", "csv", str + "\n", true);
-
+			//SaveLastLayerWeights();
 			Log("Gradients are found!");
+
+			void SaveLastLayerWeights()
+			{
+				string str = "";
+
+				for (int w = 0; w < (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights.Length; w++)
+					str += (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights[w] + ",";
+
+				Disk.WriteToProgramFiles("weights", "csv", str + "\n", true);
+			}
 		}
 
 		private static void CorrectWeightsByBP()
 		{
 			for (int test = 0; test < NNTester.testsCount; test++)
 			{
-				float[][] array = new float[1][];
-				array[0] = NNTester.tests[test];
+				if (NNTester.batch[test] == 1)
+				{
+					float[][] array = new float[1][];
+					array[0] = NNTester.tests[test];
 
-				layers[0].CorrectWeightsByBP(test, array);
+					layers[0].CorrectWeightsByBP(test, array);
 
-				for (int l = 1; l < layers.Count; l++)
-					layers[l].CorrectWeightsByBP(test, layers[l - 1].GetValues(test));
+					for (int l = 1; l < layers.Count; l++)
+						layers[l].CorrectWeightsByBP(test, layers[l - 1].GetValues(test));
+				}
 			}
 			Log("Weights are corrected!");
 		}
 
-		public static float FindErrorRate()
+		public static float FindErrorRateSquared()
 		{
 			restart:
 
@@ -492,7 +507,7 @@ namespace AbsurdMoneySimulations
 				Init();
 				NNTester.InitForEvolution();
 
-				float record = FindErrorRate();
+				float record = FindErrorRateSquared();
 				Log($"record {record}");
 				var files = Directory.GetFiles(Disk.programFiles + "NN");
 
@@ -501,7 +516,7 @@ namespace AbsurdMoneySimulations
 					Create();
 					Init();
 
-					float er = FindErrorRate();
+					float er = FindErrorRateSquared();
 					Log($"er {er}");
 
 					if (er < record)

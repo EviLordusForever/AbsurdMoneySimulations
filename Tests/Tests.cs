@@ -207,7 +207,7 @@ namespace AbsurdMoneySimulations
 			NN.Mutate();
 
 			for (int i =0; i < 100; i++)
-				Log(NN.FindErrorRate());
+				Log(NN.FindErrorRateSquared());
 		}
 
 		public static void StupiedTestR()
@@ -217,7 +217,7 @@ namespace AbsurdMoneySimulations
 			NNTester.InitForEvolution();
 			NN.Mutate();
 
-			Log("er_fb " + NN.FindErrorRate());
+			Log("er_fb " + NN.FindErrorRateSquared());
 
 			for (int i = 0; i < 100; i++)
 				Log("er_nfb " + NN.RefindErrorRate());
@@ -262,7 +262,7 @@ namespace AbsurdMoneySimulations
 				Storage.coresCount = coresCount;
 				long ms = DateTime.Now.Ticks;
 				for (int i = 0; i < 10; i++)
-					NN.FindErrorRate();
+					NN.FindErrorRateSquared();
 				Log($"{Storage.coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
 		}

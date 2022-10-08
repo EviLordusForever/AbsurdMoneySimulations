@@ -8,7 +8,7 @@ namespace AbsurdMoneySimulations
 {
 	public class LayerRecalculateStatus
 	{
-		//This is hard to explain
+		//It is hard to explain
 		//Layers are go after layers
 		//If NN mutated you have no reason
 		//to recalculate everything again

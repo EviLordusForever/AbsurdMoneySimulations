@@ -10,6 +10,8 @@ namespace AbsurdMoneySimulations
 	public static class NNTester
 	{
 		public const int testsCount = 2000;
+		public static int batchesCount = 1;
+		public static int batchSize = testsCount / batchesCount;
 
 		private static float[] originalGrafic;
 		private static float[] derivativeOfGrafic;
@@ -18,6 +20,7 @@ namespace AbsurdMoneySimulations
 		public static List<int> availableGraficPoints;
 		public static float[][] tests;
 		public static float[] answers;
+		public static byte[] batch;
 
 		public static void InitForEvolution()
 		{
@@ -28,6 +31,7 @@ namespace AbsurdMoneySimulations
 		{
 			InitForTestingFromNormalizedOriginalGrafic();
 		}
+
 
 		public static void InitForEvolutionFromNormalizedDerivativeGrafic()
 		{
@@ -108,31 +112,36 @@ namespace AbsurdMoneySimulations
 		private static void NormalizeDerivativeOfGrafic()
 		{
 			normalizedDerivativeOfGrafic = new float[originalGrafic.Length];
+			ActivationFunction af = new ClassicAF();
 			for (int i = 1; i < derivativeOfGrafic.Length; i++)
-				normalizedDerivativeOfGrafic[i] = ActivationFunctions.ActivationFunction(derivativeOfGrafic[i]);
+				normalizedDerivativeOfGrafic[i] = af.f(derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
 		}
 
 		private static void FillTestsFromNormilizedDerivativeGrafic()
 		{
+			ActivationFunction af = new ClassicAF();
+
 			int maximalDelta = availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / testsCount;
 
 			tests = new float[testsCount][];
 			answers = new float[testsCount];
 
-			int i = 0;
-			for (float delta = 0; delta < maximalDelta && i < testsCount; delta += delta_delta)
+			int test = 0;
+			for (float delta = 0; delta < maximalDelta && test < testsCount; delta += delta_delta)
 			{
 				int offset = availableGraficPoints[Convert.ToInt32(delta)];
 
-				tests[i] = Extensions.SubArray(normalizedDerivativeOfGrafic, offset, NN.inputWindow);
+				tests[test] = Extensions.SubArray(normalizedDerivativeOfGrafic, offset, NN.inputWindow);
 
 				float[] ar = Extensions.SubArray(derivativeOfGrafic, offset + NN.inputWindow, NN.horizon);
 				for (int j = 0; j < ar.Length; j++)
-					answers[i] += ar[j];
+					answers[test] += ar[j];
 
-				i++;
+				answers[test] = af.f(answers[test]);
+
+				test++;
 			}
 
 			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE grafic. ({tests.Length})");
@@ -140,6 +149,8 @@ namespace AbsurdMoneySimulations
 
 		private static void FillTestsFromOriginalGrafic()
 		{
+			ActivationFunction af = new ClassicAF();
+
 			int maximalDelta = availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / testsCount;
 
@@ -158,6 +169,8 @@ namespace AbsurdMoneySimulations
 				for (int j = 0; j < ar.Length; j++)
 					answers[test] += ar[j];
 
+				answers[test] = af.f(answers[test]);
+
 				test++;
 			}
 
@@ -172,6 +185,32 @@ namespace AbsurdMoneySimulations
 				for (int i = 0; i < NNTester.tests[test].Length; i++)
 					tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
 			}
+		}
+
+		public static void FillBatch()
+		{
+			batch = new byte[testsCount];
+
+			int i = 0;
+			while (i < batchSize)
+			{
+				int n = Storage.rnd.Next(testsCount);
+				if (batch[n] == 0)
+				{
+					batch[n] = 1;
+					i++;
+				}
+			}
+		}
+
+		public static void DoNotUseBatch()
+		{
+			batch = new byte[testsCount];
+
+			for (int i = 0; i < testsCount; i++)
+				batch[i] = 1;
+
+			batchesCount = 1;
 		}
 
 		public static float[] OriginalGrafic

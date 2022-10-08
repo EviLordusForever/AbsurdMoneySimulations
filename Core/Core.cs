@@ -12,6 +12,7 @@ namespace AbsurdMoneySimulations
 		{
 			Logger.Log("I am starting...");
 			FormsManager.mainForm.BringToFront();
+			NNTester.DoNotUseBatch();
 			Logger.Log("Hello my dear!");
 		}
 

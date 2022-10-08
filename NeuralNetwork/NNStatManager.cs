@@ -30,25 +30,29 @@ namespace AbsurdMoneySimulations
 			sections = new List<float[]>();
 
 			sections.Add(new float[] { -1000, 1000 });
-			sections.Add(new float[] { -1000, -3 });
-			sections.Add(new float[] { 3, 1000 });
 
-			sections.Add(new float[] { -15, -10 });
-			sections.Add(new float[] { -10, -7 });
-			sections.Add(new float[] { -7, -5 });
-			sections.Add(new float[] { -5, -4 });
-			sections.Add(new float[] { -4, -3 });
-			sections.Add(new float[] { -3, -2 });
-			sections.Add(new float[] { -2, -1 });
-			sections.Add(new float[] { -1, 0 });
-			sections.Add(new float[] { 0, 1 });
-			sections.Add(new float[] { 1, 2 });
-			sections.Add(new float[] { 2, 3 });
-			sections.Add(new float[] { 3, 4 });
-			sections.Add(new float[] { 4, 5 });
-			sections.Add(new float[] { 5, 7 });
-			sections.Add(new float[] { 7, 10 });
-			sections.Add(new float[] { 10, 15 });
+			sections.Add(new float[] { -1000, -75 });
+			sections.Add(new float[] { -1000, -50 });
+			sections.Add(new float[] { -1000, -35 });
+			sections.Add(new float[] { -1000, -25 });
+			sections.Add(new float[] { -1000, -20 });
+			sections.Add(new float[] { -1000, -15 });
+			sections.Add(new float[] { -1000, -10 });
+			sections.Add(new float[] { -1000, -7 });
+			sections.Add(new float[] { -1000, -5 });
+			sections.Add(new float[] { -1000, -3 });
+			sections.Add(new float[] { -1000, -1 });
+			sections.Add(new float[] { 1, 1000 });
+			sections.Add(new float[] { 3, 1000 });
+			sections.Add(new float[] { 5, 1000 });
+			sections.Add(new float[] { 7, 1000 });
+			sections.Add(new float[] { 10, 1000 });
+			sections.Add(new float[] { 15, 1000 });
+			sections.Add(new float[] { 20, 1000 });
+			sections.Add(new float[] { 25, 1000 });
+			sections.Add(new float[] { 35, 1000 });
+			sections.Add(new float[] { 50, 1000 });
+			sections.Add(new float[] { 75, 1000 });
 
 			winsPerCore = new float[coresCount, sections.Count];
 			wins = new float[sections.Count];
@@ -57,7 +61,7 @@ namespace AbsurdMoneySimulations
 			scores = new float[sections.Count];
 		}
 
-		public static string GetStatistics()
+		public static string CalculateStatistics()
 		{
 			restart:
 

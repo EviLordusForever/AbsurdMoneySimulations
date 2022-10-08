@@ -12,6 +12,9 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore]
 		public float[][][] values; //[test][sub][value]
 
+		[JsonIgnore]
+		public ActivationFunction af;
+
 		public int type;
 
 		public abstract void FillWeightsRandomly();
