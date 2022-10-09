@@ -150,7 +150,10 @@ namespace AbsurdMoneySimulations
 			}
 
 			for (int p = 0; p < perceptrons.Count(); p++)
+			{
 				perceptrons[p].InitValues();
+				perceptrons[p].af = af = new ClassicAF();
+			}
 		}
 	}
 }

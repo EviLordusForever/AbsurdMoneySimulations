@@ -16,7 +16,7 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public const float randomPower = 0.4f;
+		public const float randomPower = 1.6f;
 		public const int jumpLimit = 9000;
 
 		public static int randomMutatesCount = 2022;
@@ -32,7 +32,7 @@ namespace AbsurdMoneySimulations
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
-		public static float LYAMBDA = 0.01f;
+		public static float LYAMBDA = 0.9f;
 		public static float INERTION = 0f;
 
 		public static void Create()
@@ -50,26 +50,26 @@ namespace AbsurdMoneySimulations
 			//15
 			//1
 
-			/*			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
+			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
+			layers[0].FillWeightsRandomly();
+
+			layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
+			layers[1].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
+			layers[2].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
+			layers[3].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
+			layers[4].FillWeightsRandomly();
+
+			/*			layers.Add(new LayerPerceptron(3, 300)); //40 x 15 = 600
 						layers[0].FillWeightsRandomly();
 
-						layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
-						layers[1].FillWeightsRandomly();
-
-						layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
-						layers[2].FillWeightsRandomly();
-
-						layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
-						layers[3].FillWeightsRandomly();
-
-						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-						layers[4].FillWeightsRandomly();*/
-
-			layers.Add(new LayerPerceptron(3, 300)); //40 x 15 = 600
-			layers[0].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(1, 3)); //15 x 1 = 15
-			layers[0].FillWeightsRandomly();
+						layers.Add(new LayerPerceptron(1, 3)); //15 x 1 = 15
+						layers[0].FillWeightsRandomly();*/
 
 			Log("Neural Network created!");
 		}
@@ -235,8 +235,8 @@ namespace AbsurdMoneySimulations
 				float ert = NNStatManager.er;
 				NNTester.InitForEvolution();
 				float er = FindErrorRateSquared();
-
 				float old_er = er;
+
 				Log("Current er_fb: " + er);
 
 				for (int Generation = 0; ; Generation++)
@@ -250,8 +250,9 @@ namespace AbsurdMoneySimulations
 						CorrectWeightsByBP();
 					}
 
+					old_er = er;
 					er = FindErrorRateSquared();
-					Log($"er: {er}");
+					Log($"er: {string.Format("{0:F8}", er)} ({string.Format("{0:F8}", er - old_er)})");
 					history += er + ", " + ert + "\r\n";
 
 					if (Generation % 100 == 99)
