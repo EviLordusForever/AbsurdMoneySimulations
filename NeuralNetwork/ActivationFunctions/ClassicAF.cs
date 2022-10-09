@@ -15,7 +15,14 @@ namespace AbsurdMoneySimulations
 
 		public override float df(float x)
 		{
-			return 0.19062f * MathF.Pow(1.1f, -x) / MathF.Pow(MathF.Pow(1.1f, -x) + 1, 2);
+			if (MathF.Abs(x) > 900)
+			{
+				NN.vanishedGradients++;
+				return 0; ///////////////////////////////
+			}
+
+			float v = 0.19062f * MathF.Pow(1.1f, -x) / MathF.Pow(MathF.Pow(1.1f, -x) + 1, 2);
+			return v;
 		}
 	}
 }

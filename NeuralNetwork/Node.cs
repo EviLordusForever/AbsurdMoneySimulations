@@ -71,6 +71,7 @@ namespace AbsurdMoneySimulations
 		{
 			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
 			BPgradient[test] = NN.INERTION * BPgradient[test] + gwsumm * af.df(summ[test]); //
+			BPgradient[test] = NN.CutGradient(BPgradient[test]);
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)
@@ -85,6 +86,9 @@ namespace AbsurdMoneySimulations
 
 		public void CorrectWeightsByBP(int test, float[] input, int start)
 		{
+			if (float.IsNaN(BPgradient[test]))
+			{
+			}
 			for (int w = 0; w < weights.Count(); w++)
 				weights[w] -= NN.LYAMBDA * BPgradient[test] * input[start + w];
 		}

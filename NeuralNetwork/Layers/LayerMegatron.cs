@@ -100,6 +100,7 @@ namespace AbsurdMoneySimulations
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
 				subs[sub].BPgradient[test] += gwsumm * af.df(unnormalizedValues[test][sub][n]);
 			}
+			subs[sub].BPgradient[test] = NN.CutGradient(subs[sub].BPgradient[test]);
 		}
 
 		private void CalculateOneSub(int test, float[][] input, int sub)

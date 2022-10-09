@@ -32,8 +32,12 @@ namespace AbsurdMoneySimulations
 		public static int mutationSeed;
 		public static int lastMutatedLayer;
 
-		public static float LYAMBDA = 0.9f;
-		public static float INERTION = 0f;
+		public static float LYAMBDA = 0.05f;
+		public static float INERTION = 0.8f;
+
+		public static int vanishedGradients = 0;
+		public static int cuttedGradients = 0;
+		public const float cutter = 0.3f;
 
 		public static void Create()
 		{
@@ -229,6 +233,8 @@ namespace AbsurdMoneySimulations
 			void SoThread()
 			{
 				string history = "";
+				float old_v = 0;
+				bool grow = true;
 
 				NNTester.InitForTesting();
 				NNStatManager.CalculateStatistics();
@@ -243,6 +249,8 @@ namespace AbsurdMoneySimulations
 				{
 					Log("G" + Generation);
 
+					vanishedGradients = 0;
+					cuttedGradients = 0;
 					for (int b = 0; b < NNTester.batchesCount; b++)
 					{
 						NNTester.FillBatch();
@@ -252,12 +260,32 @@ namespace AbsurdMoneySimulations
 
 					old_er = er;
 					er = FindErrorRateSquared();
-					Log($"er: {string.Format("{0:F8}", er)} ({string.Format("{0:F8}", er - old_er)})");
+
+					float v = er - old_er;
+					float a = v - old_v;
+					old_v = v;
+
+					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", LYAMBDA)})");
+					Log($"vanished {vanishedGradients} cutted {cuttedGradients}");
 					history += er + ", " + ert + "\r\n";
+
+/*					if ((v > 0 || float.IsNaN(v)) && LYAMBDA > 0.000001f)
+					{
+						Load();
+						Init();
+						old_er = er;
+						er = FindErrorRateSquared();
+						LYAMBDA *= 0.5f;
+						continue;
+					}
+
+					if (v <= 0 && LYAMBDA < 0.9f)
+						LYAMBDA *= 1.03f;	*/				
+
+					Save();
 
 					if (Generation % 100 == 99)
 					{
-						Save();
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
@@ -551,6 +579,17 @@ namespace AbsurdMoneySimulations
 		public static void Demutate()
 		{
 			layers[lastMutatedLayer].Demutate(mutagen);
+		}
+
+		public static float CutGradient(float g)
+		{
+			if (MathF.Abs(g) > cutter)
+			{
+				cuttedGradients++;
+				return cutter * (g / g);
+			}
+			else
+				return g;
 		}
 	}
 }
