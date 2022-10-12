@@ -8,7 +8,7 @@ using static AbsurdMoneySimulations.Storage;
 
 namespace AbsurdMoneySimulations
 {
-	public static class NNS
+	public static class Stat
 	{
 		public static float er;
 		public static List<float[]> sections;
@@ -20,7 +20,7 @@ namespace AbsurdMoneySimulations
 
 		public static float[] scores;
 
-		static NNS()
+		static Stat()
 		{
 			Init();
 		}
@@ -61,7 +61,7 @@ namespace AbsurdMoneySimulations
 			scores = new float[sections.Count];
 		}
 
-		public static string CalculateStatistics(NNT tester)
+		public static string CalculateStatistics(Tester tester)
 		{
 			restart:
 

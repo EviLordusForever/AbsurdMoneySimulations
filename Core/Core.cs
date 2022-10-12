@@ -24,6 +24,7 @@ namespace AbsurdMoneySimulations
 			{
 				if (UserAsker.Ask("Are you shure?"))
 				{
+					NN.InitTesters();
 					NN.Create();
 					NN.Save();
 					NN.Init();

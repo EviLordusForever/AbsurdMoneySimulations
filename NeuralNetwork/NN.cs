@@ -37,8 +37,8 @@ namespace AbsurdMoneySimulations
 
 		public static List<LayerAbstract> layers;
 
-		public static NNT testerV;
-		public static NNT testerE;
+		public static Tester testerV;
+		public static Tester testerE;
 
 		public static string name;
 
@@ -109,7 +109,7 @@ namespace AbsurdMoneySimulations
 			Log("Neural Network loaded from disk!");
 		}
 
-		public static float Calculate(int test, NNT tester, float[] input)
+		public static float Calculate(int test, Tester tester, float[] input)
 		{
 			float[][] array = new float[1][];
 			array[0] = input;
@@ -122,7 +122,7 @@ namespace AbsurdMoneySimulations
 			return layers[layers.Count - 1].GetAnswer(test);
 		}
 
-		public static float Recalculate(int test, NNT tester)
+		public static float Recalculate(int test, Tester tester)
 		{
 			LayerRecalculateStatus lrs = LayerRecalculateStatus.First;
 
@@ -153,8 +153,8 @@ namespace AbsurdMoneySimulations
 
 		public static void InitTesters()
 		{
-			testerV = new NNT(testsCount, batchSize, "Grafic//ForValidation", "VALIDATION");
-			testerE = new NNT(testsCount, batchSize, "Grafic//ForEvolution", "EVOLUTION");
+			testerV = new Tester(testsCount, batchSize, "Grafic//ForValidation", "VALIDATION");
+			testerE = new Tester(testsCount, batchSize, "Grafic//ForEvolution", "EVOLUTION");
 		}
 
 		public static void InitActivationFunctions()
@@ -228,10 +228,10 @@ namespace AbsurdMoneySimulations
 					er = FindErrorRateSquared(testerE);
 					Log("(!) er_fb: " + er);
 
-					string validation = NNS.CalculateStatistics(testerV);
-					Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Validation") + "\n", true);
-					string evolition = NNS.CalculateStatistics(testerE);
-					Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Evolution"), true);
+					string validation = Stat.CalculateStatistics(testerV);
+					Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
+					string evolition = Stat.CalculateStatistics(testerE);
+					Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Evolution"), true);
 
 					Log("Evolution dataset:\n" + evolition);
 					Log("Validation dataset:\n" + validation);
@@ -294,10 +294,10 @@ namespace AbsurdMoneySimulations
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
-						string validation = NNS.CalculateStatistics(testerV);
-						Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Validation") + "\n", true);
-						string evolition = NNS.CalculateStatistics(testerE);
-						Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Evolution"), true);
+						string validation = Stat.CalculateStatistics(testerV);
+						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
+						string evolition = Stat.CalculateStatistics(testerE);
+						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Evolution"), true);
 
 						Log("Evolution dataset:\n" + evolition);
 						Log("Validation dataset:\n" + validation);
@@ -308,14 +308,16 @@ namespace AbsurdMoneySimulations
 				{
 					if (ert <= ert_record)
 					{
-						File.Copy($"{Disk.programFiles}\\NN\\{name}.json", $"{Disk.programFiles}\\NN\\EarlyStopping\\{name}.json");
+						ert_record = ert;
+						Disk.ClearDirectory($"{Disk.programFiles}\\NN\\EarlyStopping");
+						File.Copy($"{Disk.programFiles}\\NN\\{name}.json", $"{Disk.programFiles}\\NN\\EarlyStopping\\{name} ({ert}.json");
 						Log("NN copied for early stopping.");
 					}
 				}
 			}
 		}
 
-		private static void FindBPGradients(NNT tester)
+		private static void FindBPGradients(Tester tester)
 		{
 			for (int test = 0; test < tester.tests.Length; test++)
 				if (tester.batch[test] == 1)
@@ -339,7 +341,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		private static void CorrectWeightsByBP(NNT tester)
+		private static void CorrectWeightsByBP(Tester tester)
 		{
 			for (int test = 0; test < tester.testsCount; test++)
 			{
@@ -357,7 +359,7 @@ namespace AbsurdMoneySimulations
 			Log("Weights are corrected!");
 		}
 
-		public static float FindErrorRateLinear(NNT tester)
+		public static float FindErrorRateLinear(Tester tester)
 		{
 			restart:
 
@@ -416,7 +418,7 @@ namespace AbsurdMoneySimulations
 			return er;
 		}
 
-		public static float FindErrorRateSquared(NNT tester)
+		public static float FindErrorRateSquared(Tester tester)
 		{
 			restart:
 
@@ -475,7 +477,7 @@ namespace AbsurdMoneySimulations
 			return er;
 		}
 
-		public static float RefindErrorRateSquared(NNT tester)
+		public static float RefindErrorRateSquared(Tester tester)
 		{
 			restart:
 

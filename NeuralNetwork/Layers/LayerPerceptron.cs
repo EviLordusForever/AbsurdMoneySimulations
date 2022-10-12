@@ -17,19 +17,19 @@ namespace AbsurdMoneySimulations
 				nodes[i].FillRandomly();
 		}
 
-		public override void Calculate(int test, NNT tester, float[][] input)
+		public override void Calculate(int test, Tester tester, float[][] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
 				values[test][0][node] = af.f(nodes[node].Calculate(test, input[0], 0));
 		}
 
-		public void Calculate(int test, NNT tester, float[] input)
+		public void Calculate(int test, Tester tester, float[] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
 				values[test][0][node] = af.f(nodes[node].Calculate(test, input, 0));
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, NNT tester, float[][] input, LayerRecalculateStatus lrs)
+		public override LayerRecalculateStatus Recalculate(int test, Tester tester, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
@@ -63,7 +63,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public LayerRecalculateStatus Recalculate(int test, NNT tester, float[] input, LayerRecalculateStatus lrs)
+		public LayerRecalculateStatus Recalculate(int test, Tester tester, float[] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{

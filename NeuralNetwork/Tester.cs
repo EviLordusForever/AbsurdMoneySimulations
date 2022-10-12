@@ -7,7 +7,7 @@ using static AbsurdMoneySimulations.Logger;
 
 namespace AbsurdMoneySimulations
 {
-	public class NNT
+	public class Tester
 	{
 		public int testsCount;
 		public int batchesCount;
@@ -195,7 +195,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public NNT(int testsCount, int batchesCount, string graficPath, string reason)
+		public Tester(int testsCount, int batchesCount, string graficPath, string reason)
 		{
 			this.testsCount = testsCount;
 			this.batchesCount = batchesCount;
