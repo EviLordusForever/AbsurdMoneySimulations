@@ -56,13 +56,13 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void Calculate(int test, float[][] input)
+		public override void Calculate(int test, NNT tester, float[][] input)
 		{
 			for (int sub = 0; sub < subs.Length; sub++)
 				CalculateOneSub(test, input, sub);
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		public override LayerRecalculateStatus Recalculate(int test, NNT tester, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
@@ -73,7 +73,7 @@ namespace AbsurdMoneySimulations
 			}
 			else
 			{
-				Calculate(test, input);
+				Calculate(test, tester, input);
 				return LayerRecalculateStatus.Full;
 			}
 		}
@@ -168,7 +168,7 @@ namespace AbsurdMoneySimulations
 			throw new NotImplementedException();
 		}
 
-		public LayerMegatron(int subsCount, int outsPerSubCount, int weightsPerSubCount, int d)
+		public LayerMegatron(int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d)
 		{
 			type = 2;
 			this.d = d;
@@ -176,23 +176,23 @@ namespace AbsurdMoneySimulations
 
 			subs = new Node[subsCount];
 			for (int sub = 0; sub < subs.Count(); sub++)
-				subs[sub] = new Node(weightsPerSubCount);
+				subs[sub] = new Node(testsCount, weightsPerSubCount);
 
-			InitValues();
+			InitValues(testsCount);
 		}
 
-		public override void InitValues()
+		public override void InitValues(int testsCount)
 		{
-			values = new float[NNTester.testsCount][][];
-			for (int test = 0; test < NNTester.testsCount; test++)
+			values = new float[testsCount][][];
+			for (int test = 0; test < testsCount; test++)
 			{
 				values[test] = new float[subs.Count()][];
 				for (int sub = 0; sub < subs.Count(); sub++)
 					values[test][sub] = new float[valuesPerSubCount];
 			}
 
-			unnormalizedValues = new float[NNTester.testsCount][][];
-			for (int test = 0; test < NNTester.testsCount; test++)
+			unnormalizedValues = new float[testsCount][][];
+			for (int test = 0; test < testsCount; test++)
 			{
 				unnormalizedValues[test] = new float[subs.Count()][];
 				for (int sub = 0; sub < subs.Count(); sub++)
@@ -200,7 +200,7 @@ namespace AbsurdMoneySimulations
 			}
 
 			for (int s = 0; s < subs.Count(); s++)
-				subs[s].InitValues(); //does we need you?
+				subs[s].InitValues(testsCount); //does we need you? //
 		}
 	}
 }

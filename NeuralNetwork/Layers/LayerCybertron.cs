@@ -18,30 +18,30 @@ namespace AbsurdMoneySimulations
 				perceptrons[i].FillWeightsRandomly();
 		}
 
-		public override void Calculate(int test, float[][] input)
+		public override void Calculate(int test, NNT tester, float[][] input)
 		{
 			for (int sub = 0; sub < perceptrons.Length; sub++)
-				perceptrons[sub].Calculate(test, input[sub]);
+				perceptrons[sub].Calculate(test, tester, input[sub]);
 			//Test me
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		public override LayerRecalculateStatus Recalculate(int test, NNT tester, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
-				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.First);
+				perceptrons[lastMutatedSub].Recalculate(test, tester, input[lastMutatedSub], LayerRecalculateStatus.First);
 				lrs.lastMutatedSub = lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else if (lrs == LayerRecalculateStatus.OneSubChanged)
 			{
-				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.Full);
+				perceptrons[lastMutatedSub].Recalculate(test, tester, input[lastMutatedSub], LayerRecalculateStatus.Full);
 				lrs.lastMutatedSub = lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else
 			{
-				Calculate(test, input);
+				Calculate(test, tester, input);
 				return LayerRecalculateStatus.Full;
 			}
 		}
@@ -127,7 +127,7 @@ namespace AbsurdMoneySimulations
 			//And this
 		}
 
-		public LayerCybertron(int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount)
+		public LayerCybertron(int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount)
 		{
 			type = 3;
 
@@ -135,15 +135,15 @@ namespace AbsurdMoneySimulations
 
 			perceptrons = new LayerPerceptron[perceptronsCount];
 			for (int p = 0; p < perceptrons.Count(); p++)
-				perceptrons[p] = new LayerPerceptron(nodesPerPerceptronCount, weightsPerNodePerceptronCount);
+				perceptrons[p] = new LayerPerceptron(testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount);
 
-			InitValues();
+			InitValues(testsCount);
 		}
 
-		public override void InitValues()
+		public override void InitValues(int testsCount)
 		{
-			values = new float[NNTester.testsCount][][];
-			for (int test = 0; test < NNTester.testsCount; test++)
+			values = new float[testsCount][][];
+			for (int test = 0; test < testsCount; test++)
 			{
 				values[test] = new float[1][];
 				values[test][0] = new float[outNodesSummCount];
@@ -151,7 +151,7 @@ namespace AbsurdMoneySimulations
 
 			for (int p = 0; p < perceptrons.Count(); p++)
 			{
-				perceptrons[p].InitValues();
+				perceptrons[p].InitValues(testsCount);
 				perceptrons[p].af = af = new ClassicAF();
 			}
 		}

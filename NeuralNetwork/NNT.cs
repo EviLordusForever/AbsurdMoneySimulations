@@ -7,71 +7,40 @@ using static AbsurdMoneySimulations.Logger;
 
 namespace AbsurdMoneySimulations
 {
-	public static class NNTester
+	public class NNT
 	{
-		public const int testsCount = 2000;
-		public static int batchesCount = 1;
-		public static int batchSize = testsCount / batchesCount;
+		public int testsCount;
+		public int batchesCount;
+		public int batchSize;
 
-		private static float[] originalGrafic;
-		private static float[] derivativeOfGrafic;
-		private static float[] normalizedDerivativeOfGrafic; //[-1, 1]
+		private float[] originalGrafic;
+		private float[] derivativeOfGrafic;
+		private float[] normalizedDerivativeOfGrafic; //[-1, 1]
 
-		public static List<int> availableGraficPoints;
-		public static float[][] tests;
-		public static float[] answers;
-		public static byte[] batch;
+		public List<int> availableGraficPoints;
+		public float[][] tests;
+		public float[] answers;
+		public byte[] batch;
 
-		public static void InitForEvolution()
+		public void InitFromNormalizedOriginalGrafic(string path, string reason)
 		{
-			//InitForEvolutionFromNormalizedDerivativeGrafic();
-			InitForEvolutionFromNormalizedOriginalGrafic();
-		}
-
-		public static void InitForTesting()
-		{
-			//InitForTestingFromNormalizedDerivativeGrafic();
-			InitForTestingFromNormalizedOriginalGrafic();
-		}
-
-
-		public static void InitForEvolutionFromNormalizedDerivativeGrafic()
-		{
-			LoadOrigGrafic("Grafic\\ForEvolution", "EVOLUTION");
-			FillDerivativeOfGrafic();
-			NormalizeDerivativeOfGrafic();
-
-			FillTestsFromNormilizedDerivativeGrafic();
-		}
-
-		private static void InitForTestingFromNormalizedDerivativeGrafic()
-		{
-			LoadOrigGrafic("Grafic\\ForTesting", "TESTING");
-			FillDerivativeOfGrafic();
-			NormalizeDerivativeOfGrafic();
-
-			FillTestsFromNormilizedDerivativeGrafic();
-		}
-
-		public static void InitForEvolutionFromNormalizedOriginalGrafic()
-		{
-			LoadOrigGrafic("Grafic\\ForEvolution", "EVOLUTION+");
+			LoadOrigGrafic(path, reason);
 			FillDerivativeOfGrafic();
 			NormalizeDerivativeOfGrafic();
 
 			FillTestsFromOriginalGrafic();
 		}
 
-		private static void InitForTestingFromNormalizedOriginalGrafic()
+		public void InitFromNormalizedDerivativeGrafic(string path, string reason)
 		{
-			LoadOrigGrafic("Grafic\\ForTesting", "TESTING+");
+			LoadOrigGrafic(path, reason);
 			FillDerivativeOfGrafic();
 			NormalizeDerivativeOfGrafic();
 
-			FillTestsFromOriginalGrafic();
+			FillTestsFromNormilizedDerivativeGrafic();
 		}
 
-		private static void LoadOrigGrafic(string graficFolder, string reason)
+		private void LoadOrigGrafic(string graficFolder, string reason)
 		{
 			var files = Directory.GetFiles(Disk.programFiles + graficFolder);
 			var graficL = new List<float>();
@@ -103,7 +72,7 @@ namespace AbsurdMoneySimulations
 			Log("Grafic length: " + originalGrafic.Length + ".");
 		}
 
-		private static void FillDerivativeOfGrafic()
+		private void FillDerivativeOfGrafic()
 		{
 			derivativeOfGrafic = new float[originalGrafic.Length];
 			for (int i = 1; i < originalGrafic.Length; i++)
@@ -111,7 +80,7 @@ namespace AbsurdMoneySimulations
 			Log("Derivative of grafic is filled.");
 		}
 
-		private static void NormalizeDerivativeOfGrafic()
+		private void NormalizeDerivativeOfGrafic()
 		{
 			normalizedDerivativeOfGrafic = new float[originalGrafic.Length];
 			ActivationFunction af = new ClassicAF();
@@ -120,7 +89,7 @@ namespace AbsurdMoneySimulations
 			Log("Derivative of grafic is normilized.");
 		}
 
-		private static void FillTestsFromNormilizedDerivativeGrafic()
+		private void FillTestsFromNormilizedDerivativeGrafic()
 		{
 			ActivationFunction af = new ClassicAF();
 
@@ -149,7 +118,7 @@ namespace AbsurdMoneySimulations
 			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE grafic. ({tests.Length})");
 		}
 
-		private static void FillTestsFromOriginalGrafic()
+		private void FillTestsFromOriginalGrafic()
 		{
 			ActivationFunction af = new ClassicAF();
 
@@ -184,28 +153,31 @@ namespace AbsurdMoneySimulations
 				float max = Extensions.Max(tests[test]);
 				float scale = max - min;
 
-				for (int i = 0; i < NNTester.tests[test].Length; i++)
+				for (int i = 0; i < tests[test].Length; i++)
 					tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
 			}
 		}
 
-		public static void FillBatch()
+		public void FillBatch()
 		{
-			batch = new byte[testsCount];
-
-			int i = 0;
-			while (i < batchSize)
+			if (batchesCount > 1)
 			{
-				int n = Storage.rnd.Next(testsCount);
-				if (batch[n] == 0)
+				batch = new byte[testsCount];
+
+				int i = 0;
+				while (i < batchSize)
 				{
-					batch[n] = 1;
-					i++;
+					int n = Storage.rnd.Next(testsCount);
+					if (batch[n] == 0)
+					{
+						batch[n] = 1;
+						i++;
+					}
 				}
 			}
 		}
 
-		public static void DoNotUseBatch()
+		public void DoNotUseBatch()
 		{
 			batch = new byte[testsCount];
 
@@ -215,12 +187,23 @@ namespace AbsurdMoneySimulations
 			batchesCount = 1;
 		}
 
-		public static float[] OriginalGrafic
+		public float[] OriginalGrafic
 		{
 			get
 			{
 				return originalGrafic;
 			}
+		}
+
+		public NNT(int testsCount, int batchesCount, string graficPath, string reason)
+		{
+			this.testsCount = testsCount;
+			this.batchesCount = batchesCount;
+			batchSize = testsCount / batchesCount;
+
+			InitFromNormalizedOriginalGrafic(graficPath, reason);
+			if (batchesCount == 1)
+				DoNotUseBatch();
 		}
 	}
 }

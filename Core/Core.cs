@@ -12,7 +12,6 @@ namespace AbsurdMoneySimulations
 		{
 			Logger.Log("I am starting...");
 			FormsManager.mainForm.BringToFront();
-			NNTester.DoNotUseBatch();
 			Logger.Log("Hello my dear!");
 		}
 
@@ -43,8 +42,6 @@ namespace AbsurdMoneySimulations
 				NN.Load();
 				NN.Init();
 
-				NNTester.InitForEvolution();
-
 				NN.EvolveByRandomMutations();
 			}
 		}
@@ -59,8 +56,6 @@ namespace AbsurdMoneySimulations
 			{
 				NN.Load();
 				NN.Init();
-
-				NNTester.InitForEvolution();
 
 				NN.EvolveByBackPropagtion();
 			}

@@ -17,23 +17,23 @@ namespace AbsurdMoneySimulations
 				nodes[i].FillRandomly();
 		}
 
-		public override void Calculate(int test, float[][] input)
+		public override void Calculate(int test, NNT tester, float[][] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
 				values[test][0][node] = af.f(nodes[node].Calculate(test, input[0], 0));
 		}
 
-		public void Calculate(int test, float[] input)
+		public void Calculate(int test, NNT tester, float[] input)
 		{
 			for (int node = 0; node < nodes.Length; node++)
 				values[test][0][node] = af.f(nodes[node].Calculate(test, input, 0));
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		public override LayerRecalculateStatus Recalculate(int test, NNT tester, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
-				values[test][0][lastMutatedNode] = af.f(nodes[lastMutatedNode].CalculateOnlyOneWeight(NNTester.testsCount, input[0][lastMutatedNode], nodes[lastMutatedNode].lastMutatedWeight));
+				values[test][0][lastMutatedNode] = af.f(nodes[lastMutatedNode].CalculateOnlyOneWeight(test, input[0][lastMutatedNode], nodes[lastMutatedNode].lastMutatedWeight));
 				lrs = LayerRecalculateStatus.OneNodeChanged;
 				lrs.lastMutatedNode = lastMutatedNode;
 				return lrs;
@@ -41,7 +41,7 @@ namespace AbsurdMoneySimulations
 			else if (lrs == LayerRecalculateStatus.OneNodeChanged)
 			{
 				for (int n = 0; n < nodes.Length; n++)
-					values[test][0][n] = af.f(nodes[n].CalculateOnlyOneWeight(NNTester.testsCount, input[0][lrs.lastMutatedNode], lrs.lastMutatedNode));
+					values[test][0][n] = af.f(nodes[n].CalculateOnlyOneWeight(test, input[0][lrs.lastMutatedNode], lrs.lastMutatedNode));
 				return LayerRecalculateStatus.Full;
 			}
 			else if (lrs == LayerRecalculateStatus.OneSubChanged)
@@ -49,7 +49,7 @@ namespace AbsurdMoneySimulations
 				for (int n = 0; n < nodes.Length; n++)
 				{
 					for (int subnode = lrs.lastMutatedSub * lrs.subSize; subnode < lrs.lastMutatedSub * lrs.subSize + lrs.subSize; subnode++)
-						nodes[n].CalculateOnlyOneWeight(NNTester.testsCount, input[0][subnode], subnode);
+						nodes[n].CalculateOnlyOneWeight(test, input[0][subnode], subnode);
 					//test me
 
 					values[test][0][n] = af.f(nodes[n].summ[test]);
@@ -58,12 +58,12 @@ namespace AbsurdMoneySimulations
 			}
 			else
 			{
-				Calculate(test, input);
+				Calculate(test, tester, input);
 				return LayerRecalculateStatus.Full;
 			}
 		}
 
-		public LayerRecalculateStatus Recalculate(int test, float[] input, LayerRecalculateStatus lrs)
+		public LayerRecalculateStatus Recalculate(int test, NNT tester, float[] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
@@ -74,7 +74,7 @@ namespace AbsurdMoneySimulations
 			}
 			else
 			{
-				Calculate(test, input);
+				Calculate(test, tester, input);
 				return LayerRecalculateStatus.Full;
 			}
 		}
@@ -154,28 +154,28 @@ namespace AbsurdMoneySimulations
 			return BPGradients;
 		}
 
-		public LayerPerceptron(int nodesCount, int weightsCount)
+		public LayerPerceptron(int testsCount, int nodesCount, int weightsCount)
 		{
 			type = 1;
 
 			nodes = new Node[nodesCount];
 			for (int i = 0; i < nodes.Count(); i++)
-				nodes[i] = new Node(weightsCount);
+				nodes[i] = new Node(testsCount, weightsCount);
 
-			InitValues();
+			InitValues(testsCount);
 		}
 
-		public override void InitValues()
+		public override void InitValues(int testsCount)
 		{
-			values = new float[NNTester.testsCount][][];
-			for (int test = 0; test < NNTester.testsCount; test++)
+			values = new float[testsCount][][];
+			for (int test = 0; test < testsCount; test++)
 			{
 				values[test] = new float[1][];
 				values[test][0] = new float[nodes.Count()];
 			}
 
 			for (int n = 0; n < nodes.Count(); n++)
-				nodes[n].InitValues();
+				nodes[n].InitValues(testsCount);
 		}
 	}
 }

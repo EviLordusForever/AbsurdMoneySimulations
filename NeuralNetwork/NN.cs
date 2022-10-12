@@ -19,55 +19,59 @@ namespace AbsurdMoneySimulations
 		public const float randomPower = 1.6f;
 		public const int jumpLimit = 9000;
 
+		private const int testsCount = 2000;
+		private const int batchSize = 1;
+
 		public static int randomMutatesCount = 2022;
 
 		public static float randomMutatesSharpness =  10;
 		public static float randomMutatesScaleV2 = 10;
 		public static float randomMutatesSmoothing = 0.03f;
 
-		public static List<LayerAbstract> layers;
-
-		public static float mutagen;
-		public static float[] randomMutates;
-		public static int mutationSeed;
-		public static int lastMutatedLayer;
-
-		public static float LYAMBDA = 0.05f;
-		public static float INERTION = 0.8f;
+		public static float LYAMBDA = 0.007f; //0.05f
+		public static float INERTION = 0.9f; //0.8f
 
 		public static int vanishedGradients = 0;
 		public static int cuttedGradients = 0;
 		public const float cutter = 0.3f;
 
+		public static List<LayerAbstract> layers;
+
+		public static NNT testerV;
+		public static NNT testerE;
+
+		public static float[] randomMutates;
+		public static float mutagen;
+		public static int mutationSeed;
+		public static int lastMutatedLayer;
+
 		public static void Create()
 		{
 			layers = new List<LayerAbstract>();
 
-			//30*15
-			//55*10*15
-			//150*40
+			/*			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
+						layers[0].FillWeightsRandomly();
 
-			//300
-			//55 x 15 = 825
-			//10 x 15 = 150
-			//40
-			//15
-			//1
+						layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
+						layers[1].FillWeightsRandomly();
 
-			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
+						layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
+						layers[2].FillWeightsRandomly();
+
+						layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
+						layers[3].FillWeightsRandomly();
+
+						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
+						layers[4].FillWeightsRandomly();*/
+
+			layers.Add(new LayerMegatron(testerE.testsCount, 6, 136, 30, 2));   //136 x 30 x 6 = 
 			layers[0].FillWeightsRandomly();
 
-			layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
+			layers.Add(new LayerCybertron(testerE.testsCount, 6, 136, 6, 36)); //6 x 136 x 6 =
 			layers[1].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
+			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 36)); //36 x 1 = 36
 			layers[2].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
-			layers[3].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-			layers[4].FillWeightsRandomly();
 
 			/*			layers.Add(new LayerPerceptron(3, 300)); //40 x 15 = 600
 						layers[0].FillWeightsRandomly();
@@ -102,35 +106,35 @@ namespace AbsurdMoneySimulations
 			Log("Neural Network loaded from disk!");
 		}
 
-		public static float Calculate(int test, float[] input)
+		public static float Calculate(int test, NNT tester, float[] input)
 		{
 			float[][] array = new float[1][];
 			array[0] = input;
 
-			layers[0].Calculate(test, array);
+			layers[0].Calculate(test, tester, array);
 
 			for (int l = 1; l < layers.Count; l++)
-				layers[l].Calculate(test, layers[l - 1].GetValues(test));
+				layers[l].Calculate(test, tester, layers[l - 1].GetValues(test));
 
 			return layers[layers.Count - 1].GetAnswer(test);
 		}
 
-		public static float Recalculate(int test)
+		public static float Recalculate(int test, NNT tester)
 		{
 			LayerRecalculateStatus lrs = LayerRecalculateStatus.First;
 
 			if (lastMutatedLayer > 0)
 				for (int layer = lastMutatedLayer; layer < layers.Count; layer++)
-					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
+					lrs = layers[layer].Recalculate(test, tester, layers[layer - 1].GetValues(test), lrs);
 			else
 			{
 				float[][] array = new float[1][];
-				array[0] = NNTester.tests[test];
+				array[0] = tester.tests[test];
 
-				layers[0].Calculate(test, array);
+				layers[0].Calculate(test, tester, array);
 
 				for (int layer = 1; layer < layers.Count; layer++)
-					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
+					lrs = layers[layer].Recalculate(test, tester, layers[layer - 1].GetValues(test), lrs);
 			}
 
 			return layers[layers.Count - 1].GetAnswer(test);
@@ -138,9 +142,16 @@ namespace AbsurdMoneySimulations
 
 		public static void Init()
 		{
+			InitTesters();
 			FillRandomMutations();
 			InitValues();
 			InitActivationFunctions();
+		}
+
+		public static void InitTesters()
+		{
+			testerV = new NNT(testsCount, batchSize, "Grafic//ForValidation", "VALIDATION");
+			testerE = new NNT(testsCount, batchSize, "Grafic//ForEvolution", "EVOLUTION");
 		}
 
 		public static void InitActivationFunctions()
@@ -153,7 +164,7 @@ namespace AbsurdMoneySimulations
 		public static void InitValues()
 		{
 			for (int l = 0; l < layers.Count; l++)
-				layers[l].InitValues();
+				layers[l].InitValues(testerE.testsCount);
 
 			Log("NN values were initialized");
 		}
@@ -173,7 +184,7 @@ namespace AbsurdMoneySimulations
 			short previous = 0;
 			string history = "";
 			float er = 0;
-			float record = FindErrorRateSquared();
+			float record = FindErrorRateSquared(testerE);
 			Log("Received current er_fb: " + record);
 
 			for (int Generation = 0; ; Generation++)
@@ -183,7 +194,7 @@ namespace AbsurdMoneySimulations
 				SelectLayerForMutation();
 				Mutate();
 
-				er = RefindErrorRate();
+				er = RefindErrorRateSquared(testerE);
 
 				if (er < record)
 				{
@@ -199,7 +210,7 @@ namespace AbsurdMoneySimulations
 				{
 					Log($" ▽ Bad mutation. Go back. ({mutagen})");
 					Demutate();
-					er = FindErrorRateSquared();
+					er = FindErrorRateSquared(testerE);
 				}
 
 				history += record + "\r\n";
@@ -210,17 +221,17 @@ namespace AbsurdMoneySimulations
 					Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 					history = "";
 
-					Log("(!) er_nfb: " + er.ToString());
-					er = FindErrorRateSquared();
-					Log("(!) er_fb: " + er.ToString());
+					Log("(!) er_nfb: " + er);
+					er = FindErrorRateSquared(testerE);
+					Log("(!) er_fb: " + er);
 
-					Log("Evolution dataset:\n" + NNStatManager.CalculateStatistics());
-					Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Evolution"), true);
+					string validation = NNS.CalculateStatistics(testerV);
+					Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Validation") + "\n", true);
+					string evolition = NNS.CalculateStatistics(testerE);
+					Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Evolution"), true);
 
-					NNTester.InitForTesting();
-					Log("Testing dataset:\n" + NNStatManager.CalculateStatistics());
-					Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Testing") + "\n", true);
-					NNTester.InitForEvolution();
+					Log("Evolution dataset:\n" + evolition);
+					Log("Validation dataset:\n" + validation);
 				}
 			}
 		}
@@ -233,14 +244,12 @@ namespace AbsurdMoneySimulations
 			void SoThread()
 			{
 				string history = "";
+				float v = 0;
 				float old_v = 0;
-				bool grow = true;
-
-				NNTester.InitForTesting();
-				NNStatManager.CalculateStatistics();
-				float ert = NNStatManager.er;
-				NNTester.InitForEvolution();
-				float er = FindErrorRateSquared();
+				float a = 0;
+				
+				float er = FindErrorRateSquared(testerE);
+				float ert = FindErrorRateSquared(testerV);
 				float old_er = er;
 
 				Log("Current er_fb: " + er);
@@ -251,71 +260,56 @@ namespace AbsurdMoneySimulations
 
 					vanishedGradients = 0;
 					cuttedGradients = 0;
-					for (int b = 0; b < NNTester.batchesCount; b++)
+					for (int b = 0; b < testerE.batchesCount; b++)
 					{
-						NNTester.FillBatch();
-						FindBPGradients();
-						CorrectWeightsByBP();
+						testerE.FillBatch();
+						FindBPGradients(testerE);
+						CorrectWeightsByBP(testerE);
 					}
 
+					ert = FindErrorRateSquared(testerV);
+					Log("ert: " + ert);
 					old_er = er;
-					er = FindErrorRateSquared();
+					er = FindErrorRateSquared(testerE);
 
-					float v = er - old_er;
-					float a = v - old_v;
 					old_v = v;
+					v = er - old_er;
+					a = v - old_v;					
 
 					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", LYAMBDA)})");
 					Log($"vanished {vanishedGradients} cutted {cuttedGradients}");
 					history += er + ", " + ert + "\r\n";
 
-/*					if ((v > 0 || float.IsNaN(v)) && LYAMBDA > 0.000001f)
-					{
-						Load();
-						Init();
-						old_er = er;
-						er = FindErrorRateSquared();
-						LYAMBDA *= 0.5f;
-						continue;
-					}
-
-					if (v <= 0 && LYAMBDA < 0.9f)
-						LYAMBDA *= 1.03f;	*/				
-
 					Save();
 
-					if (Generation % 100 == 99)
+					if (Generation % 20 == 19)
 					{
 						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 						history = "";
 
-						Log("Evolution dataset:\n" + NNStatManager.CalculateStatistics());
-						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Evolution"), true);
+						string validation = NNS.CalculateStatistics(testerV);
+						Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Validation") + "\n", true);
+						string evolition = NNS.CalculateStatistics(testerE);
+						Disk.WriteToProgramFiles("Stat", "csv", NNS.StatToCsv("Evolution"), true);
 
-						NNTester.InitForTesting();
-						Log("Testing dataset:\n" + NNStatManager.CalculateStatistics());
-						ert = NNStatManager.er;
-						Disk.WriteToProgramFiles("Stat", "csv", NNStatManager.StatToCsv("Testing") + "\n", true);
-						NNTester.InitForEvolution();
-						FindErrorRateSquared();
+						Log("Evolution dataset:\n" + evolition);
+						Log("Validation dataset:\n" + validation);
 					}
 				}
 			}
 		}
 
-		private static void FindBPGradients()
+		private static void FindBPGradients(NNT tester)
 		{
-			for (int test = 0; test < NNTester.tests.Length; test++)
-			{
-				if (NNTester.batch[test] == 1)
+			for (int test = 0; test < tester.tests.Length; test++)
+				if (tester.batch[test] == 1)
 				{
-					layers[layers.Count - 1].FindBPGradient(test, NNTester.answers[test]);
+					layers[layers.Count - 1].FindBPGradient(test, tester.answers[test]);
 					for (int layer = layers.Count - 2; layer >= 0; layer--)
 						layers[layer].FindBPGradient(test, layers[layer + 1].AllBPGradients(test), layers[layer + 1].AllWeights);
 				}
-			}
 
-			SaveLastLayerWeights();
+			SaveLastLayerWeights(); //
 			Log("Gradients are found!");
 
 			void SaveLastLayerWeights()
@@ -329,14 +323,14 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		private static void CorrectWeightsByBP()
+		private static void CorrectWeightsByBP(NNT tester)
 		{
-			for (int test = 0; test < NNTester.testsCount; test++)
+			for (int test = 0; test < tester.testsCount; test++)
 			{
-				if (NNTester.batch[test] == 1)
+				if (tester.batch[test] == 1)
 				{
 					float[][] array = new float[1][];
-					array[0] = NNTester.tests[test];
+					array[0] = tester.tests[test];
 
 					layers[0].CorrectWeightsByBP(test, array);
 
@@ -347,11 +341,11 @@ namespace AbsurdMoneySimulations
 			Log("Weights are corrected!");
 		}
 
-		public static float FindErrorRateSquared()
+		public static float FindErrorRateLinear(NNT tester)
 		{
 			restart:
 
-			int testsPerCoreCount = NNTester.testsCount / coresCount;
+			int testsPerCoreCount = tester.testsCount / coresCount;
 
 			float er = 0;
 			float[] suber = new float[coresCount];
@@ -373,127 +367,9 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Calculate(test, NNTester.tests[test]);
+					float prediction = Calculate(test, tester, tester.tests[test]);
 
-					float reality = NNTester.answers[test];
-
-					suber[core] += MathF.Pow(prediction - reality, 2);
-				}
-				
-				alive--;
-			}
-
-			long ms = DateTime.Now.Ticks; 
-			while (alive > 0)
-			{
-				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
-				{
-					Log("THE THREAD IS STACKED");
-					for (int core = 0; core < coresCount; core++)
-						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
-					Log("AGAIN");
-
-					goto restart;
-				}
-			}
-
-
-			for (int core = 0; core < coresCount; core++)
-				er += suber[core];
-
-			er /= NNTester.testsCount;
-
-			return er;
-		}
-
-		public static float RefindErrorRate()
-		{
-			restart:
-
-			int testsPerCoreCount = NNTester.testsCount / coresCount;
-
-			float er = 0;
-			float[] suber = new float[coresCount];
-
-			int alive = coresCount;
-
-			Thread[] subThreads = new Thread[coresCount];
-
-			for (int core = 0; core < coresCount; core++)
-			{
-				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
-				subThreads[core].Priority = ThreadPriority.Highest;
-				subThreads[core].Start(core);
-			}
-
-			void SubThread(object obj)
-			{
-				int core = (int)obj;
-
-				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
-				{
-					float prediction = Recalculate(test);
-
-					float reality = NNTester.answers[test];
-
-					suber[core] += MathF.Pow(prediction - reality, 2);
-				}
-
-				alive--;
-				//Log($"core{core}:" + suber[core]);
-			}
-
-			long ms = DateTime.Now.Ticks;
-			while (alive > 0)
-			{
-				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
-				{
-					Log("THE THREAD IS STACKED");
-					for (int core = 0; core < coresCount; core++)
-						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
-					Log("AGAIN");
-
-					goto restart;
-				}
-			}
-
-			for (int core = 0; core < coresCount; core++)
-				er += suber[core];
-
-			er /= NNTester.testsCount;
-
-			return er;
-		}
-
-		public static float FindErrorRateLinear()
-		{
-			restart:
-
-			int testsPerCoreCount = NNTester.testsCount / coresCount;
-
-			float er = 0;
-			float[] suber = new float[coresCount];
-
-			int alive = coresCount;
-
-			Thread[] subThreads = new Thread[coresCount];
-
-			for (int core = 0; core < coresCount; core++)
-			{
-				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
-				subThreads[core].Priority = ThreadPriority.Highest;
-				subThreads[core].Start(core);
-			}
-
-			void SubThread(object obj)
-			{
-				int core = (int)obj;
-
-				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
-				{
-					float prediction = Calculate(test, NNTester.tests[test]);
-
-					float reality = NNTester.answers[test];
+					float reality = tester.answers[test];
 
 					suber[core] += MathF.Abs(prediction - reality);
 				}
@@ -519,7 +395,124 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < coresCount; core++)
 				er += suber[core];
 
-			er /= NNTester.testsCount;
+			er /= tester.testsCount;
+
+			return er;
+		}
+
+		public static float FindErrorRateSquared(NNT tester)
+		{
+			restart:
+
+			int testsPerCoreCount = tester.testsCount / coresCount;
+
+			float er = 0;
+			float[] suber = new float[coresCount];
+
+			int alive = coresCount;
+
+			Thread[] subThreads = new Thread[coresCount];
+
+			for (int core = 0; core < coresCount; core++)
+			{
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core);
+			}
+
+			void SubThread(object obj)
+			{
+				int core = (int)obj;
+
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
+				{
+					float prediction = Calculate(test, tester, tester.tests[test]);
+
+					float reality = tester.answers[test];
+
+					suber[core] += MathF.Pow(prediction - reality, 2);
+				}
+				
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks; 
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THE THREAD IS STACKED");
+					for (int core = 0; core < coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
+			}
+
+
+			for (int core = 0; core < coresCount; core++)
+				er += suber[core];
+
+			er /= tester.testsCount;
+
+			return er;
+		}
+
+		public static float RefindErrorRateSquared(NNT tester)
+		{
+			restart:
+
+			int testsPerCoreCount = tester.testsCount / coresCount;
+
+			float er = 0;
+			float[] suber = new float[coresCount];
+
+			int alive = coresCount;
+
+			Thread[] subThreads = new Thread[coresCount];
+
+			for (int core = 0; core < coresCount; core++)
+			{
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core);
+			}
+
+			void SubThread(object obj)
+			{
+				int core = (int)obj;
+
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
+				{
+					float prediction = Recalculate(test, tester);
+
+					float reality = tester.answers[test];
+
+					suber[core] += MathF.Pow(prediction - reality, 2);
+				}
+
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks;
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THE THREAD IS STACKED");
+					for (int core = 0; core < coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
+			}
+
+			for (int core = 0; core < coresCount; core++)
+				er += suber[core];
+
+			er /= tester.testsCount;
 
 			return er;
 		}
@@ -540,9 +533,8 @@ namespace AbsurdMoneySimulations
 			void SoThread()
 			{
 				Init();
-				NNTester.InitForEvolution();
 
-				float record = FindErrorRateSquared();
+				float record = FindErrorRateSquared(testerE);
 				Log($"record {record}");
 				var files = Directory.GetFiles(Disk.programFiles + "NN");
 
@@ -551,7 +543,7 @@ namespace AbsurdMoneySimulations
 					Create();
 					Init();
 
-					float er = FindErrorRateSquared();
+					float er = FindErrorRateSquared(testerE);
 					Log($"er {er}");
 
 					if (er < record)
@@ -561,9 +553,7 @@ namespace AbsurdMoneySimulations
 						Save();						
 					}
 					else
-					{
 						Log("Эта не лучше!");
-					}
 				}
 			}
 		}

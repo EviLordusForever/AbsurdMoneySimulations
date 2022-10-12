@@ -18,7 +18,6 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore]
 		public float[] summ;
 
-		[JsonIgnore]
 		public float[] BPgradient;
 
 		public int lastMutatedWeight;
@@ -93,23 +92,23 @@ namespace AbsurdMoneySimulations
 				weights[w] -= NN.LYAMBDA * BPgradient[test] * input[start + w];
 		}
 
-		public Node(int weightsCount)
+		public Node(int testsCount, int weightsCount)
 		{
 			weights = new float[weightsCount];
 
-			InitValues();
+			InitValues(testsCount);
 		}
 
-		public void InitValues()
+		public void InitValues(int testsCount)
 		{
-			summ = new float[NNTester.testsCount];
+			summ = new float[testsCount];
 
-			subvalues = new float[NNTester.testsCount][];
+			subvalues = new float[testsCount][];
 
-			for (int test = 0; test < NNTester.testsCount; test++)
+			for (int test = 0; test < testsCount; test++)
 				subvalues[test] = new float[weights.Count()];
 
-			BPgradient = new float[NNTester.testsCount];
+			BPgradient = new float[testsCount];
 		}
 	}
 }

@@ -8,7 +8,7 @@ using static AbsurdMoneySimulations.Storage;
 
 namespace AbsurdMoneySimulations
 {
-	public static class NNStatManager
+	public static class NNS
 	{
 		public static float er;
 		public static List<float[]> sections;
@@ -20,7 +20,7 @@ namespace AbsurdMoneySimulations
 
 		public static float[] scores;
 
-		static NNStatManager()
+		static NNS()
 		{
 			Init();
 		}
@@ -61,13 +61,13 @@ namespace AbsurdMoneySimulations
 			scores = new float[sections.Count];
 		}
 
-		public static string CalculateStatistics()
+		public static string CalculateStatistics(NNT tester)
 		{
 			restart:
 
 			ClearStat();
 
-			int testsPerCoreCount = NNTester.testsCount / coresCount;
+			int testsPerCoreCount = tester.testsCount / coresCount;
 
 			float[] suber = new float[coresCount];
 
@@ -88,9 +88,9 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = NN.Calculate(test, NNTester.tests[test]);
+					float prediction = NN.Calculate(test, tester, tester.tests[test]);
 
-					float reality = NNTester.answers[test];
+					float reality = tester.answers[test];
 
 					suber[core] += MathF.Pow(prediction - reality, 2);
 
@@ -120,7 +120,7 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < coresCount; core++)
 				er += suber[core];
 
-			er /= NNTester.testsCount;
+			er /= tester.testsCount;
 
 			CalculateScores();
 
