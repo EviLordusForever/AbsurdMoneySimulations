@@ -40,6 +40,8 @@ namespace AbsurdMoneySimulations
 		public static NNT testerV;
 		public static NNT testerE;
 
+		public static string name;
+
 		public static float[] randomMutates;
 		public static float mutagen;
 		public static int mutationSeed;
@@ -96,12 +98,13 @@ namespace AbsurdMoneySimulations
 		public static void Load()
 		{
 			var files = Directory.GetFiles(Disk.programFiles + "\\NN");
-			string toLoad = File.ReadAllText(files[0]);
-
+			name = TextMethods.StringInsideLast(files[0], "\\", ".json");
+			string json = File.ReadAllText(files[0]);
+			
 			var jss = new JsonSerializerSettings();
 			jss.Converters.Add(new LayerAbstractConverter());
 
-			layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(toLoad, jss);
+			layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(json, jss);
 
 			Log("Neural Network loaded from disk!");
 		}
@@ -247,12 +250,14 @@ namespace AbsurdMoneySimulations
 				float v = 0;
 				float old_v = 0;
 				float a = 0;
-				
-				float er = FindErrorRateSquared(testerE);
-				float ert = FindErrorRateSquared(testerV);
-				float old_er = er;
 
-				Log("Current er_fb: " + er);
+				float ert = FindErrorRateSquared(testerV);
+				Log("Current ert: " + ert);
+				float er = FindErrorRateSquared(testerE);
+				Log("Current er: " + er);
+				float old_er = er;
+				float old_ert = ert;
+				float ert_record = ert;
 
 				for (int Generation = 0; ; Generation++)
 				{
@@ -267,8 +272,9 @@ namespace AbsurdMoneySimulations
 						CorrectWeightsByBP(testerE);
 					}
 
+					old_ert = ert;
 					ert = FindErrorRateSquared(testerV);
-					Log("ert: " + ert);
+					Log($"ert: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
 					old_er = er;
 					er = FindErrorRateSquared(testerE);
 
@@ -281,6 +287,7 @@ namespace AbsurdMoneySimulations
 					history += er + ", " + ert + "\r\n";
 
 					Save();
+					EarlyStopping();
 
 					if (Generation % 20 == 19)
 					{
@@ -294,6 +301,15 @@ namespace AbsurdMoneySimulations
 
 						Log("Evolution dataset:\n" + evolition);
 						Log("Validation dataset:\n" + validation);
+					}
+				}
+
+				void EarlyStopping()
+				{
+					if (ert <= ert_record)
+					{
+						File.Copy($"{Disk.programFiles}\\NN\\{name}.json", $"{Disk.programFiles}\\NN\\EarlyStopping\\{name}.json");
+						Log("NN copied for early stopping.");
 					}
 				}
 			}
