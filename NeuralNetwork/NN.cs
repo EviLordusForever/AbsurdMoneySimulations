@@ -28,7 +28,7 @@ namespace AbsurdMoneySimulations
 		public static float randomMutatesScaleV2 = 10;
 		public static float randomMutatesSmoothing = 0.03f;
 
-		public static float LYAMBDA = 0.007f; //0.05f
+		public static float LYAMBDA = 0.02f; //0.05f
 		public static float INERTION = 0.9f; //0.8f
 
 		public static int vanishedGradients = 0;
@@ -246,7 +246,6 @@ namespace AbsurdMoneySimulations
 
 			void SoThread()
 			{
-				string history = "";
 				float v = 0;
 				float old_v = 0;
 				float a = 0;
@@ -284,16 +283,13 @@ namespace AbsurdMoneySimulations
 
 					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", LYAMBDA)})");
 					Log($"vanished {vanishedGradients} cutted {cuttedGradients}");
-					history += er + ", " + ert + "\r\n";
+					Disk.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
 
 					Save();
 					EarlyStopping();
 
 					if (Generation % 20 == 19)
 					{
-						Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
-						history = "";
-
 						string validation = Stat.CalculateStatistics(testerV);
 						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
 						string evolition = Stat.CalculateStatistics(testerE);
@@ -310,7 +306,7 @@ namespace AbsurdMoneySimulations
 					{
 						ert_record = ert;
 						Disk.ClearDirectory($"{Disk.programFiles}\\NN\\EarlyStopping");
-						File.Copy($"{Disk.programFiles}\\NN\\{name}.json", $"{Disk.programFiles}\\NN\\EarlyStopping\\{name} ({ert}.json");
+						File.Copy($"{Disk.programFiles}\\NN\\{name}.json", $"{Disk.programFiles}\\NN\\EarlyStopping\\{name} ({ert}).json");
 						Log("NN copied for early stopping.");
 					}
 				}

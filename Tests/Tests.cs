@@ -15,7 +15,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestRefs);
+			Thread myThread = new Thread(TestMegatronLayers);
 			myThread.Start();			
 		}
 
@@ -243,6 +243,8 @@ namespace AbsurdMoneySimulations
 
 		public static void TestMegatronLayers()
 		{
+			Load();
+			Init();
 			testerE.InitFromNormalizedDerivativeGrafic("Grafic\\ForEvolution", "EVOLTION");
 
 			int test = Storage.rnd.Next(testerE.testsCount);
@@ -260,12 +262,17 @@ namespace AbsurdMoneySimulations
 			Init();
 			Calculate(test, testerE, testerE.tests[test]);
 
-			for (int sub = 0; sub < 15; sub++)
+			int subsCount = 6;
+			float inputSize = 300;
+			int head = 30;
+			float subSize = 136;
+
+			for (int sub = 0; sub < subsCount; sub++)
 			{
-				for (int i = 0 + 16; i < testerE.tests[test].Length - 16; i++)
+				for (int v = 0 + head; v < testerE.tests[test].Length - head; v++)
 				{
-					int j = (int)Math.Round(((i - 16) / (300.0 - 30.0)) * 55.0);
-					strings[i] += "," + NN.layers[0].values[test][sub][j];
+					int j = (int)(((v - subsCount) / (inputSize - head)) * subSize);
+					strings[v] += "," + NN.layers[0].values[test][sub][j];
 				}
 			}
 

@@ -155,6 +155,7 @@ namespace AbsurdMoneySimulations
 
 				for (int i = 0; i < tests[test].Length; i++)
 					tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
+					//tests[test][i] = (tests[test][i] - min) / scale;
 			}
 		}
 

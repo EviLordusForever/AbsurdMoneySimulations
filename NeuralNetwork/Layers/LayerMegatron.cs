@@ -88,18 +88,19 @@ namespace AbsurdMoneySimulations
 		public override void FindBPGradient(int test, float desiredValue)
 		{
 			throw new NotImplementedException();
-
 		}
 
 		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
 		{
 			subs[sub].BPgradient[test] = NN.INERTION * subs[sub].BPgradient[test];
-
+			float buffer = 0;
 			for (int n = 0; n < valuesPerSubCount; n++)
 			{
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
-				subs[sub].BPgradient[test] += gwsumm * af.df(unnormalizedValues[test][sub][n]);
+				buffer += gwsumm * af.df(unnormalizedValues[test][sub][n]);
 			}
+			buffer /= valuesPerSubCount; //!!!!!!
+			subs[sub].BPgradient[test] += buffer;
 			subs[sub].BPgradient[test] = NN.CutGradient(subs[sub].BPgradient[test]);
 		}
 

@@ -18,6 +18,7 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore]
 		public float[] summ;
 
+		[JsonIgnore]
 		public float[] BPgradient;
 
 		public int lastMutatedWeight;
