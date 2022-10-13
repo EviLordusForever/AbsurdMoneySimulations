@@ -20,9 +20,11 @@ namespace AbsurdMoneySimulations
 
 		public override void Calculate(int test, float[][] input)
 		{
+			int a = perceptrons.Length;
 			for (int sub = 0; sub < perceptrons.Length; sub++)
 				perceptrons[sub].Calculate(test, input[sub]);
 			//Test me
+			//Logger.Log(a);
 		}
 
 		public override void Calculate(int test, float[] input)
@@ -90,10 +92,12 @@ namespace AbsurdMoneySimulations
 			int node1 = 0;
 			for (int perceptron = 0; perceptron < perceptrons.Count(); perceptron++)
 			{
-				for (int node2 = 0; node2 < perceptrons[perceptron].nodes.Length; node2++)
+				for (int node2 = 0; node2 < perceptrons[perceptron].nodes.Length; )
+				{
 					values[test][0][node1] = perceptrons[perceptron].values[test][0][node2];
-				
-				node1++;
+					node1++;
+					node2++;
+				}			
 			}
 
 			return values[test];
