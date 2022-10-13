@@ -16,7 +16,8 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public const float randomPower = 1.6f;
+		public const float weightsInitMin = -0.4f;
+		public const float weightsInitScale = 0.4f;
 		public const int jumpLimit = 9000;
 
 		private const int testsCount = 2000;
@@ -28,12 +29,14 @@ namespace AbsurdMoneySimulations
 		public static float randomMutatesScaleV2 = 10;
 		public static float randomMutatesSmoothing = 0.03f;
 
-		public static float LYAMBDA = 0.02f; //0.05f
+		public static float LYAMBDA = 0.2f; //0.05f
 		public static float INERTION = 0.9f; //0.8f
 
 		public static int vanishedGradients = 0;
 		public static int cuttedGradients = 0;
-		public const float cutter = 0.3f;
+		public const float cutter = 100f;
+
+		public static ActivationFunction AnswersAF = new TanH();
 
 		public static List<LayerAbstract> layers;
 
@@ -81,6 +84,8 @@ namespace AbsurdMoneySimulations
 						layers.Add(new LayerPerceptron(1, 3)); //15 x 1 = 15
 						layers[0].FillWeightsRandomly();*/
 
+			Disk.DeleteFileFromProgramFiles("EvolveHistory.csv");
+			Disk.DeleteFileFromProgramFiles("weights.csv");
 			Log("Neural Network created!");
 		}
 
@@ -160,8 +165,8 @@ namespace AbsurdMoneySimulations
 		public static void InitActivationFunctions()
 		{
 			for (int l = 0; l < layers.Count - 1; l++)
-				layers[l].af = new ClassicAF();
-			layers[layers.Count - 1].af = new ClassicAF();
+				layers[l].af = new TanH();
+			layers[layers.Count - 1].af = new TanH();
 		}
 
 		public static void InitValues()

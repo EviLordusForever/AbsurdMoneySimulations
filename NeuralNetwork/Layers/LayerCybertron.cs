@@ -25,6 +25,11 @@ namespace AbsurdMoneySimulations
 			//Test me
 		}
 
+		public override void Calculate(int test, float[] input)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
@@ -152,7 +157,7 @@ namespace AbsurdMoneySimulations
 			for (int p = 0; p < perceptrons.Count(); p++)
 			{
 				perceptrons[p].InitValues(testsCount);
-				perceptrons[p].af = af = new ClassicAF();
+				perceptrons[p].af = af = new TanH();
 			}
 		}
 	}

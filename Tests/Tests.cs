@@ -15,7 +15,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestRecursy);
+			Thread myThread = new Thread(TestMegatronLayers);
 			myThread.Start();			
 		}
 
@@ -339,10 +339,13 @@ namespace AbsurdMoneySimulations
 			layers = new List<LayerAbstract>();
 			layers.Add(new LayerPerceptron(testerE.testsCount, 5, 5));
 			Init();
-			testerE.tests = new float[1][];
-			testerE.tests[0] = new float[] { 1, 1, 1, 1, 1 };
-			layers[0].Calculate(0, testerE.tests);
+			layers[0].FillWeightsRandomly();
+
+			float[] ar = new float[] { 1, 1, 1, 1, 1 };
+
+			layers[0].Calculate(0, ar);
 			Log(layers[0].GetAnswer(0));
+
 			for (int i = 0; i < 20; i++)
 			{
 				layers[0].Calculate(0, layers[0].GetValues(0));

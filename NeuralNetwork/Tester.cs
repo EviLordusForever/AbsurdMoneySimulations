@@ -83,7 +83,7 @@ namespace AbsurdMoneySimulations
 		private void NormalizeDerivativeOfGrafic()
 		{
 			normalizedDerivativeOfGrafic = new float[originalGrafic.Length];
-			ActivationFunction af = new ClassicAF();
+			ActivationFunction af = new TanH();
 			for (int i = 1; i < derivativeOfGrafic.Length; i++)
 				normalizedDerivativeOfGrafic[i] = af.f(derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
@@ -91,7 +91,7 @@ namespace AbsurdMoneySimulations
 
 		private void FillTestsFromNormilizedDerivativeGrafic()
 		{
-			ActivationFunction af = new ClassicAF();
+			ActivationFunction af = new TanH();
 
 			int maximalDelta = availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / testsCount;
@@ -120,7 +120,7 @@ namespace AbsurdMoneySimulations
 
 		private void FillTestsFromOriginalGrafic()
 		{
-			ActivationFunction af = new ClassicAF();
+			ActivationFunction af = NN.AnswersAF;
 
 			int maximalDelta = availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / testsCount;
@@ -154,8 +154,8 @@ namespace AbsurdMoneySimulations
 				float scale = max - min;
 
 				for (int i = 0; i < tests[test].Length; i++)
-					tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
-					//tests[test][i] = (tests[test][i] - min) / scale;
+					//tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
+					tests[test][i] = (tests[test][i] - min) / scale;
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace AbsurdMoneySimulations
 			this.batchesCount = batchesCount;
 			batchSize = testsCount / batchesCount;
 
-			InitFromNormalizedOriginalGrafic(graficPath, reason);
+			InitFromNormalizedDerivativeGrafic(graficPath, reason);
 			if (batchesCount == 1)
 				DoNotUseBatch();
 		}

@@ -19,8 +19,9 @@ namespace AbsurdMoneySimulations
 
 		public override void FillWeightsRandomly()
 		{
-			FillByLogic();
-			return;
+			//FillByLogic();
+			//return;
+
 			//////////////////////////////
 			//or
 			for (int sub = 0; sub < subs.Count(); sub++)
@@ -60,6 +61,11 @@ namespace AbsurdMoneySimulations
 		{
 			for (int sub = 0; sub < subs.Length; sub++)
 				CalculateOneSub(test, input, sub);
+		}
+
+		public override void Calculate(int test, float[] input)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)

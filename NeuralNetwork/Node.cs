@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using static AbsurdMoneySimulations.ClassicAF;
+using static AbsurdMoneySimulations.TanH;
 
 namespace AbsurdMoneySimulations
 {
@@ -26,7 +26,7 @@ namespace AbsurdMoneySimulations
 		public void FillRandomly()
 		{
 			for (int i = 0; i < weights.Count(); i++)
-				weights[i] = (Storage.rnd.NextSingle() * 2 - 1) * NN.randomPower; /////////////////
+				weights[i] = (Storage.rnd.NextSingle() - NN.weightsInitMin) * NN.weightsInitScale; /////////////////
 		}
 
 		public float Calculate(int test, float[] input, int start)
