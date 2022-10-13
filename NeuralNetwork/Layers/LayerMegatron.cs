@@ -56,13 +56,13 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override void Calculate(int test, Tester tester, float[][] input)
+		public override void Calculate(int test, float[][] input)
 		{
 			for (int sub = 0; sub < subs.Length; sub++)
 				CalculateOneSub(test, input, sub);
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, Tester tester, float[][] input, LayerRecalculateStatus lrs)
+		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
@@ -73,7 +73,7 @@ namespace AbsurdMoneySimulations
 			}
 			else
 			{
-				Calculate(test, tester, input);
+				Calculate(test, input);
 				return LayerRecalculateStatus.Full;
 			}
 		}

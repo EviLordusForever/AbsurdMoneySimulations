@@ -18,30 +18,30 @@ namespace AbsurdMoneySimulations
 				perceptrons[i].FillWeightsRandomly();
 		}
 
-		public override void Calculate(int test, Tester tester, float[][] input)
+		public override void Calculate(int test, float[][] input)
 		{
 			for (int sub = 0; sub < perceptrons.Length; sub++)
-				perceptrons[sub].Calculate(test, tester, input[sub]);
+				perceptrons[sub].Calculate(test, input[sub]);
 			//Test me
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, Tester tester, float[][] input, LayerRecalculateStatus lrs)
+		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
 		{
 			if (lrs == LayerRecalculateStatus.First)
 			{
-				perceptrons[lastMutatedSub].Recalculate(test, tester, input[lastMutatedSub], LayerRecalculateStatus.First);
+				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.First);
 				lrs.lastMutatedSub = lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else if (lrs == LayerRecalculateStatus.OneSubChanged)
 			{
-				perceptrons[lastMutatedSub].Recalculate(test, tester, input[lastMutatedSub], LayerRecalculateStatus.Full);
+				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.Full);
 				lrs.lastMutatedSub = lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else
 			{
-				Calculate(test, tester, input);
+				Calculate(test, input);
 				return LayerRecalculateStatus.Full;
 			}
 		}

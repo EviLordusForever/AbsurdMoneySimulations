@@ -114,10 +114,10 @@ namespace AbsurdMoneySimulations
 			float[][] array = new float[1][];
 			array[0] = input;
 
-			layers[0].Calculate(test, tester, array);
+			layers[0].Calculate(test,  array);
 
 			for (int l = 1; l < layers.Count; l++)
-				layers[l].Calculate(test, tester, layers[l - 1].GetValues(test));
+				layers[l].Calculate(test, layers[l - 1].GetValues(test));
 
 			return layers[layers.Count - 1].GetAnswer(test);
 		}
@@ -128,16 +128,16 @@ namespace AbsurdMoneySimulations
 
 			if (lastMutatedLayer > 0)
 				for (int layer = lastMutatedLayer; layer < layers.Count; layer++)
-					lrs = layers[layer].Recalculate(test, tester, layers[layer - 1].GetValues(test), lrs);
+					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
 			else
 			{
 				float[][] array = new float[1][];
 				array[0] = tester.tests[test];
 
-				layers[0].Calculate(test, tester, array);
+				layers[0].Calculate(test, array);
 
 				for (int layer = 1; layer < layers.Count; layer++)
-					lrs = layers[layer].Recalculate(test, tester, layers[layer - 1].GetValues(test), lrs);
+					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
 			}
 
 			return layers[layers.Count - 1].GetAnswer(test);
