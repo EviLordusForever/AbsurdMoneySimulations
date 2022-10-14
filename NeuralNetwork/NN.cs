@@ -16,8 +16,8 @@ namespace AbsurdMoneySimulations
 	{
 		public const int horizon = 29;
 		public const int inputWindow = 300;
-		public const float weightsInitMin = -0.4f;
-		public const float weightsInitScale = 0.4f;
+		public const float weightsInitMin = -0.3f;
+		public const float weightsInitScale = 0.6f;
 		public const int jumpLimit = 9000;
 
 		private const int testsCount = 2000;
@@ -29,7 +29,7 @@ namespace AbsurdMoneySimulations
 		public static float randomMutatesScaleV2 = 10;
 		public static float randomMutatesSmoothing = 0.03f;
 
-		public static float LYAMBDA = 0.2f; //0.05f
+		public static float LYAMBDA = 0.01f; //0.05f
 		public static float INERTION = 0.9f; //0.8f
 
 		public static int vanishedGradients = 0;
@@ -54,29 +54,29 @@ namespace AbsurdMoneySimulations
 		{
 			layers = new List<LayerAbstract>();
 
-			/*			layers.Add(new LayerMegatron(15, 55, 30, 5));   //55 x 30 x 15 = 24750
-						layers[0].FillWeightsRandomly();
-
-						layers.Add(new LayerCybertron(15, 55, 10, 150)); //15 x 55 x 10 = 8250
-						layers[1].FillWeightsRandomly();
-
-						layers.Add(new LayerPerceptron(40, 150)); //150 x 40 = 6000
-						layers[2].FillWeightsRandomly();
-
-						layers.Add(new LayerPerceptron(15, 40)); //40 x 15 = 600
-						layers[3].FillWeightsRandomly();
-
-						layers.Add(new LayerPerceptron(1, 15)); //15 x 1 = 15
-						layers[4].FillWeightsRandomly();*/
-
-			layers.Add(new LayerMegatron(testerE.testsCount, 6, 136, 30, 2));   //136 x 30 x 6 = 
+			layers.Add(new LayerMegatron(testerE.testsCount, 10, 136, 30, 2));   //55 x 30 x 10 = 
 			layers[0].FillWeightsRandomly();
 
-			layers.Add(new LayerCybertron(testerE.testsCount, 6, 136, 6, 36)); //6 x 136 x 6 =
+			layers.Add(new LayerCybertron(testerE.testsCount, 10, 136, 10, 100)); //10 x 55 x 10 = 
 			layers[1].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 36)); //36 x 1 = 36
+			layers.Add(new LayerPerceptron(testerE.testsCount, 30, 100)); //100 x 30 = 3000
 			layers[2].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(testerE.testsCount, 10, 30)); //30 x 15 =  450
+			layers[3].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
+			layers[4].FillWeightsRandomly();
+
+			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
+			layers[0].FillWeightsRandomly();
+
+			layers.Add(new LayerCybertron(testerE.testsCount, 2, 271, 5, 10)); //2 x 271 x 5 =
+			layers[1].FillWeightsRandomly();
+
+			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
+			layers[2].FillWeightsRandomly();*/
 
 			/*			layers.Add(new LayerPerceptron(3, 300)); //40 x 15 = 600
 						layers[0].FillWeightsRandomly();

@@ -262,10 +262,11 @@ namespace AbsurdMoneySimulations
 			Init();
 			Calculate(test, testerE, testerE.tests[test]);
 
-			int subsCount = 6;
+			int subsCount = NN.layers[0].values[test].Count();
 			float inputSize = 300;
 			int head = 30;
-			float subSize = 136;
+			int d = 1;
+			float subSize = (inputSize - head) / d + 1;
 
 			for (int sub = 0; sub < subsCount; sub++)
 			{

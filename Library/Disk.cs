@@ -34,14 +34,13 @@ namespace AbsurdMoneySimulations
 			Directory.CreateDirectory(path);
 		}
 
-		public static async void WriteToProgramFiles(string path, string extension, string text, bool savebefore) //Имя файла без пути или относительный путь, и без .txt
+		public static async void WriteToProgramFiles(string path, string extension, string text, bool savebefore)
 		{
 			path = $"{programFiles}\\{path}.{extension}";
 
 			Thread writerThread = new Thread(WriterThread);
 			writerThread.Start();
 
-			bool itEnds = false;
 			while (writerThread.IsAlive) { }; //
 
 			void WriterThread()
@@ -51,8 +50,6 @@ namespace AbsurdMoneySimulations
 				{
 					using (StreamWriter STR = new StreamWriter(path, savebefore, Encoding.UTF8))
 						STR.Write(text);
-
-					itEnds = true;
 				}
 				catch (IOException ex)
 				{
@@ -70,8 +67,8 @@ namespace AbsurdMoneySimulations
 		public static string ReadFromProgramFiles(string path)
 		{
 			string fileName = path;
-			path = currentDirectory;
-			path += "\\ProgramFiles\\" + fileName + ".txt";
+			path = programFiles;
+			path += fileName + ".txt";
 			return File.ReadAllText(path, Encoding.UTF8);
 		}
 
@@ -110,18 +107,9 @@ namespace AbsurdMoneySimulations
 
 		public static void ClearDirectory(string path)
 		{
-
 			string[] files = Directory.GetFiles(path);
 			foreach (string file in files)
-			{
-				try
-				{
-					File.Delete(file);
-				}
-				catch (Exception e)
-				{
-				}
-			}
+				File.Delete(file);
 
 			string[] directories = Directory.GetDirectories(path);
 			foreach (string directory in directories)
@@ -151,8 +139,7 @@ namespace AbsurdMoneySimulations
 
 		public static void DeleteFileFromProgramFiles(string path)
 		{
-			path = $"{currentDirectory}\\ProgramFiles\\{path}";
-			File.Delete(path);
+			File.Delete($"{programFiles}\\{path}");
 		}
 	}
 }

@@ -47,6 +47,19 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public static void StartNeuralBattle()
+		{
+			Thread myThread = new Thread(NeuralBattleThread);
+			myThread.Name = "Neural Battle Thread";
+			myThread.Start();
+
+			void NeuralBattleThread()
+			{
+				if (UserAsker.Ask("Are you shure?"))
+					NN.NeuralBattle();
+			}
+		}
+
 		public static void StartEvolutionByBackPropgation()
 		{
 			Thread myThread = new Thread(StartEvolutionThread);

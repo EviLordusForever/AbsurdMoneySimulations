@@ -48,6 +48,20 @@ namespace AbsurdMoneySimulations
 				double loosedProfit = 0;
 
 				for (int s = 0; s < simulationsCount; s++)
+					SimulateAndDraw();
+
+				DrawHorizontalLines();
+				DrawIndicatorField();
+				DrawAverageAndRisk();
+				Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
+				gr = Graphics.FromImage(Storage.bmp);
+				WriteLoosersPercentage();
+				WriteProfit();
+				VisualiseBitmapToForm();
+				Logger.Log("Bets are successfully simulated.");
+
+
+				void SimulateAndDraw()
 				{
 					money = startMoney;
 					oldmoney = money;
@@ -59,7 +73,6 @@ namespace AbsurdMoneySimulations
 						y0 = (int)(heigh - 300 - money);
 
 						Play();
-
 
 						avarageMoney[b] += money;
 
@@ -76,60 +89,64 @@ namespace AbsurdMoneySimulations
 					}
 				}
 
-				int y1 = (int)(heigh - 300 - startMoney);
-				pen = new Pen(Color.Green, 2);
-				gr.DrawLine(Pens.Black, 0, y1, betsCount, y1);
-				y1 = heigh - 300;
-				gr.DrawLine(Pens.Black, 0, y1, betsCount, y1);
-
-				Brush br = new SolidBrush(Color.FromArgb(50, 0, 255, 0));
-				gr.FillRectangle(br, 0, heigh - 130, betsCount, 100);
-				gr.DrawLine(pen, 0, heigh - 130, betsCount, heigh - 130);
-				gr.DrawLine(pen, 0, heigh - 30, betsCount, heigh - 30);
-				gr.DrawLine(Pens.Green, 0, heigh - 80, betsCount, heigh - 80);
-
-
-				pen = new Pen(Color.Black, 5);
-				for (int i = 1; i < betsCount; i++)
+				void DrawHorizontalLines()
 				{
-					y0 = (int)(heigh - 300 - avarageMoney[i - 1] / simulationsCount);
-					y = (int)(heigh - 300 - avarageMoney[i] / simulationsCount);
-
-					if (y > -1000000 && y0 > -1000000)
-						if (y < 1000000 && y0 < 1000000)
-							gr.DrawLine(pen, i - 1, y0, i, y);
-
-					y0 = (int)(heigh - 80 - 50 * risk[i - 1] / simulationsCount);
-					y = (int)(heigh - 80 - 50 * risk[i] / simulationsCount);
-
-					gr.DrawLine(Pens.Red, i - 1, y0, i, y);
+					int y1 = (int)(heigh - 300 - startMoney);
+					pen = new Pen(Color.Green, 2);
+					gr.DrawLine(Pens.Black, 0, y1, betsCount, y1);
+					y1 = heigh - 300;
+					gr.DrawLine(Pens.Black, 0, y1, betsCount, y1);
 				}
 
-				Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
-				gr = Graphics.FromImage(Storage.bmp);
-				gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
-				gr.DrawString($"So, {Math.Round(100.0 * (risk[betsCount - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
-				gr.FillRectangle(Brushes.Cyan, Storage.bmp.Width - 270, 17, 270, 26);
-				gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17 + 27, 270, 26);
-				double ap = Math.Round(avarageMoney[betsCount - 1] / simulationsCount - startMoney, 2);
-				string apStr = ap.ToString() + "$";
-				if (ap > 10000000)
-					apStr = "fucking ∞";
-				if (ap < -10000000)
-					apStr = "fucking -∞";
-
-				gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 270, 17);
-				gr.DrawString($"After {betsCount} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
-
-				Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
-
-				FormsManager.mainForm.Invoke(new Action(() =>
+				void DrawIndicatorField()
 				{
-					FormsManager.showForm.BackgroundImage = Storage.bmp;
-					FormsManager.betsSimulatorForm.BringToFront();
-				}));
+					Brush br = new SolidBrush(Color.FromArgb(50, 0, 255, 0));
+					gr.FillRectangle(br, 0, heigh - 130, betsCount, 100);
+					gr.DrawLine(pen, 0, heigh - 130, betsCount, heigh - 130);
+					gr.DrawLine(pen, 0, heigh - 30, betsCount, heigh - 30);
+					gr.DrawLine(Pens.Green, 0, heigh - 80, betsCount, heigh - 80);
+				}
 
-				Logger.Log("Bets are successfully simulated.");
+				void DrawAverageAndRisk()
+				{
+					pen = new Pen(Color.Black, 5);
+					for (int i = 1; i < betsCount; i++)
+					{
+						y0 = (int)(heigh - 300 - avarageMoney[i - 1] / simulationsCount);
+						y = (int)(heigh - 300 - avarageMoney[i] / simulationsCount);
+
+						if (y > -1000000 && y0 > -1000000)
+							if (y < 1000000 && y0 < 1000000)
+								gr.DrawLine(pen, i - 1, y0, i, y);
+
+						y0 = (int)(heigh - 80 - 50 * risk[i - 1] / simulationsCount);
+						y = (int)(heigh - 80 - 50 * risk[i] / simulationsCount);
+
+						gr.DrawLine(Pens.Red, i - 1, y0, i, y);
+					}
+				}
+
+				void WriteProfit()
+				{
+					gr.FillRectangle(Brushes.Cyan, Storage.bmp.Width - 270, 17, 270, 26);
+					gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17 + 27, 270, 26);
+
+					double ap = Math.Round(avarageMoney[betsCount - 1] / simulationsCount - startMoney, 2);
+					string apStr = ap.ToString() + "$";
+					if (ap > 10000000)
+						apStr = "fucking ∞";
+					if (ap < -10000000)
+						apStr = "fucking -∞";
+
+					gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 270, 17);
+					gr.DrawString($"After {betsCount} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
+				}
+
+				void WriteLoosersPercentage()
+				{
+					gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
+					gr.DrawString($"So, {Math.Round(100.0 * (risk[betsCount - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
+				}
 
 				void Play()
 				{
@@ -154,6 +171,17 @@ namespace AbsurdMoneySimulations
 					}
 
 					money += lastProfit;
+				}
+
+				void VisualiseBitmapToForm()
+				{
+					Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
+
+					FormsManager.mainForm.Invoke(new Action(() =>
+					{
+						FormsManager.showForm.BackgroundImage = Storage.bmp;
+						FormsManager.betsSimulatorForm.BringToFront();
+					}));
 				}
 
 				double CalculateBet()

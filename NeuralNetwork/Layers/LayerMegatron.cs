@@ -105,7 +105,7 @@ namespace AbsurdMoneySimulations
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
 				buffer += gwsumm * af.df(unnormalizedValues[test][sub][n]);
 			}
-			buffer /= valuesPerSubCount; //!!!!!!
+			//buffer /= valuesPerSubCount; //!!!!!!
 			subs[sub].BPgradient[test] += buffer;
 			subs[sub].BPgradient[test] = NN.CutGradient(subs[sub].BPgradient[test]);
 		}

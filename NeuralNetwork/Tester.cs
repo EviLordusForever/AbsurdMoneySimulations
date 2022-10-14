@@ -154,8 +154,8 @@ namespace AbsurdMoneySimulations
 				float scale = max - min;
 
 				for (int i = 0; i < tests[test].Length; i++)
-					//tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
-					tests[test][i] = (tests[test][i] - min) / scale;
+					tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
+					//tests[test][i] = (tests[test][i] - min) / scale;
 			}
 		}
 
@@ -202,6 +202,7 @@ namespace AbsurdMoneySimulations
 			this.batchesCount = batchesCount;
 			batchSize = testsCount / batchesCount;
 
+			//InitFromNormalizedOriginalGrafic(graficPath, reason);
 			InitFromNormalizedDerivativeGrafic(graficPath, reason);
 			if (batchesCount == 1)
 				DoNotUseBatch();

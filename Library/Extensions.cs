@@ -24,22 +24,17 @@ namespace AbsurdMoneySimulations
 		{
 			List<T> lst = new List<T>();
 			foreach (T[] a in array2D)
-			{
 				lst.AddRange(a);
-			}
+
 			return lst.ToArray();
 		}
 
 		public static T[] Concatenate<T>(T[] first, T[] second)
 		{
 			if (first == null)
-			{
 				return second;
-			}
 			if (second == null)
-			{
 				return first;
-			}
 
 			return first.Concat(second).ToArray();
 		}

@@ -16,7 +16,6 @@ namespace AbsurdMoneySimulations
         public static Thread flusherThread;
         public static Thread visualizerThread;
 
-
         public static void Log(string text)
         {
             FormsManager.OpenLogForm();
@@ -128,7 +127,7 @@ namespace AbsurdMoneySimulations
             Log(text.ToString());
         }
 
-        public static void Visualiser()
+        static void StartVisualiser()
         {
             visualizerThread = new Thread(VisualiserThread);
             visualizerThread.Name = "LogVisuliser";
@@ -140,16 +139,13 @@ namespace AbsurdMoneySimulations
                 {
                     while (true)
                     {
-                        if (updated)
+                        if (updated && FormsManager.logForm.WindowState != FormWindowState.Minimized)
                         {
-                            if (FormsManager.logForm.WindowState != FormWindowState.Minimized)
+                            FormsManager.mainForm.Invoke(new Action(() =>
                             {
-                                FormsManager.mainForm.Invoke(new Action(() =>
-                                {
-                                    FormsManager.logForm.rtb.Text = logText;
-                                }));
-                                updated = false;
-                            }
+                                FormsManager.logForm.rtb.Text = logText;
+                            }));
+                            updated = false;
                         }
                         Thread.Sleep(250);
                     }
@@ -160,7 +156,7 @@ namespace AbsurdMoneySimulations
             }
         }
 
-        static void Flusher()
+        static void StartFlusher()
         {
             flusherThread = new Thread(FlusherThread);
             flusherThread.Name = "LogFlusher";
@@ -188,13 +184,15 @@ namespace AbsurdMoneySimulations
             string h = dateTime.Hour.ToString();
             string m = dateTime.Minute.ToString();
             string s = dateTime.Second.ToString();
+
             if (h.Length == 1)
                 h = "0" + h;
             if (m.Length == 1)
                 m = "0" + m;
             if (s.Length == 1)
                 s = "0" + s;
-            return h + ":" + m + ":" + s;
+
+            return $"{h}:{m}:{s}";
         }
 
         public static string GetDateToShow(DateTime dateTime)
@@ -207,7 +205,8 @@ namespace AbsurdMoneySimulations
                 d = "0" + d;
             if (m.Length == 1)
                 m = "0" + m;
-            return d + "." + m + "." + y;
+
+            return $"{d}.{m}.{y}";
         }
 
         public static void Quit()
@@ -220,8 +219,8 @@ namespace AbsurdMoneySimulations
         {
             logText = "";
             writer = new StreamWriter(Disk.programFiles + "Logs\\log.log", true);
-            Flusher();
-            Visualiser();
+            StartFlusher();
+            StartVisualiser();
         }
     }
 }

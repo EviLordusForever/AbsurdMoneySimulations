@@ -16,9 +16,11 @@ namespace AbsurdMoneySimulations
             for (; str.Contains(after);)
             {
                 str = StringAfter(str, after);
-                if (!str.Contains(before)) break;
+                if (!str.Contains(before)) 
+                    break;
                 res += StringBefore(str, before);
-                if (str.Contains(after)) res += "~";
+                if (str.Contains(after)) 
+                    res += "~";
             }
 
             return res.Split('~');
@@ -67,12 +69,11 @@ namespace AbsurdMoneySimulations
 
                     if (i > maximumSymbols)
                     {
-                        Logger.Log($"Это было много! i = {i} болше {maximumSymbols} символов. Всего символов {str.Length}. Прешлось прервать StringSuperUltraSplit. Получено {res.Length} объектов.");
+                        Logger.Log($"It was much! i = {i} more than {maximumSymbols} symbols. All symbols count {str.Length}. Stopping StringSuperUltraSplit. Getten {res.Length} objects.");
                         break;
                     }
                 }
             }
-            //View.SayBig(inf, structureMap);
             return res.Remove(res.Length - 1).Split('~');
         }
 
@@ -134,97 +135,68 @@ namespace AbsurdMoneySimulations
 
         public static bool IsLetter(char symbol)
         {
-            if (Char.GetUnicodeCategory(symbol) == System.Globalization.UnicodeCategory.UppercaseLetter || Char.GetUnicodeCategory(symbol) == System.Globalization.UnicodeCategory.LowercaseLetter)
-                return true;
-            else
-                return false;
+            return Char.GetUnicodeCategory(symbol) == System.Globalization.UnicodeCategory.UppercaseLetter 
+                || Char.GetUnicodeCategory(symbol) == System.Globalization.UnicodeCategory.LowercaseLetter;
         }
 
         public static bool IsLowcaseLetter(char symbol)
         {
-            if (Char.GetUnicodeCategory(symbol) == System.Globalization.UnicodeCategory.LowercaseLetter)
-                return true;
-            else
-                return false;
+            return Char.GetUnicodeCategory(symbol) == System.Globalization.UnicodeCategory.LowercaseLetter;
         }
 
         public static bool IsNumber(char symbol)
         {
-            if (symbol == '0' || symbol == '1' || symbol == '2' || symbol == '3' || symbol == '4' || symbol == '5' || symbol == '6' || symbol == '7' || symbol == '8' || symbol == '9')
-                return true;
-            else
-                return false;
+            return symbol == '0' || symbol == '1' || symbol == '2' || symbol == '3' || symbol == '4' || symbol == '5' || symbol == '6' || symbol == '7' || symbol == '8' || symbol == '9';
         }
 
         public static string ModifyText(string text)
         {
+            //Deleting double spaces, removing textes with CAPSLOCK
+            //and big enters count, adding offset after enters
             for (int i = 0; i < text.Length; i++)
             {
                 if (Char.GetUnicodeCategory(text[i]) == System.Globalization.UnicodeCategory.UppercaseLetter && Char.GetUnicodeCategory(text[i + 1]) == System.Globalization.UnicodeCategory.UppercaseLetter)
-                    return ("КАПС");
+                    throw new Exception("CAPSLOCK");
                 if (text[i] == '\n' && text[i + 1] == '\n' && text[i + 2] == '\n')
-                {
-                    return ("ENTERS");
-                }
+                    throw new Exception("ENTERS");
                 if (text[i] == '\n' && text[i + 1] == '\n')
-                {
                     text = text.Remove(i, 1);
-                }
                 if (text[i] == '\n')
                     text = text.Remove(i + 1) + "     " + text.Substring(i + 1);
                 if (text[i] == ' ' && text[i + 1] == ' ')
                     text = text.Remove(i, 1);
             }
             return text;
-        } //Удаляет двойные пробелы, отсеивает тексты с капсом и сбольшим количеством ентеров, добавляет отступ после ентера
+        }
 
         public static string RemoveNotLettersAndNotSpaces(string str)
         {
             for (int i = str.Length - 1; i >= 0; i--)
-            {
                 if (!(IsLowcaseLetter(str[i]) || str[i] == ' '))
                     str = str.Remove(i, 1);
-            }
+
             return str;
         }
 
         public static string RemoveSymbols(string str, char symbol)
         {
-            string[] strParts = str.Split(symbol);
-            int len = str.Length;
-            str = String.Concat(strParts);
-            /*
-            int i = 0;
-            foreach (string strPart in strParts)
-            {
-                i++;
-                str += strPart;
-
-                if (i % 20000 == 0)
-                    View.ShoutConsole("TextMethods", "Removing Symbols", "TM.RS", $"Удаление символов. Символы удалены. Соединение частей строки: {str.Length} из {len}");
-            }
-            */
-
-            return str;
+            return String.Concat(str.Split(symbol));
         }
 
         public static string RemoveDoubles(string text, char symbol)
         {
-            for (int i = 0; i < text.Length - 1; i++)
-            {
+            for (int i = 0; i < text.Length - 1;)
                 if (text[i] == symbol && text[i + 1] == symbol)
-                {
                     text = text.Remove(i, 1);
-                    i--;
-                }
-            }
+                else
+                    i++;
+
             return text;
         }
 
         public static int SubstringsCount(string str, string str0)
         {
-            int count = (str.Length - str.Replace(str0, "").Length) / str0.Length;
-            return count;
+            return (str.Length - str.Replace(str0, "").Length) / str0.Length;
         }
 
         public static int CharsCount(string str, char c)
@@ -259,10 +231,11 @@ namespace AbsurdMoneySimulations
 
         public static string ModifyStringAsList(string str)
         {
-            //Disk.ErrorLog(str);
-            //Удаляет двойные энтеры, двойные пробелы, табы, пустые строки, пробелы в начале и конце строк, ненужные энтеры в начале и конце строки
+            //Deleting double enters, spaces, tabs,
+            //empty strings,
+            //spaces and unused enters in begining and ending of strings
+
             for (int i = str.Length - 1; i > 0; i--)
-            {
                 if (str[i] == ' ' && str[i - 1] == ' ')
                     str = str.Remove(i, 1);
                 else if (str[i] == '\t')
@@ -273,7 +246,6 @@ namespace AbsurdMoneySimulations
                     str = str.Remove(i, 1);
                 else if ((str[i] == '\n' || str[i] == '\r') && (str[i - 1] == '\n' || str[i - 1] == '\r'))
                     str = str.Remove(i, 1);
-            }
 
             if (str.Length == 0)
                 return str;
@@ -323,15 +295,15 @@ namespace AbsurdMoneySimulations
 
         public static string[] ProSplit(string str, string separator)
         {
-            //Это как обычный Split, но работает с разделением строками
-            str = str.Replace(separator, "~");
+            //Like ususal spit, but with string separators
 
-            return str.Split('~');
+            return str.Split(str.Replace(separator, "~"));
         }
 
         public static string[] OmegaSplit(string str, params char[] cs)
         {
-            //Это как обычный Split, но при этом он не удаляет разделяющие символы
+            //Like usual split, but it is not deleting separatos
+            //And more separators
             for (int i = 0; i < str.Length; i++)
             {
                 foreach (char c in cs)
