@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json;
 using static AbsurdMoneySimulations.Logger;
 using static AbsurdMoneySimulations.Storage;
 
@@ -14,60 +7,60 @@ namespace AbsurdMoneySimulations
 {
 	public static class NN
 	{
-		public const int horizon = 29;
-		public const int inputWindow = 300;
-		public const float weightsInitMin = -0.3f;
-		public const float weightsInitScale = 0.6f;
-		public const int jumpLimit = 9000;
+		public const int _horizon = 29;
+		public const int _inputWindow = 300;
+		public const float _weightsInitMin = -0.3f;
+		public const float _weightsInitScale = 0.6f;
+		public const int _jumpLimit = 9000;
 
-		private const int testsCount = 2000;
-		private const int batchSize = 1;
+		private const int _testsCount = 2000;
+		private const int _batchSize = 1;
 
-		public static int randomMutatesCount = 2022;
+		public static int _randomMutatesCount = 2022;
 
-		public static float randomMutatesSharpness =  10;
-		public static float randomMutatesScaleV2 = 10;
-		public static float randomMutatesSmoothing = 0.03f;
+		public static float _randomMutatesSharpness = 10;
+		public static float _randomMutatesScaleV2 = 10;
+		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float LYAMBDA = 0.01f; //0.05f
-		public static float INERTION = 0.9f; //0.8f
+		public static float _LYAMBDA = 0.01f; //0.05f
+		public static float _INERTION = 0.9f; //0.8f
 
-		public static int vanishedGradients = 0;
-		public static int cuttedGradients = 0;
-		public const float cutter = 100f;
+		public static int _vanishedGradients = 0;
+		public static int _cuttedGradients = 0;
+		public const float _cutter = 100f;
 
-		public static ActivationFunction AnswersAF = new TanH();
+		public static ActivationFunction _answersAF = new TanH();
 
-		public static List<LayerAbstract> layers;
+		public static List<LayerAbstract> _layers;
 
-		public static Tester testerV;
-		public static Tester testerE;
+		public static Tester _testerV;
+		public static Tester _testerE;
 
-		public static string name;
+		public static string _name;
 
-		public static float[] randomMutates;
-		public static float mutagen;
-		public static int mutationSeed;
-		public static int lastMutatedLayer;
+		public static float[] _randomMutates;
+		public static float _mutagen;
+		public static int _mutationSeed;
+		public static int _lastMutatedLayer;
 
 		public static void Create()
 		{
-			layers = new List<LayerAbstract>();
+			_layers = new List<LayerAbstract>();
 
-			layers.Add(new LayerMegatron(testerE.testsCount, 10, 136, 30, 2));   //55 x 30 x 10 = 
-			layers[0].FillWeightsRandomly();
+			_layers.Add(new LayerMegatron(_testerE._testsCount, 10, 136, 30, 2));   //55 x 30 x 10 = 
+			_layers[0].FillWeightsRandomly();
 
-			layers.Add(new LayerCybertron(testerE.testsCount, 10, 136, 10, 100)); //10 x 55 x 10 = 
-			layers[1].FillWeightsRandomly();
+			_layers.Add(new LayerCybertron(_testerE._testsCount, 10, 136, 10, 100)); //10 x 55 x 10 = 
+			_layers[1].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(testerE.testsCount, 30, 100)); //100 x 30 = 3000
-			layers[2].FillWeightsRandomly();
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 30, 100)); //100 x 30 = 3000
+			_layers[2].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(testerE.testsCount, 10, 30)); //30 x 15 =  450
-			layers[3].FillWeightsRandomly();
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 10, 30)); //30 x 15 =  450
+			_layers[3].FillWeightsRandomly();
 
-			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
-			layers[4].FillWeightsRandomly();
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 10)); //10 x 1 = 10
+			_layers[4].FillWeightsRandomly();
 
 			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
 			layers[0].FillWeightsRandomly();
@@ -91,25 +84,25 @@ namespace AbsurdMoneySimulations
 
 		public static void Save()
 		{
-			var files = Directory.GetFiles(Disk.programFiles + "\\NN");
+			var files = Directory.GetFiles(Disk._programFiles + "\\NN");
 
 			JsonSerializerSettings jss = new JsonSerializerSettings();
 			jss.Formatting = Formatting.Indented;
 
-			File.WriteAllText(files[0], JsonConvert.SerializeObject(layers, jss));
+			File.WriteAllText(files[0], JsonConvert.SerializeObject(_layers, jss));
 			Log("Neural Network saved!");
 		}
 
 		public static void Load()
 		{
-			var files = Directory.GetFiles(Disk.programFiles + "\\NN");
-			name = TextMethods.StringInsideLast(files[0], "\\", ".json");
+			var files = Directory.GetFiles(Disk._programFiles + "\\NN");
+			_name = TextMethods.StringInsideLast(files[0], "\\", ".json");
 			string json = File.ReadAllText(files[0]);
-			
+
 			var jss = new JsonSerializerSettings();
 			jss.Converters.Add(new LayerAbstractConverter());
 
-			layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(json, jss);
+			_layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(json, jss);
 
 			Log("Neural Network loaded from disk!");
 		}
@@ -119,33 +112,33 @@ namespace AbsurdMoneySimulations
 			float[][] array = new float[1][];
 			array[0] = input;
 
-			layers[0].Calculate(test,  array);
+			_layers[0].Calculate(test, array);
 
-			for (int l = 1; l < layers.Count; l++)
-				layers[l].Calculate(test, layers[l - 1].GetValues(test));
+			for (int l = 1; l < _layers.Count; l++)
+				_layers[l].Calculate(test, _layers[l - 1].GetValues(test));
 
-			return layers[layers.Count - 1].GetAnswer(test);
+			return _layers[_layers.Count - 1].GetAnswer(test);
 		}
 
 		public static float Recalculate(int test, Tester tester)
 		{
-			LayerRecalculateStatus lrs = LayerRecalculateStatus.First;
+			LayerRecalculateStatus lrs = LayerRecalculateStatus.OneWeightChanged;
 
-			if (lastMutatedLayer > 0)
-				for (int layer = lastMutatedLayer; layer < layers.Count; layer++)
-					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
+			if (_lastMutatedLayer > 0)
+				for (int layer = _lastMutatedLayer; layer < _layers.Count; layer++)
+					lrs = _layers[layer].Recalculate(test, _layers[layer - 1].GetValues(test), lrs);
 			else
 			{
 				float[][] array = new float[1][];
-				array[0] = tester.tests[test];
+				array[0] = tester._tests[test];
 
-				layers[0].Calculate(test, array);
+				_layers[0].Calculate(test, array);
 
-				for (int layer = 1; layer < layers.Count; layer++)
-					lrs = layers[layer].Recalculate(test, layers[layer - 1].GetValues(test), lrs);
+				for (int layer = 1; layer < _layers.Count; layer++)
+					lrs = _layers[layer].Recalculate(test, _layers[layer - 1].GetValues(test), lrs);
 			}
 
-			return layers[layers.Count - 1].GetAnswer(test);
+			return _layers[_layers.Count - 1].GetAnswer(test);
 		}
 
 		public static void Init()
@@ -158,31 +151,31 @@ namespace AbsurdMoneySimulations
 
 		public static void InitTesters()
 		{
-			testerV = new Tester(testsCount, batchSize, "Grafic//ForValidation", "VALIDATION");
-			testerE = new Tester(testsCount, batchSize, "Grafic//ForEvolution", "EVOLUTION");
+			_testerV = new Tester(_testsCount, _batchSize, "Grafic//ForValidation", "VALIDATION");
+			_testerE = new Tester(_testsCount, _batchSize, "Grafic//ForEvolution", "EVOLUTION");
 		}
 
 		public static void InitActivationFunctions()
 		{
-			for (int l = 0; l < layers.Count - 1; l++)
-				layers[l].af = new TanH();
-			layers[layers.Count - 1].af = new TanH();
+			for (int l = 0; l < _layers.Count - 1; l++)
+				_layers[l]._af = new TanH();
+			_layers[_layers.Count - 1]._af = new TanH();
 		}
 
 		public static void InitValues()
 		{
-			for (int l = 0; l < layers.Count; l++)
-				layers[l].InitValues(testerE.testsCount);
+			for (int l = 0; l < _layers.Count; l++)
+				_layers[l].InitValues(_testerE._testsCount);
 
 			Log("NN values were initialized");
 		}
 
 		public static void FillRandomMutations()
 		{
-			randomMutates = new float[randomMutatesCount];
+			_randomMutates = new float[_randomMutatesCount];
 
-			for (int m = 0; m < randomMutatesCount; m++)
-				randomMutates[m] = Extensions.NormalDistribution(randomMutatesScaleV2, randomMutatesSharpness, randomMutatesSmoothing);
+			for (int m = 0; m < _randomMutatesCount; m++)
+				_randomMutates[m] = Extensions.NormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing);
 
 			Log("Random mutations are filled.");
 		}
@@ -192,7 +185,7 @@ namespace AbsurdMoneySimulations
 			short previous = 0;
 			string history = "";
 			float er = 0;
-			float record = FindErrorRateSquared(testerE);
+			float record = FindErrorRateSquared(_testerE);
 			Log("Received current er_fb: " + record);
 
 			for (int Generation = 0; ; Generation++)
@@ -202,23 +195,23 @@ namespace AbsurdMoneySimulations
 				SelectLayerForMutation();
 				Mutate();
 
-				er = RefindErrorRateSquared(testerE);
+				er = RefindErrorRateSquared(_testerE);
 
 				if (er < record)
 				{
 					Log("er_nfb: " + er.ToString());
-					Log($" ▲ Good mutation. (mutagen {mutagen})");
+					Log($" ▲ Good mutation. (mutagen {_mutagen})");
 					record = er;
 				}
 				else if (er == record)
 				{
-					Log($" - Neutral mutation. Leave it. ({mutagen})");
+					Log($" - Neutral mutation. Leave it. ({_mutagen})");
 				}
 				else
 				{
-					Log($" ▽ Bad mutation. Go back. ({mutagen})");
+					Log($" ▽ Bad mutation. Go back. ({_mutagen})");
 					Demutate();
-					er = FindErrorRateSquared(testerE);
+					er = FindErrorRateSquared(_testerE);
 				}
 
 				history += record + "\r\n";
@@ -230,12 +223,12 @@ namespace AbsurdMoneySimulations
 					history = "";
 
 					Log("(!) er_nfb: " + er);
-					er = FindErrorRateSquared(testerE);
+					er = FindErrorRateSquared(_testerE);
 					Log("(!) er_fb: " + er);
 
-					string validation = Stat.CalculateStatistics(testerV);
+					string validation = Stat.CalculateStatistics(_testerV);
 					Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
-					string evolition = Stat.CalculateStatistics(testerE);
+					string evolition = Stat.CalculateStatistics(_testerE);
 					Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Evolution"), true);
 
 					Log("Evolution dataset:\n" + evolition);
@@ -255,9 +248,9 @@ namespace AbsurdMoneySimulations
 				float old_v = 0;
 				float a = 0;
 
-				float ert = FindErrorRateSquared(testerV);
+				float ert = FindErrorRateSquared(_testerV);
 				Log("Current ert: " + ert);
-				float er = FindErrorRateSquared(testerE);
+				float er = FindErrorRateSquared(_testerE);
 				Log("Current er: " + er);
 				float old_er = er;
 				float old_ert = ert;
@@ -267,27 +260,27 @@ namespace AbsurdMoneySimulations
 				{
 					Log("G" + Generation);
 
-					vanishedGradients = 0;
-					cuttedGradients = 0;
-					for (int b = 0; b < testerE.batchesCount; b++)
+					_vanishedGradients = 0;
+					_cuttedGradients = 0;
+					for (int b = 0; b < _testerE._batchesCount; b++)
 					{
-						testerE.FillBatch();
-						FindBPGradients(testerE);
-						CorrectWeightsByBP(testerE);
+						_testerE.FillBatch();
+						FindBPGradients(_testerE);
+						CorrectWeightsByBP(_testerE);
 					}
 
 					old_ert = ert;
-					ert = FindErrorRateSquared(testerV);
+					ert = FindErrorRateSquared(_testerV);
 					Log($"ert: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
 					old_er = er;
-					er = FindErrorRateSquared(testerE);
+					er = FindErrorRateSquared(_testerE);
 
 					old_v = v;
 					v = er - old_er;
-					a = v - old_v;					
+					a = v - old_v;
 
-					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", LYAMBDA)})");
-					Log($"vanished {vanishedGradients} cutted {cuttedGradients}");
+					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LYAMBDA)})");
+					Log($"vanished {_vanishedGradients} cutted {_cuttedGradients}");
 					Disk.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
 
 					Save();
@@ -295,9 +288,9 @@ namespace AbsurdMoneySimulations
 
 					if (Generation % 20 == 19)
 					{
-						string validation = Stat.CalculateStatistics(testerV);
+						string validation = Stat.CalculateStatistics(_testerV);
 						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
-						string evolition = Stat.CalculateStatistics(testerE);
+						string evolition = Stat.CalculateStatistics(_testerE);
 						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Evolution"), true);
 
 						Log("Evolution dataset:\n" + evolition);
@@ -310,8 +303,8 @@ namespace AbsurdMoneySimulations
 					if (ert <= ert_record)
 					{
 						ert_record = ert;
-						Disk.ClearDirectory($"{Disk.programFiles}\\NN\\EarlyStopping");
-						File.Copy($"{Disk.programFiles}\\NN\\{name}.json", $"{Disk.programFiles}\\NN\\EarlyStopping\\{name} ({ert}).json");
+						Disk.ClearDirectory($"{Disk._programFiles}\\NN\\EarlyStopping");
+						File.Copy($"{Disk._programFiles}\\NN\\{_name}.json", $"{Disk._programFiles}\\NN\\EarlyStopping\\{_name} ({ert}).json");
 						Log("NN copied for early stopping.");
 					}
 				}
@@ -320,12 +313,12 @@ namespace AbsurdMoneySimulations
 
 		private static void FindBPGradients(Tester tester)
 		{
-			for (int test = 0; test < tester.tests.Length; test++)
-				if (tester.batch[test] == 1)
+			for (int test = 0; test < tester._tests.Length; test++)
+				if (tester._batch[test] == 1)
 				{
-					layers[layers.Count - 1].FindBPGradient(test, tester.answers[test]);
-					for (int layer = layers.Count - 2; layer >= 0; layer--)
-						layers[layer].FindBPGradient(test, layers[layer + 1].AllBPGradients(test), layers[layer + 1].AllWeights);
+					_layers[_layers.Count - 1].FindBPGradient(test, tester._answers[test]);
+					for (int layer = _layers.Count - 2; layer >= 0; layer--)
+						_layers[layer].FindBPGradient(test, _layers[layer + 1].AllBPGradients(test), _layers[layer + 1].AllWeights);
 				}
 
 			SaveLastLayerWeights(); //
@@ -335,8 +328,8 @@ namespace AbsurdMoneySimulations
 			{
 				string str = "";
 
-				for (int w = 0; w < (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights.Length; w++)
-					str += (layers[layers.Count - 1] as LayerPerceptron).nodes[0].weights[w] + ",";
+				for (int w = 0; w < (_layers[_layers.Count - 1] as LayerPerceptron)._nodes[0]._weights.Length; w++)
+					str += (_layers[_layers.Count - 1] as LayerPerceptron)._nodes[0]._weights[w] + ",";
 
 				Disk.WriteToProgramFiles("weights", "csv", str + "\n", true);
 			}
@@ -344,17 +337,17 @@ namespace AbsurdMoneySimulations
 
 		private static void CorrectWeightsByBP(Tester tester)
 		{
-			for (int test = 0; test < tester.testsCount; test++)
+			for (int test = 0; test < tester._testsCount; test++)
 			{
-				if (tester.batch[test] == 1)
+				if (tester._batch[test] == 1)
 				{
 					float[][] array = new float[1][];
-					array[0] = tester.tests[test];
+					array[0] = tester._tests[test];
 
-					layers[0].CorrectWeightsByBP(test, array);
+					_layers[0].CorrectWeightsByBP(test, array);
 
-					for (int l = 1; l < layers.Count; l++)
-						layers[l].CorrectWeightsByBP(test, layers[l - 1].GetValues(test));
+					for (int l = 1; l < _layers.Count; l++)
+						_layers[l].CorrectWeightsByBP(test, _layers[l - 1].GetValues(test));
 				}
 			}
 			Log("Weights are corrected!");
@@ -364,16 +357,16 @@ namespace AbsurdMoneySimulations
 		{
 			restart:
 
-			int testsPerCoreCount = tester.testsCount / coresCount;
+			int testsPerCoreCount = tester._testsCount / _coresCount;
 
 			float er = 0;
-			float[] suber = new float[coresCount];
+			float[] suber = new float[_coresCount];
 
-			int alive = coresCount;
+			int alive = _coresCount;
 
-			Thread[] subThreads = new Thread[coresCount];
+			Thread[] subThreads = new Thread[_coresCount];
 
-			for (int core = 0; core < coresCount; core++)
+			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
 				subThreads[core].Priority = ThreadPriority.Highest;
@@ -386,9 +379,9 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Calculate(test, tester, tester.tests[test]);
+					float prediction = Calculate(test, tester, tester._tests[test]);
 
-					float reality = tester.answers[test];
+					float reality = tester._answers[test];
 
 					suber[core] += MathF.Abs(prediction - reality);
 				}
@@ -402,7 +395,7 @@ namespace AbsurdMoneySimulations
 				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
 				{
 					Log("THE THREAD IS STACKED");
-					for (int core = 0; core < coresCount; core++)
+					for (int core = 0; core < _coresCount; core++)
 						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
 					Log("AGAIN");
 
@@ -411,10 +404,10 @@ namespace AbsurdMoneySimulations
 			}
 
 
-			for (int core = 0; core < coresCount; core++)
+			for (int core = 0; core < _coresCount; core++)
 				er += suber[core];
 
-			er /= tester.testsCount;
+			er /= tester._testsCount;
 
 			return er;
 		}
@@ -423,16 +416,16 @@ namespace AbsurdMoneySimulations
 		{
 			restart:
 
-			int testsPerCoreCount = tester.testsCount / coresCount;
+			int testsPerCoreCount = tester._testsCount / _coresCount;
 
 			float er = 0;
-			float[] suber = new float[coresCount];
+			float[] suber = new float[_coresCount];
 
-			int alive = coresCount;
+			int alive = _coresCount;
 
-			Thread[] subThreads = new Thread[coresCount];
+			Thread[] subThreads = new Thread[_coresCount];
 
-			for (int core = 0; core < coresCount; core++)
+			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
 				subThreads[core].Priority = ThreadPriority.Highest;
@@ -445,23 +438,23 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Calculate(test, tester, tester.tests[test]);
+					float prediction = Calculate(test, tester, tester._tests[test]);
 
-					float reality = tester.answers[test];
+					float reality = tester._answers[test];
 
 					suber[core] += MathF.Pow(prediction - reality, 2);
 				}
-				
+
 				alive--;
 			}
 
-			long ms = DateTime.Now.Ticks; 
+			long ms = DateTime.Now.Ticks;
 			while (alive > 0)
 			{
 				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
 				{
 					Log("THE THREAD IS STACKED");
-					for (int core = 0; core < coresCount; core++)
+					for (int core = 0; core < _coresCount; core++)
 						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
 					Log("AGAIN");
 
@@ -470,10 +463,10 @@ namespace AbsurdMoneySimulations
 			}
 
 
-			for (int core = 0; core < coresCount; core++)
+			for (int core = 0; core < _coresCount; core++)
 				er += suber[core];
 
-			er /= tester.testsCount;
+			er /= tester._testsCount;
 
 			return er;
 		}
@@ -482,16 +475,16 @@ namespace AbsurdMoneySimulations
 		{
 			restart:
 
-			int testsPerCoreCount = tester.testsCount / coresCount;
+			int testsPerCoreCount = tester._testsCount / _coresCount;
 
 			float er = 0;
-			float[] suber = new float[coresCount];
+			float[] suber = new float[_coresCount];
 
-			int alive = coresCount;
+			int alive = _coresCount;
 
-			Thread[] subThreads = new Thread[coresCount];
+			Thread[] subThreads = new Thread[_coresCount];
 
-			for (int core = 0; core < coresCount; core++)
+			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
 				subThreads[core].Priority = ThreadPriority.Highest;
@@ -506,7 +499,7 @@ namespace AbsurdMoneySimulations
 				{
 					float prediction = Recalculate(test, tester);
 
-					float reality = tester.answers[test];
+					float reality = tester._answers[test];
 
 					suber[core] += MathF.Pow(prediction - reality, 2);
 				}
@@ -520,7 +513,7 @@ namespace AbsurdMoneySimulations
 				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
 				{
 					Log("THE THREAD IS STACKED");
-					for (int core = 0; core < coresCount; core++)
+					for (int core = 0; core < _coresCount; core++)
 						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
 					Log("AGAIN");
 
@@ -528,10 +521,10 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-			for (int core = 0; core < coresCount; core++)
+			for (int core = 0; core < _coresCount; core++)
 				er += suber[core];
 
-			er /= tester.testsCount;
+			er /= tester._testsCount;
 
 			return er;
 		}
@@ -539,9 +532,9 @@ namespace AbsurdMoneySimulations
 		private static void SelectLayerForMutation()
 		{
 			//int number = linksToLayersToMutate[Storage.rnd.Next(linksToLayersToMutate.Count)];
-			int number = Storage.rnd.Next(layers.Count - 0) + 0;
+			int number = Storage.rnd.Next(_layers.Count - 0) + 0;
 
-			lastMutatedLayer = number;
+			_lastMutatedLayer = number;
 		}
 
 		public static void NeuralBattle()
@@ -553,23 +546,23 @@ namespace AbsurdMoneySimulations
 			{
 				Init();
 
-				float record = FindErrorRateSquared(testerE);
+				float record = FindErrorRateSquared(_testerE);
 				Log($"record {record}");
-				var files = Directory.GetFiles(Disk.programFiles + "NN");
+				var files = Directory.GetFiles(Disk._programFiles + "NN");
 
 				for (int n = 0; ; n++)
 				{
 					Create();
 					Init();
 
-					float er = FindErrorRateSquared(testerE);
+					float er = FindErrorRateSquared(_testerE);
 					Log($"er {er}");
 
 					if (er < record)
 					{
 						Logger.Log("Эта лучше!");
 						record = er;
-						Save();						
+						Save();
 					}
 					else
 						Log("Эта не лучше!");
@@ -580,22 +573,22 @@ namespace AbsurdMoneySimulations
 		public static void Mutate()
 		{
 			SelectLayerForMutation();
-			mutagen = randomMutates[Storage.rnd.Next(randomMutates.Length)];
-			layers[lastMutatedLayer].Mutate(mutagen);
-			Log($"Layer {lastMutatedLayer} is mutated.");
+			_mutagen = _randomMutates[Storage.rnd.Next(_randomMutates.Length)];
+			_layers[_lastMutatedLayer].Mutate(_mutagen);
+			Log($"Layer {_lastMutatedLayer} is mutated.");
 		}
 
 		public static void Demutate()
 		{
-			layers[lastMutatedLayer].Demutate(mutagen);
+			_layers[_lastMutatedLayer].Demutate(_mutagen);
 		}
 
 		public static float CutGradient(float g)
 		{
-			if (MathF.Abs(g) > cutter)
+			if (MathF.Abs(g) > _cutter)
 			{
-				cuttedGradients++;
-				return cutter * (g / g);
+				_cuttedGradients++;
+				return _cutter * (g / g);
 			}
 			else
 				return g;

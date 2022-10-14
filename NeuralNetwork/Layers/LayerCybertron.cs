@@ -1,30 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public class LayerCybertron : LayerAbstract
 	{
-		public LayerPerceptron[] perceptrons;
-		public int lastMutatedSub;
-		public int outNodesSummCount;
+		public LayerPerceptron[] _perceptrons;
+		public int _lastMutatedSub;
+		public int _outNodesSummCount;
 
 		public override void FillWeightsRandomly()
 		{
-			for (int i = 0; i < perceptrons.Count(); i++)
-				perceptrons[i].FillWeightsRandomly();
+			for (int i = 0; i < _perceptrons.Count(); i++)
+				_perceptrons[i].FillWeightsRandomly();
 		}
 
 		public override void Calculate(int test, float[][] input)
 		{
-			int a = perceptrons.Length;
-			for (int sub = 0; sub < perceptrons.Length; sub++)
-				perceptrons[sub].Calculate(test, input[sub]);
-			//Test me
-			//Logger.Log(a);
+			for (int sub = 0; sub < _perceptrons.Length; sub++)
+				_perceptrons[sub].Calculate(test, input[sub]);
 		}
 
 		public override void Calculate(int test, float[] input)
@@ -34,16 +25,16 @@ namespace AbsurdMoneySimulations
 
 		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
 		{
-			if (lrs == LayerRecalculateStatus.First)
+			if (lrs == LayerRecalculateStatus.OneWeightChanged)
 			{
-				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.First);
-				lrs.lastMutatedSub = lastMutatedSub;
+				_perceptrons[_lastMutatedSub].Recalculate(test, input[_lastMutatedSub], LayerRecalculateStatus.OneWeightChanged);
+				lrs._lastMutatedSub = _lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else if (lrs == LayerRecalculateStatus.OneSubChanged)
 			{
-				perceptrons[lastMutatedSub].Recalculate(test, input[lastMutatedSub], LayerRecalculateStatus.Full);
-				lrs.lastMutatedSub = lastMutatedSub;
+				_perceptrons[_lastMutatedSub].Recalculate(test, input[_lastMutatedSub], LayerRecalculateStatus.Full);
+				lrs._lastMutatedSub = _lastMutatedSub;
 				return LayerRecalculateStatus.OneSubChanged;
 			}
 			else
@@ -56,8 +47,8 @@ namespace AbsurdMoneySimulations
 		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
 		{
 			//very hard to explain without drawing
-			for (int n = 0; n < perceptrons.Count(); n++)
-				perceptrons[n].FindBPGradient(test, innerBPGradients, Extensions.SubArray(innerWeights, n * perceptrons[0].nodes.Count(), perceptrons[0].nodes.Count()));
+			for (int n = 0; n < _perceptrons.Count(); n++)
+				_perceptrons[n].FindBPGradient(test, innerBPGradients, Extensions.SubArray(innerWeights, n * _perceptrons[0]._nodes.Count(), _perceptrons[0]._nodes.Count()));
 		}
 
 		public override void FindBPGradient(int test, float desiredValue)
@@ -67,19 +58,19 @@ namespace AbsurdMoneySimulations
 
 		public override void Mutate(float mutagen)
 		{
-			lastMutatedSub = Storage.rnd.Next(perceptrons.Count());
-			perceptrons[lastMutatedSub].Mutate(mutagen);
+			_lastMutatedSub = Storage.rnd.Next(_perceptrons.Count());
+			_perceptrons[_lastMutatedSub].Mutate(mutagen);
 		}
 
 		public override void Demutate(float mutagen)
 		{
-			perceptrons[lastMutatedSub].Demutate(mutagen);
+			_perceptrons[_lastMutatedSub].Demutate(mutagen);
 		}
 
 		public override void CorrectWeightsByBP(int test, float[][] input)
 		{
-			for (int sub = 0; sub < perceptrons.Length; sub++)
-				perceptrons[sub].CorrectWeightsByBP(test, input[sub]);
+			for (int sub = 0; sub < _perceptrons.Length; sub++)
+				_perceptrons[sub].CorrectWeightsByBP(test, input[sub]);
 		}
 
 		public override float GetAnswer(int test)
@@ -90,24 +81,24 @@ namespace AbsurdMoneySimulations
 		public override float[][] GetValues(int test)
 		{
 			int node1 = 0;
-			for (int perceptron = 0; perceptron < perceptrons.Count(); perceptron++)
+			for (int perceptron = 0; perceptron < _perceptrons.Count(); perceptron++)
 			{
-				for (int node2 = 0; node2 < perceptrons[perceptron].nodes.Length; )
+				for (int node2 = 0; node2 < _perceptrons[perceptron]._nodes.Length;)
 				{
-					values[test][0][node1] = perceptrons[perceptron].values[test][0][node2];
+					_values[test][0][node1] = _perceptrons[perceptron]._values[test][0][node2];
 					node1++;
 					node2++;
-				}			
+				}
 			}
 
-			return values[test];
+			return _values[test];
 		}
 
 		public override int WeightsCount
 		{
 			get
 			{
-				return perceptrons.Count() * perceptrons[0].WeightsCount;
+				return _perceptrons.Count() * _perceptrons[0].WeightsCount;
 			}
 		}
 
@@ -115,10 +106,10 @@ namespace AbsurdMoneySimulations
 		{
 			get
 			{
-				float[][] weights = perceptrons[0].AllWeights;
+				float[][] weights = _perceptrons[0].AllWeights;
 
-				for (int p = 1; p < perceptrons.Length; p++)
-					weights = Extensions.Concatenate(weights, perceptrons[p].AllWeights);
+				for (int p = 1; p < _perceptrons.Length; p++)
+					weights = Extensions.Concatenate(weights, _perceptrons[p].AllWeights);
 
 				return weights;
 				//TEST THIS !!!!!
@@ -127,10 +118,10 @@ namespace AbsurdMoneySimulations
 
 		public override float[] AllBPGradients(int test)
 		{
-			float[] gradients = perceptrons[0].AllBPGradients(test);
+			float[] gradients = _perceptrons[0].AllBPGradients(test);
 
-			for (int p = 1; p < perceptrons.Length; p++)
-				gradients = Extensions.Concatenate(gradients, perceptrons[p].AllBPGradients(test));
+			for (int p = 1; p < _perceptrons.Length; p++)
+				gradients = Extensions.Concatenate(gradients, _perceptrons[p].AllBPGradients(test));
 
 			return gradients;
 			//And this
@@ -138,30 +129,30 @@ namespace AbsurdMoneySimulations
 
 		public LayerCybertron(int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount)
 		{
-			type = 3;
+			_type = 3;
 
-			this.outNodesSummCount = outNodesSummCount;
+			this._outNodesSummCount = outNodesSummCount;
 
-			perceptrons = new LayerPerceptron[perceptronsCount];
-			for (int p = 0; p < perceptrons.Count(); p++)
-				perceptrons[p] = new LayerPerceptron(testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount);
+			_perceptrons = new LayerPerceptron[perceptronsCount];
+			for (int p = 0; p < _perceptrons.Count(); p++)
+				_perceptrons[p] = new LayerPerceptron(testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount);
 
 			InitValues(testsCount);
 		}
 
 		public override void InitValues(int testsCount)
 		{
-			values = new float[testsCount][][];
+			_values = new float[testsCount][][];
 			for (int test = 0; test < testsCount; test++)
 			{
-				values[test] = new float[1][];
-				values[test][0] = new float[outNodesSummCount];
+				_values[test] = new float[1][];
+				_values[test][0] = new float[_outNodesSummCount];
 			}
 
-			for (int p = 0; p < perceptrons.Count(); p++)
+			for (int p = 0; p < _perceptrons.Count(); p++)
 			{
-				perceptrons[p].InitValues(testsCount);
-				perceptrons[p].af = af = new TanH();
+				_perceptrons[p].InitValues(testsCount);
+				_perceptrons[p]._af = _af = new TanH();
 			}
 		}
 	}

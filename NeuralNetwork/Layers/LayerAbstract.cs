@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
 	public abstract class LayerAbstract
 	{
 		[JsonIgnore]
-		public float[][][] values; //[test][sub][value]
+		public float[][][] _values; //[test][sub][value]
 
 		[JsonIgnore]
-		public ActivationFunction af;
+		public ActivationFunction _af;
 
-		public int type;
+		public int _type;
 
 		public abstract void FillWeightsRandomly();
 

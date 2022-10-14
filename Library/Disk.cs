@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace AbsurdMoneySimulations
 {
 	public static class Disk
 	{
-		public static string currentDirectory;
+		public static string _currentDirectory;
 
-		public static string programFiles;
+		public static string _programFiles;
 
 		static Disk()
 		{
-			currentDirectory = Environment.CurrentDirectory;
-			programFiles = currentDirectory + "\\ProgramFiles\\";
+			_currentDirectory = Environment.CurrentDirectory;
+			_programFiles = _currentDirectory + "\\ProgramFiles\\";
 
-			if (!Directory.Exists(programFiles))
+			if (!Directory.Exists(_programFiles))
 			{
-				Directory.CreateDirectory(programFiles);
-				MessageBox.Show($"Directory \"{programFiles}\" was created!");
+				Directory.CreateDirectory(_programFiles);
+				MessageBox.Show($"Directory \"{_programFiles}\" was created!");
 			}
 		}
 
@@ -36,7 +32,7 @@ namespace AbsurdMoneySimulations
 
 		public static async void WriteToProgramFiles(string path, string extension, string text, bool savebefore)
 		{
-			path = $"{programFiles}\\{path}.{extension}";
+			path = $"{_programFiles}\\{path}.{extension}";
 
 			Thread writerThread = new Thread(WriterThread);
 			writerThread.Start();
@@ -67,7 +63,7 @@ namespace AbsurdMoneySimulations
 		public static string ReadFromProgramFiles(string path)
 		{
 			string fileName = path;
-			path = programFiles;
+			path = _programFiles;
 			path += fileName + ".txt";
 			return File.ReadAllText(path, Encoding.UTF8);
 		}
@@ -89,7 +85,7 @@ namespace AbsurdMoneySimulations
 
 		public static void RenameTxtFileInProgramFiles(string from, string to)
 		{
-			File.Move($"{programFiles}\\{from}.txt", $"{programFiles}\\{to}.txt");
+			File.Move($"{_programFiles}\\{from}.txt", $"{_programFiles}\\{to}.txt");
 		}
 
 		public static void DeleteDirectoryWithFiles(string path)
@@ -139,7 +135,7 @@ namespace AbsurdMoneySimulations
 
 		public static void DeleteFileFromProgramFiles(string path)
 		{
-			File.Delete($"{programFiles}\\{path}");
+			File.Delete($"{_programFiles}\\{path}");
 		}
 	}
 }

@@ -11,8 +11,8 @@ namespace AbsurdMoneySimulations
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
-			FormsManager.mainForm = new MainForm();
-			Application.Run(FormsManager.mainForm);
+			FormsManager._mainForm = new MainForm();
+			Application.Run(FormsManager._mainForm);
 		}
 	}
 }

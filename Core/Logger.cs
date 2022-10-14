@@ -1,226 +1,220 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
-    public static class Logger
-    {
-        public static int logSize = 15000;
-        public static string logText;
-        public static StreamWriter writer;
-        public static bool updated;
+	public static class Logger
+	{
+		public static int _logSize = 15000;
+		public static string _logText;
+		public static StreamWriter _writer;
+		public static bool _updated;
 
-        public static Thread flusherThread;
-        public static Thread visualizerThread;
+		public static Thread _flusherThread;
+		public static Thread _visualizerThread;
 
-        public static void Log(string text)
-        {
-            FormsManager.OpenLogForm();
+		public static void Log(string text)
+		{
+			FormsManager.OpenLogForm();
 
-            string msg = CreateMessageToShout(text);
-            string date = GetDateToShow(System.DateTime.Now);
-            string time = GetTimeToShow(System.DateTime.Now);
+			string msg = CreateMessageToShout(text);
+			string date = GetDateToShow(System.DateTime.Now);
+			string time = GetTimeToShow(System.DateTime.Now);
 			LogToFile($"[{date}][{time}] {msg}");
 			LogToWindow($"[{date}][{time}] {msg}");
-            CutVisibleLog();
+			CutVisibleLog();
 
 			void LogToFile(string text)
 			{
-                FormsManager.mainForm.Invoke(new Action(() =>
-                {
-                    writer.Write($"{text}\r\n");
-                }));
+				FormsManager._mainForm.Invoke(new Action(() =>
+				{
+					_writer.Write($"{text}\r\n");
+				}));
 			}
 
 			void LogToWindow(string text)
-            {
-                logText = $"{text}\r\n{logText}";
-                updated = true;
-            }
+			{
+				_logText = $"{text}\r\n{_logText}";
+				_updated = true;
+			}
 
-            void CutVisibleLog()
-            {
-                if (logText.Length > logSize + 1000)
-                    logText = logText.Remove(logSize);
-            }
+			void CutVisibleLog()
+			{
+				if (_logText.Length > _logSize + 1000)
+					_logText = _logText.Remove(_logSize);
+			}
 
-            string CreateMessageToShout(string text)
-            {
-                string who = "";
-                string during = "";
-                string place = "";
-                string whoe = "   ";
-                string duringe = "   ";
-                string placee = "   ";
+			string CreateMessageToShout(string text)
+			{
+				string who = "";
+				string during = "";
+				string place = "";
+				string whoe = "   ";
+				string duringe = "   ";
+				string placee = "   ";
 
-                string timee = "          ";
-                string datee = "            ";
-
-
-                text = ModyfyText(text);
-
-                if (whoe.Length > who.Length)
-                    who += whoe.Remove(whoe.Length - 1 - who.Length);
-                if (duringe.Length > during.Length)
-                    during += duringe.Remove(duringe.Length - 1 - during.Length);
-                if (placee.Length > place.Length)
-                    place += placee.Remove(placee.Length - 1 - place.Length);
-
-                return $"{who} {during} {place} {text}";
+				string timee = "          ";
+				string datee = "            ";
 
 
-                string ModyfyText(string str)
-                {
-                    int size = 180;
-                    string res = "";
-                    str += "\r\n";
+				text = ModyfyText(text);
 
-                    while (true)
-                    {
-                        int indexOfR = Math.Min(str.IndexOf('\r'), str.IndexOf('\n'));
-                        indexOfR = Math.Min(indexOfR, str.IndexOf(Environment.NewLine));
+				if (whoe.Length > who.Length)
+					who += whoe.Remove(whoe.Length - 1 - who.Length);
+				if (duringe.Length > during.Length)
+					during += duringe.Remove(duringe.Length - 1 - during.Length);
+				if (placee.Length > place.Length)
+					place += placee.Remove(placee.Length - 1 - place.Length);
+
+				return $"{who} {during} {place} {text}";
 
 
-                        if (indexOfR < size - 1 && indexOfR != -1 && indexOfR + 2 < str.Length)
-                        {
-                            res += str.Remove(indexOfR + 1).Replace('\r', ' ').Replace('\n', ' ') + "\r" + datee + timee + whoe + duringe + placee + " ";
-                            str = str.Substring(indexOfR + 1);
-                        }
-                        else if (str.Length <= size)
-                        {
-                            res += str.Replace('\r', ' ').Replace('\n', ' ');
-                            break;
-                        }
-                        else if (str.Length > size)
-                        {
-                            string strRemoveSize = str.Remove(size);
+				string ModyfyText(string str)
+				{
+					int size = 180;
+					string res = "";
+					str += "\r\n";
 
-                            int lastSpaceIndex = size;
-                            if (strRemoveSize.Contains(" "))
-                                lastSpaceIndex = strRemoveSize.LastIndexOf(' ');
+					while (true)
+					{
+						int indexOfR = Math.Min(str.IndexOf('\r'), str.IndexOf('\n'));
+						indexOfR = Math.Min(indexOfR, str.IndexOf(Environment.NewLine));
 
-                            res += str.Remove(lastSpaceIndex) + "\r" + datee + timee + whoe + duringe + placee + " ";
-                            str = str.Substring(lastSpaceIndex + 1);
-                        }
-                        else
-                        {
-                            res += str.Replace('\r', ' ').Replace('\n', ' ');
-                            break;
-                        }
-                    }
 
-                    return res;
-                }
-            }
-        }
+						if (indexOfR < size - 1 && indexOfR != -1 && indexOfR + 2 < str.Length)
+						{
+							res += str.Remove(indexOfR + 1).Replace('\r', ' ').Replace('\n', ' ') + "\r" + datee + timee + whoe + duringe + placee + " ";
+							str = str.Substring(indexOfR + 1);
+						}
+						else if (str.Length <= size)
+						{
+							res += str.Replace('\r', ' ').Replace('\n', ' ');
+							break;
+						}
+						else if (str.Length > size)
+						{
+							string strRemoveSize = str.Remove(size);
 
-        public static void Log(float text)
-        {
-            Log(text.ToString());
-        }
+							int lastSpaceIndex = size;
+							if (strRemoveSize.Contains(" "))
+								lastSpaceIndex = strRemoveSize.LastIndexOf(' ');
 
-        public static void Log(int text)
-        {
-            Log(text.ToString());
-        }
+							res += str.Remove(lastSpaceIndex) + "\r" + datee + timee + whoe + duringe + placee + " ";
+							str = str.Substring(lastSpaceIndex + 1);
+						}
+						else
+						{
+							res += str.Replace('\r', ' ').Replace('\n', ' ');
+							break;
+						}
+					}
 
-        static void StartVisualiser()
-        {
-            visualizerThread = new Thread(VisualiserThread);
-            visualizerThread.Name = "LogVisuliser";
-            visualizerThread.Start();
+					return res;
+				}
+			}
+		}
 
-            void VisualiserThread()
-            {
-                try
-                {
-                    while (true)
-                    {
-                        if (updated && FormsManager.logForm.WindowState != FormWindowState.Minimized)
-                        {
-                            FormsManager.mainForm.Invoke(new Action(() =>
-                            {
-                                FormsManager.logForm.rtb.Text = logText;
-                            }));
-                            updated = false;
-                        }
-                        Thread.Sleep(250);
-                    }
-                }
-                catch (ThreadInterruptedException ex)
-                {
-                }
-            }
-        }
+		public static void Log(float text)
+		{
+			Log(text.ToString());
+		}
 
-        static void StartFlusher()
-        {
-            flusherThread = new Thread(FlusherThread);
-            flusherThread.Name = "LogFlusher";
-            flusherThread.Start();
+		public static void Log(int text)
+		{
+			Log(text.ToString());
+		}
 
-            void FlusherThread()
-            {
-                try
-                {
-                    while (true)
-                    {
-                        Thread.Sleep(20000);
-                        writer.Flush();
-                    }
-                }
-                catch (ThreadInterruptedException ex)
-                {
-                    writer.Flush();
-                }
-            }
-        }
+		static void StartVisualiser()
+		{
+			_visualizerThread = new Thread(VisualiserThread);
+			_visualizerThread.Name = "LogVisuliser";
+			_visualizerThread.Start();
 
-        public static string GetTimeToShow(DateTime dateTime)
-        {
-            string h = dateTime.Hour.ToString();
-            string m = dateTime.Minute.ToString();
-            string s = dateTime.Second.ToString();
+			void VisualiserThread()
+			{
+				try
+				{
+					while (true)
+					{
+						if (_updated && FormsManager._logForm.WindowState != FormWindowState.Minimized)
+						{
+							FormsManager._mainForm.Invoke(new Action(() =>
+							{
+								FormsManager._logForm.rtb.Text = _logText;
+							}));
+							_updated = false;
+						}
+						Thread.Sleep(250);
+					}
+				}
+				catch (ThreadInterruptedException ex)
+				{
+				}
+			}
+		}
 
-            if (h.Length == 1)
-                h = "0" + h;
-            if (m.Length == 1)
-                m = "0" + m;
-            if (s.Length == 1)
-                s = "0" + s;
+		static void StartFlusher()
+		{
+			_flusherThread = new Thread(FlusherThread);
+			_flusherThread.Name = "LogFlusher";
+			_flusherThread.Start();
 
-            return $"{h}:{m}:{s}";
-        }
+			void FlusherThread()
+			{
+				try
+				{
+					while (true)
+					{
+						Thread.Sleep(20000);
+						_writer.Flush();
+					}
+				}
+				catch (ThreadInterruptedException ex)
+				{
+					_writer.Flush();
+				}
+			}
+		}
 
-        public static string GetDateToShow(DateTime dateTime)
-        {
-            string d = dateTime.Day.ToString();
-            string m = dateTime.Month.ToString();
-            string y = dateTime.Year.ToString();
+		public static string GetTimeToShow(DateTime dateTime)
+		{
+			string h = dateTime.Hour.ToString();
+			string m = dateTime.Minute.ToString();
+			string s = dateTime.Second.ToString();
 
-            if (d.Length == 1)
-                d = "0" + d;
-            if (m.Length == 1)
-                m = "0" + m;
+			if (h.Length == 1)
+				h = "0" + h;
+			if (m.Length == 1)
+				m = "0" + m;
+			if (s.Length == 1)
+				s = "0" + s;
 
-            return $"{d}.{m}.{y}";
-        }
+			return $"{h}:{m}:{s}";
+		}
 
-        public static void Quit()
-        {
-            visualizerThread.Interrupt();
-            flusherThread.Interrupt();
-        }
+		public static string GetDateToShow(DateTime dateTime)
+		{
+			string d = dateTime.Day.ToString();
+			string m = dateTime.Month.ToString();
+			string y = dateTime.Year.ToString();
 
-        static Logger()
-        {
-            logText = "";
-            writer = new StreamWriter(Disk.programFiles + "Logs\\log.log", true);
-            StartFlusher();
-            StartVisualiser();
-        }
-    }
+			if (d.Length == 1)
+				d = "0" + d;
+			if (m.Length == 1)
+				m = "0" + m;
+
+			return $"{d}.{m}.{y}";
+		}
+
+		public static void Quit()
+		{
+			_visualizerThread.Interrupt();
+			_flusherThread.Interrupt();
+		}
+
+		static Logger()
+		{
+			_logText = "";
+			_writer = new StreamWriter(Disk._programFiles + "Logs\\log.log", true);
+			StartFlusher();
+			StartVisualiser();
+		}
+	}
 }

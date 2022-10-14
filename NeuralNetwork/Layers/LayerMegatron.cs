@@ -1,31 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
 	public class LayerMegatron : LayerAbstract
 	{
 		[JsonIgnore]
-		public float[][][] unnormalizedValues;
+		public float[][][] _unnormalizedValues;
 
-		public Node[] subs; //[sub]
-		public int d;
-		public int valuesPerSubCount; //should be
-		public int lastMutatedSub;
+		public Node[] _subs; //[sub]
+		public int _d;
+		public int _outsPerSubCount;
+		public int _lastMutatedSub;
 
 		public override void FillWeightsRandomly()
 		{
 			//FillByLogic();
 			//return;
 
-			//////////////////////////////
 			//or
-			for (int sub = 0; sub < subs.Count(); sub++)
-				subs[sub].FillRandomly();
+			for (int sub = 0; sub < _subs.Count(); sub++)
+				_subs[sub].FillRandomly();
 		}
 
 		public void FillByLogic()
@@ -50,16 +44,16 @@ namespace AbsurdMoneySimulations
 			ars[13] = new float[] { 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1 };
 			ars[14] = new float[] { 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1 };
 
-			for (int s = 0; s < subs.Count(); s++)
+			for (int s = 0; s < _subs.Count(); s++)
 			{
 				for (int w = 0; w < 30; w++)
-					subs[s].weights[w] = ars[s][w];
+					_subs[s]._weights[w] = ars[s][w];
 			}
 		}
 
 		public override void Calculate(int test, float[][] input)
 		{
-			for (int sub = 0; sub < subs.Length; sub++)
+			for (int sub = 0; sub < _subs.Length; sub++)
 				CalculateOneSub(test, input, sub);
 		}
 
@@ -70,11 +64,11 @@ namespace AbsurdMoneySimulations
 
 		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
 		{
-			if (lrs == LayerRecalculateStatus.First)
+			if (lrs == LayerRecalculateStatus.OneWeightChanged)
 			{
-				CalculateOneSub(test, input, lastMutatedSub);
+				CalculateOneSub(test, input, _lastMutatedSub);
 				lrs = LayerRecalculateStatus.OneSubChanged;
-				lrs.lastMutatedSub = lastMutatedSub;
+				lrs._lastMutatedSub = _lastMutatedSub;
 				return lrs;
 			}
 			else
@@ -86,9 +80,9 @@ namespace AbsurdMoneySimulations
 
 		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
 		{
-			int gradientsPerSubCount = innerBPGradients.Count() / subs.Count();
-			for (int sub = 0; sub < subs.Count(); sub++)
-				FindBPGradientOneSub(test, sub, Extensions.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Extensions.SubArray(innerWeights, sub * valuesPerSubCount, valuesPerSubCount));
+			int gradientsPerSubCount = innerBPGradients.Count() / _subs.Count();
+			for (int sub = 0; sub < _subs.Count(); sub++)
+				FindBPGradientOneSub(test, sub, Extensions.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Extensions.SubArray(innerWeights, sub * _outsPerSubCount, _outsPerSubCount));
 		}
 
 		public override void FindBPGradient(int test, float desiredValue)
@@ -98,48 +92,48 @@ namespace AbsurdMoneySimulations
 
 		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
 		{
-			subs[sub].BPgradient[test] = NN.INERTION * subs[sub].BPgradient[test];
+			_subs[sub]._BPgradient[test] = NN._INERTION * _subs[sub]._BPgradient[test];
 			float buffer = 0;
-			for (int n = 0; n < valuesPerSubCount; n++)
+			for (int n = 0; n < _outsPerSubCount; n++)
 			{
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
-				buffer += gwsumm * af.df(unnormalizedValues[test][sub][n]);
+				buffer += gwsumm * _af.df(_unnormalizedValues[test][sub][n]);
 			}
 			//buffer /= valuesPerSubCount; //!!!!!!
-			subs[sub].BPgradient[test] += buffer;
-			subs[sub].BPgradient[test] = NN.CutGradient(subs[sub].BPgradient[test]);
+			_subs[sub]._BPgradient[test] += buffer;
+			_subs[sub]._BPgradient[test] = NN.CutGradient(_subs[sub]._BPgradient[test]);
 		}
 
 		private void CalculateOneSub(int test, float[][] input, int sub)
 		{
-			for (int v = 0; v < values[test][sub].Length; v++)
+			for (int v = 0; v < _values[test][sub].Length; v++)
 			{
-				unnormalizedValues[test][sub][v] = subs[sub].Calculate(test, input[0], v * d);
-				values[test][sub][v] = af.f(unnormalizedValues[test][sub][v]);
+				_unnormalizedValues[test][sub][v] = _subs[sub].Calculate(test, input[0], v * _d);
+				_values[test][sub][v] = _af.f(_unnormalizedValues[test][sub][v]);
 			}
 		}
 
 		public override void Mutate(float mutagen)
 		{
-			lastMutatedSub = Storage.rnd.Next(subs.Count());
-			subs[lastMutatedSub].Mutate(mutagen);
+			_lastMutatedSub = Storage.rnd.Next(_subs.Count());
+			_subs[_lastMutatedSub].Mutate(mutagen);
 		}
 
 		public override void Demutate(float mutagen)
 		{
-			subs[lastMutatedSub].Demutate(mutagen);
+			_subs[_lastMutatedSub].Demutate(mutagen);
 		}
 
 		public override void CorrectWeightsByBP(int test, float[][] input)
 		{
-			for (int sub = 0; sub < subs.Length; sub++)
+			for (int sub = 0; sub < _subs.Length; sub++)
 				CorrectWeightsByBPOneSub(test, sub, input[0]);
 		}
 
 		private void CorrectWeightsByBPOneSub(int test, int sub, float[] input)
 		{
-			for (int v = 0; v < values[test][sub].Length; v++)
-				subs[sub].CorrectWeightsByBP(test, input, v * d);
+			for (int v = 0; v < _values[test][sub].Length; v++)
+				_subs[sub].CorrectWeightsByBP(test, input, v * _d);
 		}
 
 		public override float GetAnswer(int test)
@@ -149,14 +143,14 @@ namespace AbsurdMoneySimulations
 
 		public override float[][] GetValues(int test)
 		{
-			return values[test];
+			return _values[test];
 		}
 
 		public override int WeightsCount
 		{
 			get
 			{
-				return subs.Count() * subs[0].weights.Count();
+				return _subs.Count() * _subs[0]._weights.Count();
 			}
 		}
 
@@ -177,37 +171,37 @@ namespace AbsurdMoneySimulations
 
 		public LayerMegatron(int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d)
 		{
-			type = 2;
-			this.d = d;
-			this.valuesPerSubCount = outsPerSubCount;
+			_type = 2;
+			_d = d;
+			_outsPerSubCount = outsPerSubCount;
 
-			subs = new Node[subsCount];
-			for (int sub = 0; sub < subs.Count(); sub++)
-				subs[sub] = new Node(testsCount, weightsPerSubCount);
+			_subs = new Node[subsCount];
+			for (int sub = 0; sub < _subs.Count(); sub++)
+				_subs[sub] = new Node(testsCount, weightsPerSubCount);
 
 			InitValues(testsCount);
 		}
 
 		public override void InitValues(int testsCount)
 		{
-			values = new float[testsCount][][];
+			_values = new float[testsCount][][];
 			for (int test = 0; test < testsCount; test++)
 			{
-				values[test] = new float[subs.Count()][];
-				for (int sub = 0; sub < subs.Count(); sub++)
-					values[test][sub] = new float[valuesPerSubCount];
+				_values[test] = new float[_subs.Count()][];
+				for (int sub = 0; sub < _subs.Count(); sub++)
+					_values[test][sub] = new float[_outsPerSubCount];
 			}
 
-			unnormalizedValues = new float[testsCount][][];
+			_unnormalizedValues = new float[testsCount][][];
 			for (int test = 0; test < testsCount; test++)
 			{
-				unnormalizedValues[test] = new float[subs.Count()][];
-				for (int sub = 0; sub < subs.Count(); sub++)
-					unnormalizedValues[test][sub] = new float[valuesPerSubCount];
+				_unnormalizedValues[test] = new float[_subs.Count()][];
+				for (int sub = 0; sub < _subs.Count(); sub++)
+					_unnormalizedValues[test][sub] = new float[_outsPerSubCount];
 			}
 
-			for (int s = 0; s < subs.Count(); s++)
-				subs[s].InitValues(testsCount); //does we need you? //
+			for (int s = 0; s < _subs.Count(); s++)
+				_subs[s].InitValues(testsCount); //does we need you? //
 		}
 	}
 }

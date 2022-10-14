@@ -1,64 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public static class FormsManager
 	{
-		public static MainForm mainForm;
-		public static BetsSimulatorForm betsSimulatorForm;
-		public static ShowForm showForm;
-		public static LogForm logForm;
+		public static MainForm _mainForm;
+		public static BetsSimulatorForm _betsSimulatorForm;
+		public static ShowForm _showForm;
+		public static LogForm _logForm;
 
 		public static void OpenBetsSimulatorForm()
 		{
-			mainForm.Invoke(new Action(() =>
+			_mainForm.Invoke(new Action(() =>
 			{
-				if (betsSimulatorForm == null || betsSimulatorForm.IsDisposed)
-					betsSimulatorForm = new BetsSimulatorForm();
+				if (_betsSimulatorForm == null || _betsSimulatorForm.IsDisposed)
+					_betsSimulatorForm = new BetsSimulatorForm();
 
-				betsSimulatorForm.Show();
-				betsSimulatorForm.WindowState = FormWindowState.Normal;
-				betsSimulatorForm.BringToFront();
-			}));			
+				_betsSimulatorForm.Show();
+				_betsSimulatorForm.WindowState = FormWindowState.Normal;
+				_betsSimulatorForm.BringToFront();
+			}));
 		}
 
 		public static void OpenShowForm(string text)
 		{
-			mainForm.Invoke(new Action(() =>
+			_mainForm.Invoke(new Action(() =>
 			{
-				if (showForm == null || showForm.IsDisposed)
+				if (_showForm == null || _showForm.IsDisposed)
 				{
-					showForm = new ShowForm();
+					_showForm = new ShowForm();
 				}
 
-				showForm.Show();
-				showForm.WindowState = FormWindowState.Normal;
-				showForm.BringToFront();
-				showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-				showForm.Location = new Point(0, 0);
-				showForm.BackgroundImageLayout = ImageLayout.Stretch;
+				_showForm.Show();
+				_showForm.WindowState = FormWindowState.Normal;
+				_showForm.BringToFront();
+				_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+				_showForm.Location = new Point(0, 0);
+				_showForm.BackgroundImageLayout = ImageLayout.Stretch;
 
-				showForm.BackgroundImage = Storage.bmp;
-				showForm.Text = text;
+				_showForm.BackgroundImage = Storage._bmp;
+				_showForm.Text = text;
 			}));
 		}
 
 		public static void OpenLogForm()
 		{
-			mainForm.Invoke(new Action(() =>
+			_mainForm.Invoke(new Action(() =>
 			{
-				if (logForm == null || logForm.IsDisposed)
+				if (_logForm == null || _logForm.IsDisposed)
 				{
-					logForm = new LogForm();
-					logForm.BringToFront();
-					logForm.Show();
-					logForm.WindowState = FormWindowState.Normal;
-					logForm.Location = new Point(-7, 0);
-					logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
+					_logForm = new LogForm();
+					_logForm.BringToFront();
+					_logForm.Show();
+					_logForm.WindowState = FormWindowState.Normal;
+					_logForm.Location = new Point(-7, 0);
+					_logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
 				}
 			}));
 		}

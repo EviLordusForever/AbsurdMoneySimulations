@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public static class Extensions
 	{
@@ -68,7 +62,7 @@ namespace AbsurdMoneySimulations
 		}
 
 		public static float NormalDistribution(float scale, float centralization, float smoothing)
-		{   
+		{
 			//actually this is not normal distribution, but who cares
 			float x = Storage.rnd.NextSingle();
 			float y = (MathF.Pow(x, centralization) + x * smoothing) / (smoothing + 1);

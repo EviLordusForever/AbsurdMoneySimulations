@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public class TanH : ActivationFunction
 	{
@@ -17,7 +11,7 @@ namespace AbsurdMoneySimulations
 		{
 			if (MathF.Abs(x) > 900)
 			{
-				NN.vanishedGradients++;
+				NN._vanishedGradients++;
 				return 0; ///////////////////////////////
 			}
 

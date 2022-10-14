@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public class LayerRecalculateStatus
 	{
@@ -19,24 +13,24 @@ namespace AbsurdMoneySimulations
 		//The problem is that
 		//this is different for every type of layers
 
-		private string status;
-		public int lastMutatedNode;
-		public int lastMutatedSub;
-		public int subSize;
+		private string _status;
+		public int _lastMutatedNode;
+		public int _lastMutatedSub;
+		public int _subSize;
 
-		public string Status 
+		public string Status
 		{
 			get
 			{
-				return status;
+				return _status;
 			}
 		}
 
-		public static LayerRecalculateStatus First
+		public static LayerRecalculateStatus OneWeightChanged
 		{
 			get
 			{
-				return new LayerRecalculateStatus { status = "First" };
+				return new LayerRecalculateStatus { _status = "First" };
 			}
 		}
 
@@ -44,7 +38,7 @@ namespace AbsurdMoneySimulations
 		{
 			get
 			{
-				return new LayerRecalculateStatus { status = "OneNodeChanged" };
+				return new LayerRecalculateStatus { _status = "OneNodeChanged" };
 			}
 		}
 
@@ -52,7 +46,7 @@ namespace AbsurdMoneySimulations
 		{
 			get
 			{
-				return new LayerRecalculateStatus { status = "OneSubChanged" };
+				return new LayerRecalculateStatus { _status = "OneSubChanged" };
 			}
 		}
 
@@ -60,7 +54,7 @@ namespace AbsurdMoneySimulations
 		{
 			get
 			{
-				return new LayerRecalculateStatus { status = "Full" };
+				return new LayerRecalculateStatus { _status = "Full" };
 			}
 		}
 	}

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public static class BetsSimulator
 	{
@@ -18,20 +12,20 @@ namespace AbsurdMoneySimulations
 
 			void SimulateThread()
 			{
-				int betsCount = Convert.ToInt16(FormsManager.betsSimulatorForm.betsCount.Text);
-				int heigh = Convert.ToInt16(FormsManager.betsSimulatorForm.height.Text);
-				Storage.bmp = new Bitmap(betsCount, heigh);
+				int betsCount = Convert.ToInt16(FormsManager._betsSimulatorForm.betsCount.Text);
+				int heigh = Convert.ToInt16(FormsManager._betsSimulatorForm.height.Text);
+				Storage._bmp = new Bitmap(betsCount, heigh);
 
-				Graphics gr = Graphics.FromImage(Storage.bmp);
+				Graphics gr = Graphics.FromImage(Storage._bmp);
 				gr.Clear(Color.White);
 
-				int martingaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.martingaleChain.Text);
-				int antimaringaleChain = Convert.ToInt16(FormsManager.betsSimulatorForm.antimartingaleChain.Text);
-				double startMoney = Convert.ToDouble(FormsManager.betsSimulatorForm.money.Text);
-				double betPercent = Convert.ToDouble(FormsManager.betsSimulatorForm.betPercent.Text) / 100;
-				double prize = Convert.ToDouble(FormsManager.betsSimulatorForm.prize.Text) / 100;
-				double winrate = Convert.ToDouble(FormsManager.betsSimulatorForm.winrate.Text) / 100;
-				double simulationsCount = Convert.ToDouble(FormsManager.betsSimulatorForm.simulationsCount.Text);
+				int martingaleChain = Convert.ToInt16(FormsManager._betsSimulatorForm.martingaleChain.Text);
+				int antimaringaleChain = Convert.ToInt16(FormsManager._betsSimulatorForm.antimartingaleChain.Text);
+				double startMoney = Convert.ToDouble(FormsManager._betsSimulatorForm.money.Text);
+				double betPercent = Convert.ToDouble(FormsManager._betsSimulatorForm.betPercent.Text) / 100;
+				double prize = Convert.ToDouble(FormsManager._betsSimulatorForm.prize.Text) / 100;
+				double winrate = Convert.ToDouble(FormsManager._betsSimulatorForm.winrate.Text) / 100;
+				double simulationsCount = Convert.ToDouble(FormsManager._betsSimulatorForm.simulationsCount.Text);
 				double money;
 				double oldmoney;
 				double[] avarageMoney = new double[betsCount];
@@ -53,8 +47,8 @@ namespace AbsurdMoneySimulations
 				DrawHorizontalLines();
 				DrawIndicatorField();
 				DrawAverageAndRisk();
-				Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, Storage.bmp.Height);
-				gr = Graphics.FromImage(Storage.bmp);
+				Storage._bmp = Extensions.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, Storage._bmp.Height);
+				gr = Graphics.FromImage(Storage._bmp);
 				WriteLoosersPercentage();
 				WriteProfit();
 				VisualiseBitmapToForm();
@@ -128,8 +122,8 @@ namespace AbsurdMoneySimulations
 
 				void WriteProfit()
 				{
-					gr.FillRectangle(Brushes.Cyan, Storage.bmp.Width - 270, 17, 270, 26);
-					gr.FillRectangle(Brushes.Red, Storage.bmp.Width - 270, 17 + 27, 270, 26);
+					gr.FillRectangle(Brushes.Cyan, Storage._bmp.Width - 270, 17, 270, 26);
+					gr.FillRectangle(Brushes.Red, Storage._bmp.Width - 270, 17 + 27, 270, 26);
 
 					double ap = Math.Round(avarageMoney[betsCount - 1] / simulationsCount - startMoney, 2);
 					string apStr = ap.ToString() + "$";
@@ -138,14 +132,14 @@ namespace AbsurdMoneySimulations
 					if (ap < -10000000)
 						apStr = "fucking -∞";
 
-					gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 270, 17);
-					gr.DrawString($"After {betsCount} bets", new Font("Tahoma", 14), Brushes.White, Storage.bmp.Width - 270, 17 + 27);
+					gr.DrawString($"Average profit: {apStr}", new Font("Tahoma", 14), Brushes.Black, Storage._bmp.Width - 270, 17);
+					gr.DrawString($"After {betsCount} bets", new Font("Tahoma", 14), Brushes.White, Storage._bmp.Width - 270, 17 + 27);
 				}
 
 				void WriteLoosersPercentage()
 				{
 					gr.DrawString("Not loosers, %:", new Font("Tahoma", 14), Brushes.Black, 5, heigh - 156);
-					gr.DrawString($"So, {Math.Round(100.0 * (risk[betsCount - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage.bmp.Width - 340, heigh - 156);
+					gr.DrawString($"So, {Math.Round(100.0 * (risk[betsCount - 1] + simulationsCount) / (2.0 * simulationsCount), 2)}% of simulations are in profit.", new Font("Tahoma", 14), Brushes.Black, Storage._bmp.Width - 340, heigh - 156);
 				}
 
 				void Play()
@@ -175,12 +169,12 @@ namespace AbsurdMoneySimulations
 
 				void VisualiseBitmapToForm()
 				{
-					Storage.bmp = Extensions.RescaleBitmap(Storage.bmp, Storage.bmp.Width, FormsManager.showForm.ClientSize.Height);
+					Storage._bmp = Extensions.RescaleBitmap(Storage._bmp, Storage._bmp.Width, FormsManager._showForm.ClientSize.Height);
 
-					FormsManager.mainForm.Invoke(new Action(() =>
+					FormsManager._mainForm.Invoke(new Action(() =>
 					{
-						FormsManager.showForm.BackgroundImage = Storage.bmp;
-						FormsManager.betsSimulatorForm.BringToFront();
+						FormsManager._showForm.BackgroundImage = Storage._bmp;
+						FormsManager._betsSimulatorForm.BringToFront();
 					}));
 				}
 

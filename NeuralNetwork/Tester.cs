@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static AbsurdMoneySimulations.Logger;
+﻿using static AbsurdMoneySimulations.Logger;
 
 namespace AbsurdMoneySimulations
 {
 	public class Tester
 	{
-		public int testsCount;
-		public int batchesCount;
-		public int batchSize;
+		public int _testsCount;
+		public int _batchesCount;
+		public int _batchSize;
 
-		private float[] originalGrafic;
-		private float[] derivativeOfGrafic;
-		private float[] normalizedDerivativeOfGrafic; //[-1, 1]
+		private float[] _originalGrafic;
+		private float[] _derivativeOfGrafic;
+		private float[] _normalizedDerivativeOfGrafic; //[-1, 1]
 
-		public List<int> availableGraficPoints;
-		public float[][] tests;
-		public float[] answers;
-		public byte[] batch;
+		public List<int> _availableGraficPoints;
+		public float[][] _tests;
+		public float[] _answers;
+		public byte[] _batch;
 
 		public void InitFromNormalizedOriginalGrafic(string path, string reason)
 		{
@@ -42,9 +37,9 @@ namespace AbsurdMoneySimulations
 
 		private void LoadOrigGrafic(string graficFolder, string reason)
 		{
-			var files = Directory.GetFiles(Disk.programFiles + graficFolder);
+			var files = Directory.GetFiles(Disk._programFiles + graficFolder);
 			var graficL = new List<float>();
-			availableGraficPoints = new List<int>();
+			_availableGraficPoints = new List<int>();
 
 			int g = 0;
 
@@ -57,8 +52,8 @@ namespace AbsurdMoneySimulations
 				{
 					graficL.Add(Convert.ToSingle(lines[l]));
 
-					if (l < lines.Length - NN.inputWindow - NN.horizon - 2)
-						availableGraficPoints.Add(g);
+					if (l < lines.Length - NN._inputWindow - NN._horizon - 2)
+						_availableGraficPoints.Add(g);
 
 					l++; g++;
 				}
@@ -66,26 +61,26 @@ namespace AbsurdMoneySimulations
 				Log($"Loaded grafic: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
 			}
 
-			originalGrafic = graficL.ToArray();
+			_originalGrafic = graficL.ToArray();
 			Log($"Original (and discrete) grafic for {reason} loaded.");
 			Log("Also available grafic points are loaded.");
-			Log("Grafic length: " + originalGrafic.Length + ".");
+			Log("Grafic length: " + _originalGrafic.Length + ".");
 		}
 
 		private void FillDerivativeOfGrafic()
 		{
-			derivativeOfGrafic = new float[originalGrafic.Length];
-			for (int i = 1; i < originalGrafic.Length; i++)
-				derivativeOfGrafic[i] = originalGrafic[i] - originalGrafic[i - 1];
+			_derivativeOfGrafic = new float[_originalGrafic.Length];
+			for (int i = 1; i < _originalGrafic.Length; i++)
+				_derivativeOfGrafic[i] = _originalGrafic[i] - _originalGrafic[i - 1];
 			Log("Derivative of grafic is filled.");
 		}
 
 		private void NormalizeDerivativeOfGrafic()
 		{
-			normalizedDerivativeOfGrafic = new float[originalGrafic.Length];
+			_normalizedDerivativeOfGrafic = new float[_originalGrafic.Length];
 			ActivationFunction af = new TanH();
-			for (int i = 1; i < derivativeOfGrafic.Length; i++)
-				normalizedDerivativeOfGrafic[i] = af.f(derivativeOfGrafic[i]);
+			for (int i = 1; i < _derivativeOfGrafic.Length; i++)
+				_normalizedDerivativeOfGrafic[i] = af.f(_derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
 		}
 
@@ -93,85 +88,85 @@ namespace AbsurdMoneySimulations
 		{
 			ActivationFunction af = new TanH();
 
-			int maximalDelta = availableGraficPoints.Count();
-			float delta_delta = 0.990f * maximalDelta / testsCount;
+			int maximalDelta = _availableGraficPoints.Count();
+			float delta_delta = 0.990f * maximalDelta / _testsCount;
 
-			tests = new float[testsCount][];
-			answers = new float[testsCount];
+			_tests = new float[_testsCount][];
+			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < testsCount; delta += delta_delta)
+			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += delta_delta)
 			{
-				int offset = availableGraficPoints[Convert.ToInt32(delta)];
+				int offset = _availableGraficPoints[Convert.ToInt32(delta)];
 
-				tests[test] = Extensions.SubArray(normalizedDerivativeOfGrafic, offset, NN.inputWindow);
+				_tests[test] = Extensions.SubArray(_normalizedDerivativeOfGrafic, offset, NN._inputWindow);
 
-				float[] ar = Extensions.SubArray(derivativeOfGrafic, offset + NN.inputWindow, NN.horizon);
+				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + NN._inputWindow, NN._horizon);
 				for (int j = 0; j < ar.Length; j++)
-					answers[test] += ar[j];
+					_answers[test] += ar[j];
 
-				answers[test] = af.f(answers[test]);
+				_answers[test] = af.f(_answers[test]);
 
 				test++;
 			}
 
-			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE grafic. ({tests.Length})");
+			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE grafic. ({_tests.Length})");
 		}
 
 		private void FillTestsFromOriginalGrafic()
 		{
-			ActivationFunction af = NN.AnswersAF;
+			ActivationFunction af = NN._answersAF;
 
-			int maximalDelta = availableGraficPoints.Count();
-			float delta_delta = 0.990f * maximalDelta / testsCount;
+			int maximalDelta = _availableGraficPoints.Count();
+			float delta_delta = 0.990f * maximalDelta / _testsCount;
 
-			tests = new float[testsCount][];
-			answers = new float[testsCount];
+			_tests = new float[_testsCount][];
+			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < testsCount; delta += delta_delta)
+			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += delta_delta)
 			{
-				int offset = availableGraficPoints[Convert.ToInt32(delta)];
+				int offset = _availableGraficPoints[Convert.ToInt32(delta)];
 
-				tests[test] = Extensions.SubArray(originalGrafic, offset, NN.inputWindow);
+				_tests[test] = Extensions.SubArray(_originalGrafic, offset, NN._inputWindow);
 				Normalize(test);
 
-				float[] ar = Extensions.SubArray(derivativeOfGrafic, offset + NN.inputWindow, NN.horizon);
+				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + NN._inputWindow, NN._horizon);
 				for (int j = 0; j < ar.Length; j++)
-					answers[test] += ar[j];
+					_answers[test] += ar[j];
 
-				answers[test] = af.f(answers[test]);
+				_answers[test] = af.f(_answers[test]);
 
 				test++;
 			}
 
-			Log($"Tests and answers for NN are filled from NORMILIZED ORIGINAL grafic. ({tests.Length})");
+			Log($"Tests and answers for NN are filled from NORMILIZED ORIGINAL grafic. ({_tests.Length})");
 
 			void Normalize(int test)
 			{
-				float min = Extensions.Min(tests[test]);
-				float max = Extensions.Max(tests[test]);
+				float min = Extensions.Min(_tests[test]);
+				float max = Extensions.Max(_tests[test]);
 				float scale = max - min;
 
-				for (int i = 0; i < tests[test].Length; i++)
-					tests[test][i] = 2 * (tests[test][i] - min) / scale - 1;
-					//tests[test][i] = (tests[test][i] - min) / scale;
+				for (int i = 0; i < _tests[test].Length; i++)
+					_tests[test][i] = 2 * (_tests[test][i] - min) / scale - 1;
+				//tests[test][i] = (tests[test][i] - min) / scale;
 			}
 		}
 
 		public void FillBatch()
 		{
-			if (batchesCount > 1)
+			if (_batchesCount > 1)
 			{
-				batch = new byte[testsCount];
+				_batch = new byte[_testsCount];
 
 				int i = 0;
-				while (i < batchSize)
+				while (i < _batchSize)
 				{
-					int n = Storage.rnd.Next(testsCount);
-					if (batch[n] == 0)
+					int n = Storage.rnd.Next(_testsCount);
+					if (_batch[n] == 0)
 					{
-						batch[n] = 1;
+						_batch[n] = 1;
 						i++;
 					}
 				}
@@ -180,27 +175,27 @@ namespace AbsurdMoneySimulations
 
 		public void DoNotUseBatch()
 		{
-			batch = new byte[testsCount];
+			_batch = new byte[_testsCount];
 
-			for (int i = 0; i < testsCount; i++)
-				batch[i] = 1;
+			for (int i = 0; i < _testsCount; i++)
+				_batch[i] = 1;
 
-			batchesCount = 1;
+			_batchesCount = 1;
 		}
 
 		public float[] OriginalGrafic
 		{
 			get
 			{
-				return originalGrafic;
+				return _originalGrafic;
 			}
 		}
 
 		public Tester(int testsCount, int batchesCount, string graficPath, string reason)
 		{
-			this.testsCount = testsCount;
-			this.batchesCount = batchesCount;
-			batchSize = testsCount / batchesCount;
+			this._testsCount = testsCount;
+			this._batchesCount = batchesCount;
+			_batchSize = testsCount / batchesCount;
 
 			//InitFromNormalizedOriginalGrafic(graficPath, reason);
 			InitFromNormalizedDerivativeGrafic(graficPath, reason);

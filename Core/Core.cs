@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public static class Core
 	{
 		public static void OnAppStarting()
 		{
 			Logger.Log("I am starting...");
-			FormsManager.mainForm.BringToFront();
+			FormsManager._mainForm.BringToFront();
 			Logger.Log("Hello my dear!");
 		}
 

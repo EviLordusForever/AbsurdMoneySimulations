@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AbsurdMoneySimulations
+﻿namespace AbsurdMoneySimulations
 {
 	public static class MinimalWinrateFinder
 	{
@@ -14,8 +8,8 @@ namespace AbsurdMoneySimulations
 
 			double[,] table = new double[120, 120];
 
-			Storage.bmp = new Bitmap(2700, 1920);
-			Graphics gr = Graphics.FromImage(Storage.bmp);
+			Storage._bmp = new Bitmap(2700, 1920);
+			Graphics gr = Graphics.FromImage(Storage._bmp);
 
 
 			for (double wr = 45; wr <= 110; wr += 1.0 / 26)
@@ -49,9 +43,9 @@ namespace AbsurdMoneySimulations
 				gr.DrawLine(Pens.Black, 0, 33 + prize * 18, 2700, 33 + prize * 18);
 
 
-			FormsManager.mainForm.Invoke(new Action(() =>
+			FormsManager._mainForm.Invoke(new Action(() =>
 			{
-				FormsManager.showForm.BackgroundImage = Extensions.RescaleBitmap(Storage.bmp, FormsManager.showForm.ClientSize.Width, FormsManager.showForm.ClientSize.Height);
+				FormsManager._showForm.BackgroundImage = Extensions.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, FormsManager._showForm.ClientSize.Height);
 			}));
 
 			Logger.Log("Profit table successfully created.");

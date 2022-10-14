@@ -5,14 +5,14 @@ namespace AbsurdMoneySimulations
 {
 	public static class Trader
 	{
-        public static void DoIt()
+		public static void DoIt()
 		{
 			LoadBrowser("https://google.com");
 			UserAsker.SayWait("So, let's we begin!");
 			Thread.Sleep(100);
-			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
-			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");
-			driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
+			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
+			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");
+			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
 		}
 	}
 }
