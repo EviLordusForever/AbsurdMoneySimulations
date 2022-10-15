@@ -10,7 +10,7 @@ namespace AbsurdMoneySimulations
 		public const int _horizon = 29;
 		public const int _inputWindow = 300;
 		public const float _weightsInitMin = -0.3f;
-		public const float _weightsInitScale = 0.6f;
+		public const float _weightsInitMax = 0.3f;
 		public const int _jumpLimit = 9000;
 
 		private const int _testsCount = 2000;

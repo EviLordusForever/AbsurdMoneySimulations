@@ -19,8 +19,9 @@ namespace AbsurdMoneySimulations
 
 		public void FillRandomly()
 		{
+			float scale = NN._weightsInitMax - NN._weightsInitMin;
 			for (int i = 0; i < _weights.Count(); i++)
-				_weights[i] = (Storage.rnd.NextSingle() - NN._weightsInitMin) * NN._weightsInitScale; /////////////////
+				_weights[i] = Storage.rnd.NextSingle() * scale - NN._weightsInitMin;
 		}
 
 		public float Calculate(int test, float[] input, int start)
