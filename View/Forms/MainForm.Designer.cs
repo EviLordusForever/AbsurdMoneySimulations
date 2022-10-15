@@ -35,6 +35,7 @@
 			this.button5 = new System.Windows.Forms.Button();
 			this.button6 = new System.Windows.Forms.Button();
 			this.button7 = new System.Windows.Forms.Button();
+			this.button8 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// button1
@@ -59,7 +60,7 @@
 			// 
 			// button3
 			// 
-			this.button3.Location = new System.Drawing.Point(12, 99);
+			this.button3.Location = new System.Drawing.Point(12, 128);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(456, 23);
 			this.button3.TabIndex = 2;
@@ -69,7 +70,7 @@
 			// 
 			// button4
 			// 
-			this.button4.Location = new System.Drawing.Point(13, 157);
+			this.button4.Location = new System.Drawing.Point(13, 186);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(456, 23);
 			this.button4.TabIndex = 3;
@@ -89,7 +90,7 @@
 			// 
 			// button6
 			// 
-			this.button6.Location = new System.Drawing.Point(12, 70);
+			this.button6.Location = new System.Drawing.Point(12, 99);
 			this.button6.Name = "button6";
 			this.button6.Size = new System.Drawing.Size(456, 23);
 			this.button6.TabIndex = 5;
@@ -99,7 +100,7 @@
 			// 
 			// button7
 			// 
-			this.button7.Location = new System.Drawing.Point(13, 128);
+			this.button7.Location = new System.Drawing.Point(13, 157);
 			this.button7.Name = "button7";
 			this.button7.Size = new System.Drawing.Size(456, 23);
 			this.button7.TabIndex = 6;
@@ -107,11 +108,22 @@
 			this.button7.UseVisualStyleBackColor = true;
 			this.button7.Click += new System.EventHandler(this.button7_Click);
 			// 
+			// button8
+			// 
+			this.button8.Location = new System.Drawing.Point(12, 70);
+			this.button8.Name = "button8";
+			this.button8.Size = new System.Drawing.Size(456, 23);
+			this.button8.TabIndex = 7;
+			this.button8.Text = "Neural Battle";
+			this.button8.UseVisualStyleBackColor = true;
+			this.button8.Click += new System.EventHandler(this.button8_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(481, 306);
+			this.Controls.Add(this.button8);
 			this.Controls.Add(this.button7);
 			this.Controls.Add(this.button6);
 			this.Controls.Add(this.button5);
@@ -137,5 +149,6 @@
 		private Button button5;
 		private Button button6;
 		private Button button7;
+		private Button button8;
 	}
 }

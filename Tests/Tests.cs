@@ -33,13 +33,13 @@ namespace AbsurdMoneySimulations
 
 			for (int test = 0; test < NN._testerE._testsCount; test++)
 			{
-				float before = Calculate(test, _testerE, _testerE._tests[test]);
+				float before = Calculate(test, _testerE._tests[test]);
 				Mutate();
-				float after1 = Recalculate(test, _testerE);
-				float after2 = Calculate(test, _testerE, _testerE._tests[test]);
+				float after1 = Recalculate(test, _testerE._tests[test]);
+				float after2 = Calculate(test, _testerE._tests[test]);
 				Demutate();
-				float again1 = Recalculate(test, _testerE);
-				float again2 = Calculate(test, _testerE, _testerE._tests[test]);
+				float again1 = Recalculate(test, _testerE._tests[test]);
+				float again2 = Calculate(test, _testerE._tests[test]);
 
 				bool good = (before == again1 && before == again2) && (after1 == after2);
 
@@ -74,7 +74,7 @@ namespace AbsurdMoneySimulations
 
 			Log($"Started calculate tests");
 			for (int test = 0; test < _testerE._testsCount; test++)
-				res += NN.Calculate(test, _testerE, _testerE._tests[test]);
+				res += NN.Calculate(test, _testerE._tests[test]);
 			Log($"Ended calculate tests");
 			Log(res);
 
@@ -85,31 +85,8 @@ namespace AbsurdMoneySimulations
 			res = 0;
 
 			Log($"Started recalculate tests");
-			for (int test = 0; test < NN._testerE._testsCount; test++)
-				res += NN.Recalculate(test, NN._testerE);
-
-			Log($"Ended recalculate tests");
-			Log(res);
-
-			Log($"==================================");
-
-			res = 0;
-
-			Log($"Started calculate tests");
-			for (int test = 0; test < NN._testerE._testsCount; test++)
-				res += NN.Calculate(test, _testerE, _testerE._tests[test]);
-			Log($"Ended calculate tests");
-			Log(res);
-
-			Log($"==================================");
-			NN.Demutate();
-			Log($"==================================");
-
-			res = 0;
-
-			Log($"Started recalculate tests");
-			for (int test = 0; test < NN._testerE._testsCount; test++)
-				res += NN.Recalculate(test, NN._testerE);
+			for (int test = 0; test < _testerE._testsCount; test++)
+				res += NN.Recalculate(test, _testerE._tests[test]);
 
 			Log($"Ended recalculate tests");
 			Log(res);
@@ -120,7 +97,30 @@ namespace AbsurdMoneySimulations
 
 			Log($"Started calculate tests");
 			for (int test = 0; test < _testerE._testsCount; test++)
-				res += Calculate(test, _testerE, _testerE._tests[test]);
+				res += NN.Calculate(test, _testerE._tests[test]);
+			Log($"Ended calculate tests");
+			Log(res);
+
+			Log($"==================================");
+			NN.Demutate();
+			Log($"==================================");
+
+			res = 0;
+
+			Log($"Started recalculate tests");
+			for (int test = 0; test < _testerE._testsCount; test++)
+				res += NN.Recalculate(test, _testerE._tests[test]);
+
+			Log($"Ended recalculate tests");
+			Log(res);
+
+			Log($"==================================");
+
+			res = 0;
+
+			Log($"Started calculate tests");
+			for (int test = 0; test < _testerE._testsCount; test++)
+				res += Calculate(test, _testerE._tests[test]);
 			Log($"Ended calculate tests");
 			Log(res);
 		}
@@ -254,7 +254,7 @@ namespace AbsurdMoneySimulations
 
 			Load();
 			Init();
-			Calculate(test, _testerE, _testerE._tests[test]);
+			Calculate(test, _testerE._tests[test]);
 
 			int subsCount = NN._layers[0]._values[test].Count();
 			float inputSize = 300;

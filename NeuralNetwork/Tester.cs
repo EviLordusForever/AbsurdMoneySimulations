@@ -189,7 +189,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public void FillBatchByOnes()
+		private void FillFullBatch()
 		{
 			for (int i = 0; i < _testsCount; i++)
 				_batch[i] = 1;
@@ -213,7 +213,7 @@ namespace AbsurdMoneySimulations
 			//InitFromNormalizedOriginalGrafic(graficPath, reason);
 			InitFromNormalizedDerivativeGrafic(graficPath, reason);
 			if (batchesCount == 1)
-				FillBatchByOnes();
+				FillFullBatch();
 		}
 	}
 }

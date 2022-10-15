@@ -22,8 +22,8 @@ namespace AbsurdMoneySimulations
 		public static float _randomMutatesScaleV2 = 10;
 		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float _LYAMBDA = 0.01f; //0.05f
-		public static float _INERTION = 0.9f; //0.8f
+		public static float _LYAMBDA = 0.02f; //0.05f
+		public static float _INERTION = 0.8f; //0.8f
 
 		public static int _vanishedGradients = 0;
 		public static int _cuttedGradients = 0;
@@ -107,7 +107,7 @@ namespace AbsurdMoneySimulations
 			Log("Neural Network loaded from disk!");
 		}
 
-		public static float Calculate(int test, Tester tester, float[] input)
+		public static float Calculate(int test, float[] input)
 		{
 			float[][] array = new float[1][];
 			array[0] = input;
@@ -120,7 +120,7 @@ namespace AbsurdMoneySimulations
 			return _layers[_layers.Count - 1].GetAnswer(test);
 		}
 
-		public static float Recalculate(int test, Tester tester)
+		public static float Recalculate(int test, float[] input)
 		{
 			LayerRecalculateStatus lrs = LayerRecalculateStatus.OneWeightChanged;
 
@@ -130,7 +130,7 @@ namespace AbsurdMoneySimulations
 			else
 			{
 				float[][] array = new float[1][];
-				array[0] = tester._tests[test];
+				array[0] = input;
 
 				_layers[0].Calculate(test, array);
 
@@ -258,10 +258,13 @@ namespace AbsurdMoneySimulations
 
 				for (int Generation = 0; ; Generation++)
 				{
-					Log("G" + Generation);
+					Log($"G{Generation} b{Generation % 30}");
 
 					if (Generation % 30 == 0)
+					{
 						_testerE.FillBatchBy(500);
+						Log("Batch refilled");
+					}
 
 					_vanishedGradients = 0;
 					_cuttedGradients = 0;
@@ -395,7 +398,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Calculate(test, tester, tester._tests[test]);
+					float prediction = Calculate(test, tester._tests[test]);
 
 					float reality = tester._answers[test];
 
@@ -454,7 +457,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Calculate(test, tester, tester._tests[test]);
+					float prediction = Calculate(test, tester._tests[test]);
 
 					float reality = tester._answers[test];
 
@@ -513,7 +516,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Recalculate(test, tester);
+					float prediction = Recalculate(test, tester._tests[test]);
 
 					float reality = tester._answers[test];
 

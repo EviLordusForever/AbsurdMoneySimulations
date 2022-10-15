@@ -83,7 +83,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = NN.Calculate(test, tester, tester._tests[test]);
+					float prediction = NN.Calculate(test, tester._tests[test]);
 
 					float reality = tester._answers[test];
 
