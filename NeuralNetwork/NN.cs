@@ -9,8 +9,8 @@ namespace AbsurdMoneySimulations
 	{
 		public const int _horizon = 29;
 		public const int _inputWindow = 300;
-		public const float _weightsInitMin = -0.3f;
-		public const float _weightsInitMax = 0.3f;
+		public const float _weightsInitMin = -0.15f;
+		public const float _weightsInitMax = 0.15f;
 		public const int _jumpLimit = 9000;
 
 		private const int _testsCount = 2000;
@@ -25,9 +25,12 @@ namespace AbsurdMoneySimulations
 		public static float _LYAMBDA = 0.02f; //0.05f
 		public static float _INERTION = 0.8f; //0.8f
 
-		public static int _vanishedGradients = 0;
-		public static int _cuttedGradients = 0;
 		public const float _cutter = 100f;
+
+		public const float _biasInput = 0.1f;
+
+		public static int _vanishedGradients;
+		public static int _cuttedGradients;
 
 		public static ActivationFunction _answersAF = new TanH();
 

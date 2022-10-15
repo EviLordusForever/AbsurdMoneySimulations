@@ -6,8 +6,13 @@ namespace AbsurdMoneySimulations
 	{
 		public float[] _weights;
 
+		public float bias;
+
 		[JsonIgnore]
 		public float[][] _subvalues;
+
+		[JsonIgnore]
+		public float[] _biasvalues;
 
 		[JsonIgnore]
 		public float[] _summ;
@@ -19,14 +24,17 @@ namespace AbsurdMoneySimulations
 
 		public void FillRandomly()
 		{
-			float scale = NN._weightsInitMax - NN._weightsInitMin;
+			float scale = MathF.Abs(NN._weightsInitMax - NN._weightsInitMin);
+
 			for (int i = 0; i < _weights.Count(); i++)
-				_weights[i] = Storage.rnd.NextSingle() * scale - NN._weightsInitMin;
+				_weights[i] = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
+			bias = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
 		}
 
 		public float Calculate(int test, float[] input, int start)
 		{
-			_summ[test] = 0;
+			_biasvalues[test] = bias * NN._biasInput;
+			_summ[test] = _biasvalues[test];
 
 			for (int w = 0; w < _weights.Count(); w++)
 			{
@@ -39,22 +47,38 @@ namespace AbsurdMoneySimulations
 
 		public float CalculateOnlyOneWeight(int test, float input, int w)
 		{
-			_summ[test] -= _subvalues[test][w];
-			_subvalues[test][w] = _weights[w] * input;
-			_summ[test] += _subvalues[test][w];
+			if (w < _weights.Length)
+			{
+				_summ[test] -= _subvalues[test][w];
+				_subvalues[test][w] = _weights[w] * input;
+				_summ[test] += _subvalues[test][w];
+			}
+			else
+			{
+				_summ[test] -= _biasvalues[test];
+				_biasvalues[test] = bias * NN._biasInput;
+				_summ[test] += _biasvalues[test];
+			}
 
 			return _summ[test];
 		}
 
 		public void Mutate(float mutagen)
 		{
-			_lastMutatedWeight = Storage.rnd.Next(_weights.Length);
-			_weights[_lastMutatedWeight] += mutagen;
+			_lastMutatedWeight = Storage.rnd.Next(_weights.Length + 1);
+
+			if (_lastMutatedWeight == _weights.Length)
+				bias += mutagen;
+			else
+				_weights[_lastMutatedWeight] += mutagen;
 		}
 
 		public void Demutate(float mutagen)
 		{
-			_weights[_lastMutatedWeight] -= mutagen;
+			if (_lastMutatedWeight == _weights.Length)
+				bias -= mutagen;
+			else
+				_weights[_lastMutatedWeight] -= mutagen;
 		}
 
 		public void FindBPGradient(int test, ActivationFunction af, float desiredValue)
@@ -91,6 +115,7 @@ namespace AbsurdMoneySimulations
 			}
 			for (int w = 0; w < _weights.Count(); w++)
 				_weights[w] -= NN._LYAMBDA * _BPgradient[test] * input[start + w];
+			bias -= NN._LYAMBDA * _BPgradient[test] * NN._biasInput;
 		}
 
 		public Node(int testsCount, int weightsCount)
@@ -108,6 +133,8 @@ namespace AbsurdMoneySimulations
 
 			for (int test = 0; test < testsCount; test++)
 				_subvalues[test] = new float[_weights.Count()];
+
+			_biasvalues = new float[testsCount];
 
 			_BPgradient = new float[testsCount];
 		}
