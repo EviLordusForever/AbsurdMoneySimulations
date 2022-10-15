@@ -103,6 +103,12 @@
 			_nodes[0].FindBPGradient(test, _af, desiredValue);
 		}
 
+		public override void UseInertionForGradient(int test)
+		{
+			for (int n = 0; n < _nodes.Count(); n++)
+				_nodes[n].UseInertionForGradient(test);
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			_lastMutatedNode = Storage.rnd.Next(_nodes.Count());

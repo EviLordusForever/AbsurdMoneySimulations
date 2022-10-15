@@ -173,14 +173,26 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public void DoNotUseBatch()
+		public void FillBatchBy(int count)
 		{
 			_batch = new byte[_testsCount];
 
+			int i = 0;
+			while (i < count)
+			{
+				int n = Storage.rnd.Next(_testsCount);
+				if (_batch[n] == 0)
+				{
+					_batch[n] = 1;
+					i++;
+				}
+			}
+		}
+
+		public void FillBatchByOnes()
+		{
 			for (int i = 0; i < _testsCount; i++)
 				_batch[i] = 1;
-
-			_batchesCount = 1;
 		}
 
 		public float[] OriginalGrafic
@@ -193,14 +205,15 @@ namespace AbsurdMoneySimulations
 
 		public Tester(int testsCount, int batchesCount, string graficPath, string reason)
 		{
-			this._testsCount = testsCount;
-			this._batchesCount = batchesCount;
+			_testsCount = testsCount;
+			_batch = new byte[testsCount];
+			_batchesCount = batchesCount;
 			_batchSize = testsCount / batchesCount;
 
 			//InitFromNormalizedOriginalGrafic(graficPath, reason);
 			InitFromNormalizedDerivativeGrafic(graficPath, reason);
 			if (batchesCount == 1)
-				DoNotUseBatch();
+				FillBatchByOnes();
 		}
 	}
 }

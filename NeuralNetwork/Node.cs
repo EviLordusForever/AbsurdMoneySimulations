@@ -64,8 +64,13 @@ namespace AbsurdMoneySimulations
 		public void FindBPGradient(int test, ActivationFunction af, float[] gradients, float[] weights)
 		{
 			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
-			_BPgradient[test] = NN._INERTION * _BPgradient[test] + gwsumm * af.df(_summ[test]); //
+			_BPgradient[test] += gwsumm * af.df(_summ[test]);
 			_BPgradient[test] = NN.CutGradient(_BPgradient[test]);
+		}
+
+		public void UseInertionForGradient(int test)
+		{
+			_BPgradient[test] *= NN._INERTION;
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)

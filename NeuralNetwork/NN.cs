@@ -47,19 +47,19 @@ namespace AbsurdMoneySimulations
 		{
 			_layers = new List<LayerAbstract>();
 
-			_layers.Add(new LayerMegatron(_testerE._testsCount, 10, 136, 30, 2));   //55 x 30 x 10 = 
+			_layers.Add(new LayerMegatron(_testerE._testsCount, 6, 136, 30, 2));   //136 x 30 x 10 = 
 			_layers[0].FillWeightsRandomly();
 
-			_layers.Add(new LayerCybertron(_testerE._testsCount, 10, 136, 10, 100)); //10 x 55 x 10 = 
+			_layers.Add(new LayerCybertron(_testerE._testsCount, 6, 136, 10, 60)); //6 x 136 x 10 = 
 			_layers[1].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 30, 100)); //100 x 30 = 3000
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 60)); //5 x 60 = 300
 			_layers[2].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 10, 30)); //30 x 15 =  450
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 5)); //5 x 5 =  25
 			_layers[3].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 10)); //10 x 1 = 10
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 5)); //5 x 1 = 5
 			_layers[4].FillWeightsRandomly();
 
 			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
@@ -260,11 +260,15 @@ namespace AbsurdMoneySimulations
 				{
 					Log("G" + Generation);
 
+					if (Generation % 30 == 0)
+						_testerE.FillBatchBy(500);
+
 					_vanishedGradients = 0;
 					_cuttedGradients = 0;
 					for (int b = 0; b < _testerE._batchesCount; b++)
 					{
 						_testerE.FillBatch();
+						UseInertionForBPGradients(_testerE);
 						FindBPGradients(_testerE);
 						CorrectWeightsByBP(_testerE);
 					}
@@ -308,6 +312,18 @@ namespace AbsurdMoneySimulations
 						Log("NN copied for early stopping.");
 					}
 				}
+			}
+		}
+
+		private static void UseInertionForBPGradients(Tester tester)
+		{
+			if (_INERTION != 1f)
+			{
+				for (int test = 0; test < tester._tests.Length; test++)
+					for (int layer = _layers.Count - 2; layer >= 0; layer--)
+						_layers[layer].UseInertionForGradient(test);
+
+				Log("Inertion for gradients used!");
 			}
 		}
 

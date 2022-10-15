@@ -19,8 +19,8 @@ namespace AbsurdMoneySimulations
 
 			JObject jo = JObject.Load(reader);
 			reader = jo.CreateReader();
-			if (jo["type"] != null)
-				switch (jo.GetValue("type").ToString())
+			if (jo["_type"] != null)
+				switch (jo.GetValue("_type").ToString())
 				{
 					case "1":
 						return serializer.Deserialize(reader, typeof(LayerPerceptron));

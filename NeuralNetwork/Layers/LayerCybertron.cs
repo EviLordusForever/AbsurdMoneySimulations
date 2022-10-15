@@ -56,6 +56,12 @@
 			throw new NotImplementedException();
 		}
 
+		public override void UseInertionForGradient(int test)
+		{
+			for (int n = 0; n < _perceptrons.Count(); n++)
+				_perceptrons[n].UseInertionForGradient(test);
+		}
+
 		public override void Mutate(float mutagen)
 		{
 			_lastMutatedSub = Storage.rnd.Next(_perceptrons.Count());

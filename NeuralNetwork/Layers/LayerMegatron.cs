@@ -90,9 +90,14 @@ namespace AbsurdMoneySimulations
 			throw new NotImplementedException();
 		}
 
+		public override void UseInertionForGradient(int test)
+		{
+			for (int sub = 0; sub < _subs.Count(); sub++)
+				_subs[sub].UseInertionForGradient(test);
+		}
+
 		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
 		{
-			_subs[sub]._BPgradient[test] = NN._INERTION * _subs[sub]._BPgradient[test];
 			float buffer = 0;
 			for (int n = 0; n < _outsPerSubCount; n++)
 			{

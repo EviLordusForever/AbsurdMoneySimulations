@@ -25,6 +25,8 @@ namespace AbsurdMoneySimulations
 
 		public abstract void FindBPGradient(int test, float desiredValue);
 
+		public abstract void UseInertionForGradient(int test);
+
 		public abstract void Mutate(float mutagen);
 
 		public abstract void CorrectWeightsByBP(int test, float[][] input);
