@@ -115,8 +115,6 @@ namespace AbsurdMoneySimulations
 
 		private void FillTestsFromOriginalGrafic()
 		{
-			ActivationFunction af = NN._answersAF;
-
 			int maximalDelta = _availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / _testsCount;
 
@@ -135,7 +133,7 @@ namespace AbsurdMoneySimulations
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = af.f(_answers[test]);
+				_answers[test] = NN._answersAF.f(_answers[test]);
 
 				test++;
 			}

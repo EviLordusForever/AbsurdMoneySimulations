@@ -79,5 +79,17 @@
 				Trader.DoIt();
 			}
 		}
+
+		public static void StartROI()
+		{
+			Thread myThread = new Thread(StartTraderThread);
+			myThread.Name = "ROI";
+			myThread.Start();
+
+			void StartTraderThread()
+			{
+				ROI.LetsDoIt();
+			}
+		}
 	}
 }

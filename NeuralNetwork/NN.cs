@@ -116,6 +116,19 @@ namespace AbsurdMoneySimulations
 			Log("Neural Network loaded from disk!");
 		}
 
+		public static void Load(string path)
+		{
+			_name = TextMethods.StringInsideLast(path, "\\", ".json");
+			string json = File.ReadAllText(path);
+
+			var jss = new JsonSerializerSettings();
+			jss.Converters.Add(new LayerAbstractConverter());
+
+			_layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(json, jss);
+
+			Log("Neural Network loaded from disk!");
+		}
+
 		public static float Calculate(int test, float[] input)
 		{
 			float[][] array = new float[1][];
@@ -257,11 +270,11 @@ namespace AbsurdMoneySimulations
 				float old_v = 0;
 				float a = 0;
 
-				float ert = FindErrorRateSquared(_testerV);
+				float ert = FindErrorRateLinear(_testerV);
 				Log("Current ert: " + ert);
 				float ert_record = GetErtRecord();
 				Log("Current ert_record: " + ert_record);
-				float er = FindErrorRateSquared(_testerE);
+				float er = FindErrorRateLinear(_testerE);
 				Log("Current er: " + er);
 				float old_er = er;
 				float old_ert = ert;				
@@ -286,10 +299,10 @@ namespace AbsurdMoneySimulations
 					CorrectWeightsByBP(_testerE);
 
 					old_ert = ert;
-					ert = FindErrorRateSquared(_testerV);
+					ert = FindErrorRateLinear(_testerV);
 					Log($"ert: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
 					old_er = er;
-					er = FindErrorRateSquared(_testerE);
+					er = FindErrorRateLinear(_testerE);
 
 					old_v = v;
 					v = er - old_er;
