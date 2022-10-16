@@ -78,9 +78,9 @@ namespace AbsurdMoneySimulations
 		private void NormalizeDerivativeOfGrafic()
 		{
 			_normalizedDerivativeOfGrafic = new float[_originalGrafic.Length];
-			ActivationFunction af = new TanH();
+
 			for (int i = 1; i < _derivativeOfGrafic.Length; i++)
-				_normalizedDerivativeOfGrafic[i] = af.f(_derivativeOfGrafic[i]);
+				_normalizedDerivativeOfGrafic[i] = NN._inputAF.f(_derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
 		}
 

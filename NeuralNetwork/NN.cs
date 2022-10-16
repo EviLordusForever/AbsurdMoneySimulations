@@ -22,7 +22,7 @@ namespace AbsurdMoneySimulations
 		public static float _randomMutatesScaleV2 = 10;
 		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float _LYAMBDA = 0.0001f; //0.05f
+		public static float _LYAMBDA = 0.001f; //0.05f
 		public static float _INERTION = 0f; //0.8f
 
 		public const float _cutter = 10f;
@@ -32,7 +32,8 @@ namespace AbsurdMoneySimulations
 		public static int _vanishedGradients;
 		public static int _cuttedGradients;
 
-		public static ActivationFunction _answersAF = new Linear();
+		public static ActivationFunction _inputAF = new Avocado();
+		public static ActivationFunction _answersAF = new TanH();
 
 		public static List<LayerAbstract> _layers;
 
@@ -180,8 +181,8 @@ namespace AbsurdMoneySimulations
 		public static void InitActivationFunctions()
 		{
 			for (int l = 0; l < _layers.Count - 1; l++)
-				_layers[l]._af = new ELU();
-			_layers[_layers.Count - 1]._af = new Linear();
+				_layers[l]._af = new Avocado();
+			_layers[_layers.Count - 1]._af = new TanH();
 		}
 
 		public static void InitValues()
@@ -207,7 +208,7 @@ namespace AbsurdMoneySimulations
 			short previous = 0;
 			string history = "";
 			float er = 0;
-			float record = FindErrorRateSquared(_testerE);
+			float record = FindErrorRate(_testerE);
 			Log("Received current er_fb: " + record);
 
 			for (int Generation = 0; ; Generation++)
@@ -233,7 +234,7 @@ namespace AbsurdMoneySimulations
 				{
 					Log($" ▽ Bad mutation. Go back. ({_mutagen})");
 					Demutate();
-					er = FindErrorRateSquared(_testerE);
+					er = FindErrorRate(_testerE);
 				}
 
 				history += record + "\r\n";
@@ -245,7 +246,7 @@ namespace AbsurdMoneySimulations
 					history = "";
 
 					Log("(!) er_nfb: " + er);
-					er = FindErrorRateSquared(_testerE);
+					er = FindErrorRate(_testerE);
 					Log("(!) er_fb: " + er);
 
 					string validation = Stat.CalculateStatistics(_testerV);
@@ -270,16 +271,14 @@ namespace AbsurdMoneySimulations
 				float old_v = 0;
 				float a = 0;
 
-				float ert = FindErrorRateLinear(_testerV);
+				float ert = FindErrorRate(_testerV);
 				Log("Current ert: " + ert);
 				float ert_record = GetErtRecord();
 				Log("Current ert_record: " + ert_record);
-				float er = FindErrorRateLinear(_testerE);
+				float er = FindErrorRate(_testerE);
 				Log("Current er: " + er);
 				float old_er = er;
 				float old_ert = ert;				
-
-				//_testerE._batchesCount = 40;
 
 				for (int Generation = 0; ; Generation++)
 				{
@@ -299,10 +298,10 @@ namespace AbsurdMoneySimulations
 					CorrectWeightsByBP(_testerE);
 
 					old_ert = ert;
-					ert = FindErrorRateLinear(_testerV);
+					ert = FindErrorRate(_testerV);
 					Log($"ert: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
 					old_er = er;
-					er = FindErrorRateLinear(_testerE);
+					er = FindErrorRate(_testerE);
 
 					old_v = v;
 					v = er - old_er;
@@ -334,7 +333,7 @@ namespace AbsurdMoneySimulations
 						ert_record = ert;
 						Disk.ClearDirectory($"{Disk._programFiles}\\NN\\EarlyStopping");
 						File.Copy($"{Disk._programFiles}\\NN\\{_name}.json", $"{Disk._programFiles}\\NN\\EarlyStopping\\{_name} ({ert}).json");
-						Log("NN copied for early stopping.");
+						Log(" ▲ NN copied for early stopping.");
 					}
 				}
 
@@ -404,6 +403,11 @@ namespace AbsurdMoneySimulations
 				}
 			}
 			Log("Weights are corrected!");
+		}
+
+		public static float FindErrorRate(Tester tester)
+		{
+			return FindErrorRateSquared(tester);
 		}
 
 		public static float FindErrorRateLinear(Tester tester)
