@@ -49,12 +49,14 @@ namespace AbsurdMoneySimulations
 						summ--;
 					}
 
-				////////////////////
-
 				if (summ == files.Length)
 					csv += "1,";
 				else
 					csv += "0,";
+
+
+				////////////////////
+
 
 				float summ2 = 0;
 				for (int nn = 0; nn < files.Length; nn++)
@@ -84,11 +86,73 @@ namespace AbsurdMoneySimulations
 				else
 					csv += ",0,";
 
-				csv += "\r\n";
+
+				//////////////////////////////
+
+
+				bool isPrediction = true;
+				for (int nn = 1; nn < files.Length; nn++)
+					if (predictions[test, nn] > 0 && predictions[test, 0] < 0 ||
+						predictions[test, nn] < 0 && predictions[test, 0] > 0)
+						isPrediction = false;
+
+				for (int nn = 1; nn < files.Length; nn++)
+					if (Math.Abs(predictions[test, nn]) < 0.02f)
+						isPrediction = false;
+
+				if (isPrediction)
+				{
+					if (NN._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+						NN._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+						csv += ",1,";
+					else
+						csv += ",-1,";
+				}
+				else
+					csv += ",0,";
+
+				///////////////////////////////////////////
+
+				csv += "\r\n";				
+			}
+
+			for (float d = 0; d < 0.03; d += 0.001f)
+				So(d);
+
+			void So(float d)
+			{
+				float predictionsCount = 0;
+				float wins = 0;
+
+				for (int test = 0; test < NN._testerV._testsCount; test++)
+				{
+					bool isPrediction = true;
+					for (int nn = 1; nn < files.Length; nn++)
+						if (predictions[test, nn] > 0 && predictions[test, 0] < 0 ||
+							predictions[test, nn] < 0 && predictions[test, 0] > 0)
+							isPrediction = false;
+
+					for (int nn = 1; nn < files.Length; nn++)
+						if (Math.Abs(predictions[test, nn]) < d)
+							isPrediction = false;
+
+					if (isPrediction)
+					{
+						predictionsCount++;
+
+						if (NN._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+							NN._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+							wins++;
+					}
+				}
+
+				Logger.Log($"d{d}: {wins}/{predictionsCount}");
 			}
 
 			Disk.WriteToProgramFiles("ROI test", "csv", csv, false);
 			Logger.Log("done");
+
+
 		}
 	}
 }
