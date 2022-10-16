@@ -259,7 +259,7 @@ namespace AbsurdMoneySimulations
 			int subsCount = NN._layers[0]._values[test].Count();
 			float inputSize = 300;
 			int head = 30;
-			int d = 1;
+			int d = 2;
 			float subSize = (inputSize - head) / d + 1;
 
 			for (int sub = 0; sub < subsCount; sub++)

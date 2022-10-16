@@ -9,8 +9,8 @@ namespace AbsurdMoneySimulations
 	{
 		public const int _horizon = 29;
 		public const int _inputWindow = 300;
-		public const float _weightsInitMin = -0.15f;
-		public const float _weightsInitMax = 0.15f;
+		public const float _weightsInitMin = -1.5f;
+		public const float _weightsInitMax = 1.5f;
 		public const int _jumpLimit = 9000;
 
 		private const int _testsCount = 2000;
@@ -22,12 +22,12 @@ namespace AbsurdMoneySimulations
 		public static float _randomMutatesScaleV2 = 10;
 		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float _LYAMBDA = 0.02f; //0.05f
-		public static float _INERTION = 0.8f; //0.8f
+		public static float _LYAMBDA = 0.5f; //0.05f
+		public static float _INERTION = 0f; //0.8f
 
-		public const float _cutter = 100f;
+		public const float _cutter = 10f;
 
-		public const float _biasInput = 0.1f;
+		public const float _biasInput = 0.01f;
 
 		public static int _vanishedGradients;
 		public static int _cuttedGradients;
@@ -50,20 +50,17 @@ namespace AbsurdMoneySimulations
 		{
 			_layers = new List<LayerAbstract>();
 
-			_layers.Add(new LayerMegatron(_testerE._testsCount, 6, 136, 30, 2));   //136 x 30 x 10 = 
+			_layers.Add(new LayerMegatron(_testerE._testsCount, 3, 271, 30, 1));   //136 x 30 x 10 = 
 			_layers[0].FillWeightsRandomly();
 
-			_layers.Add(new LayerCybertron(_testerE._testsCount, 6, 136, 10, 60)); //6 x 136 x 10 = 
+			_layers.Add(new LayerCybertron(_testerE._testsCount, 3, 271, 10, 30)); //6 x 136 x 10 = 
 			_layers[1].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 60)); //5 x 60 = 300
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 30)); //5 x 60 = 300
 			_layers[2].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 5)); //5 x 5 =  25
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 5)); //5 x 5 =  25
 			_layers[3].FillWeightsRandomly();
-
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 5)); //5 x 1 = 5
-			_layers[4].FillWeightsRandomly();
 
 			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
 			layers[0].FillWeightsRandomly();
@@ -82,6 +79,7 @@ namespace AbsurdMoneySimulations
 
 			Disk.DeleteFileFromProgramFiles("EvolveHistory.csv");
 			Disk.DeleteFileFromProgramFiles("weights.csv");
+			Disk.ClearDirectory("NN\\EarlyStopping");
 			Log("Neural Network created!");
 		}
 
@@ -253,31 +251,31 @@ namespace AbsurdMoneySimulations
 
 				float ert = FindErrorRateSquared(_testerV);
 				Log("Current ert: " + ert);
+				float ert_record = GetErtRecord();
+				Log("Current ert_record: " + ert_record);
 				float er = FindErrorRateSquared(_testerE);
 				Log("Current er: " + er);
 				float old_er = er;
-				float old_ert = ert;
-				float ert_record = ert;
+				float old_ert = ert;				
+
+				_testerE._batchesCount = 40;
 
 				for (int Generation = 0; ; Generation++)
 				{
-					Log($"G{Generation} b{Generation % 30}");
+					Log($"G{Generation} b{Generation % 20 + 1}");
 
-					if (Generation % 30 == 0)
+					if (Generation % 1 == 0)
 					{
-						_testerE.FillBatchBy(500);
+						_testerE.FillBatchBy(50);
 						Log("Batch refilled");
 					}
 
 					_vanishedGradients = 0;
 					_cuttedGradients = 0;
-					for (int b = 0; b < _testerE._batchesCount; b++)
-					{
-						_testerE.FillBatch();
-						UseInertionForBPGradients(_testerE);
-						FindBPGradients(_testerE);
-						CorrectWeightsByBP(_testerE);
-					}
+
+					UseInertionForBPGradients(_testerE);
+					FindBPGradients(_testerE);
+					CorrectWeightsByBP(_testerE);
 
 					old_ert = ert;
 					ert = FindErrorRateSquared(_testerV);
@@ -317,6 +315,18 @@ namespace AbsurdMoneySimulations
 						File.Copy($"{Disk._programFiles}\\NN\\{_name}.json", $"{Disk._programFiles}\\NN\\EarlyStopping\\{_name} ({ert}).json");
 						Log("NN copied for early stopping.");
 					}
+				}
+
+				float GetErtRecord()
+				{
+					string[] files = Directory.GetFiles(Disk._programFiles + "NN\\EarlyStopping");
+					if (files.Length > 0)
+					{
+						string record = TextMethods.StringInsideLast(files[0], " (", ").json");
+						return Convert.ToSingle(record);
+					}
+					else
+						return 1f;
 				}
 			}
 		}

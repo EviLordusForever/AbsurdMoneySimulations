@@ -6,7 +6,7 @@ namespace AbsurdMoneySimulations
 	{
 		public float[] _weights;
 
-		public float bias;
+		public float _bias;
 
 		[JsonIgnore]
 		public float[][] _subvalues;
@@ -28,12 +28,12 @@ namespace AbsurdMoneySimulations
 
 			for (int i = 0; i < _weights.Count(); i++)
 				_weights[i] = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
-			bias = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
+			_bias = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
 		}
 
 		public float Calculate(int test, float[] input, int start)
 		{
-			_biasvalues[test] = bias * NN._biasInput;
+			_biasvalues[test] = _bias * NN._biasInput;
 			_summ[test] = _biasvalues[test];
 
 			for (int w = 0; w < _weights.Count(); w++)
@@ -56,7 +56,7 @@ namespace AbsurdMoneySimulations
 			else
 			{
 				_summ[test] -= _biasvalues[test];
-				_biasvalues[test] = bias * NN._biasInput;
+				_biasvalues[test] = _bias * NN._biasInput;
 				_summ[test] += _biasvalues[test];
 			}
 
@@ -68,7 +68,7 @@ namespace AbsurdMoneySimulations
 			_lastMutatedWeight = Storage.rnd.Next(_weights.Length + 1);
 
 			if (_lastMutatedWeight == _weights.Length)
-				bias += mutagen;
+				_bias += mutagen;
 			else
 				_weights[_lastMutatedWeight] += mutagen;
 		}
@@ -76,7 +76,7 @@ namespace AbsurdMoneySimulations
 		public void Demutate(float mutagen)
 		{
 			if (_lastMutatedWeight == _weights.Length)
-				bias -= mutagen;
+				_bias -= mutagen;
 			else
 				_weights[_lastMutatedWeight] -= mutagen;
 		}
@@ -115,7 +115,7 @@ namespace AbsurdMoneySimulations
 			}
 			for (int w = 0; w < _weights.Count(); w++)
 				_weights[w] -= NN._LYAMBDA * _BPgradient[test] * input[start + w];
-			bias -= NN._LYAMBDA * _BPgradient[test] * NN._biasInput;
+			_bias -= NN._LYAMBDA * _BPgradient[test] * NN._biasInput;
 		}
 
 		public Node(int testsCount, int weightsCount)
