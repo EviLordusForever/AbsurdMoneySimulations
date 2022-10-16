@@ -28,7 +28,7 @@ namespace AbsurdMoneySimulations
 
 			for (int i = 0; i < _weights.Count(); i++)
 				_weights[i] = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
-			_bias = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
+			_bias = 0;
 		}
 
 		public float Calculate(int test, float[] input, int start)

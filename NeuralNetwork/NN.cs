@@ -22,7 +22,7 @@ namespace AbsurdMoneySimulations
 		public static float _randomMutatesScaleV2 = 10;
 		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float _LYAMBDA = 0.5f; //0.05f
+		public static float _LYAMBDA = 0.0001f; //0.05f
 		public static float _INERTION = 0f; //0.8f
 
 		public const float _cutter = 10f;
@@ -32,7 +32,7 @@ namespace AbsurdMoneySimulations
 		public static int _vanishedGradients;
 		public static int _cuttedGradients;
 
-		public static ActivationFunction _answersAF = new TanH();
+		public static ActivationFunction _answersAF = new Linear();
 
 		public static List<LayerAbstract> _layers;
 
@@ -50,17 +50,21 @@ namespace AbsurdMoneySimulations
 		{
 			_layers = new List<LayerAbstract>();
 
-			_layers.Add(new LayerMegatron(_testerE._testsCount, 3, 271, 30, 1));   //136 x 30 x 10 = 
-			_layers[0].FillWeightsRandomly();
+			/*			_layers.Add(new LayerMegatron(_testerE._testsCount, 3, 271, 30, 1));   //136 x 30 x 10 = 
+						_layers[0].FillWeightsRandomly();
 
-			_layers.Add(new LayerCybertron(_testerE._testsCount, 3, 271, 10, 30)); //6 x 136 x 10 = 
-			_layers[1].FillWeightsRandomly();
+						_layers.Add(new LayerCybertron(_testerE._testsCount, 3, 271, 5, 15)); //6 x 136 x 10 = 
+						_layers[1].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 30)); //5 x 60 = 300
-			_layers[2].FillWeightsRandomly();
+						_layers.Add(new LayerPerceptron(_testerE._testsCount, 10, 15)); //5 x 60 = 300
+						_layers[2].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 5)); //5 x 5 =  25
-			_layers[3].FillWeightsRandomly();
+						_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 10)); //5 x 5 =  25
+						_layers[3].FillWeightsRandomly();
+
+						_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 5)); //5 x 5 =  25
+						_layers[4].FillWeightsRandomly();*/
+
 
 			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
 			layers[0].FillWeightsRandomly();
@@ -71,15 +75,19 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			/*			layers.Add(new LayerPerceptron(3, 300)); //40 x 15 = 600
-						layers[0].FillWeightsRandomly();
+			_layers.Add(new LayerPerceptron(4000, 3, 300)); //40 x 15 = 600
+			_layers[0].FillWeightsRandomly();
 
-						layers.Add(new LayerPerceptron(1, 3)); //15 x 1 = 15
-						layers[0].FillWeightsRandomly();*/
+			_layers.Add(new LayerPerceptron(4000, 3, 3)); //40 x 15 = 600
+			_layers[1].FillWeightsRandomly();
+
+			_layers.Add(new LayerPerceptron(4000, 1, 3)); //40 x 15 = 600
+			_layers[2].FillWeightsRandomly();
+
 
 			Disk.DeleteFileFromProgramFiles("EvolveHistory.csv");
 			Disk.DeleteFileFromProgramFiles("weights.csv");
-			Disk.ClearDirectory("NN\\EarlyStopping");
+			Disk.ClearDirectory(Disk._programFiles + "NN\\EarlyStopping");
 			Log("Neural Network created!");
 		}
 
@@ -153,14 +161,14 @@ namespace AbsurdMoneySimulations
 		public static void InitTesters()
 		{
 			_testerV = new Tester(_testsCount, _batchSize, "Grafic//ForValidation", "VALIDATION");
-			_testerE = new Tester(_testsCount, _batchSize, "Grafic//ForEvolution", "EVOLUTION");
+			_testerE = new Tester(4000, _batchSize, "Grafic//ForEvolution", "EVOLUTION");
 		}
 
 		public static void InitActivationFunctions()
 		{
 			for (int l = 0; l < _layers.Count - 1; l++)
-				_layers[l]._af = new TanH();
-			_layers[_layers.Count - 1]._af = new TanH();
+				_layers[l]._af = new ELU();
+			_layers[_layers.Count - 1]._af = new Linear();
 		}
 
 		public static void InitValues()
@@ -258,7 +266,7 @@ namespace AbsurdMoneySimulations
 				float old_er = er;
 				float old_ert = ert;				
 
-				_testerE._batchesCount = 40;
+				//_testerE._batchesCount = 40;
 
 				for (int Generation = 0; ; Generation++)
 				{
@@ -627,4 +635,3 @@ namespace AbsurdMoneySimulations
 		}
 	}
 }
-

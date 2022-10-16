@@ -149,8 +149,8 @@ namespace AbsurdMoneySimulations
 				float scale = max - min;
 
 				for (int i = 0; i < _tests[test].Length; i++)
-					_tests[test][i] = 2 * (_tests[test][i] - min) / scale - 1;
-				//tests[test][i] = (tests[test][i] - min) / scale;
+					//_tests[test][i] = 2 * (_tests[test][i] - min) / scale - 1;
+					_tests[test][i] = (_tests[test][i] - min) / scale;
 			}
 		}
 
