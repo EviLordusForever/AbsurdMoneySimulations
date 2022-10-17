@@ -22,7 +22,7 @@ namespace AbsurdMoneySimulations
 		public static float _randomMutatesScaleV2 = 10;
 		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float _LYAMBDA = 0.001f; //0.05f
+		public static float _LYAMBDA = 0.002f; //0.05f
 		public static float _INERTION = 0f; //0.8f
 
 		public const float _cutter = 10f;
