@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using static AbsurdMoneySimulations.BrowserManager;
 using static AbsurdMoneySimulations.Logger;
-using static AbsurdMoneySimulations.NN;
 
 namespace AbsurdMoneySimulations
 {
@@ -15,31 +14,30 @@ namespace AbsurdMoneySimulations
 
 		public static void TestCreateSaveLoad()
 		{
-			NN.Create();
-			NN.Init();
-			NN.Save();
-			NN.Load();
+			NN nn = NN.CreateBasicNN();
+			NN.Save(nn);
+			nn = NN.Load();
 		}
 
 		public static void TestCalculateRecalculate()
 		{
-			NN.Create();
-			NN.Init();
+			NN nn = NN.CreateBasicNN();
 
-			Log("LML: " + NN._lastMutatedLayer);
+
+			Log("LML: " + nn._lastMutatedLayer);
 			int goods = 0;
 			int bads = 0;
 			int neutral = 0;
 
-			for (int test = 0; test < NN._testerE._testsCount; test++)
+			for (int test = 0; test < nn._testerE._testsCount; test++)
 			{
-				float before = Calculate(test, _testerE._tests[test]);
-				Mutate();
-				float after1 = Recalculate(test, _testerE._tests[test]);
-				float after2 = Calculate(test, _testerE._tests[test]);
-				Demutate();
-				float again1 = Recalculate(test, _testerE._tests[test]);
-				float again2 = Calculate(test, _testerE._tests[test]);
+				float before = nn.Calculate(test, nn._testerE._tests[test]);
+				nn.Mutate();
+				float after1 = nn.Recalculate(test, nn._testerE._tests[test]);
+				float after2 = nn.Calculate(test, nn._testerE._tests[test]);
+				nn.Demutate();
+				float again1 = nn.Recalculate(test, nn._testerE._tests[test]);
+				float again2 = nn.Calculate(test, nn._testerE._tests[test]);
 
 				bool good = (before == again1 && before == again2) && (after1 == after2);
 
@@ -61,8 +59,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestSpeed()
 		{
-			NN.Create();
-			NN.Init();
+			NN nn = NN.CreateBasicNN();
 
 			int goods = 0;
 			int bads = 0;
@@ -73,20 +70,20 @@ namespace AbsurdMoneySimulations
 			float res = 0;
 
 			Log($"Started calculate tests");
-			for (int test = 0; test < _testerE._testsCount; test++)
-				res += NN.Calculate(test, _testerE._tests[test]);
+			for (int test = 0; test < nn._testerE._testsCount; test++)
+				res += nn.Calculate(test, nn._testerE._tests[test]);
 			Log($"Ended calculate tests");
 			Log(res);
 
 			Log($"==================================");
-			NN.Mutate();
+			nn.Mutate();
 			Log($"==================================");
 
 			res = 0;
 
 			Log($"Started recalculate tests");
-			for (int test = 0; test < _testerE._testsCount; test++)
-				res += NN.Recalculate(test, _testerE._tests[test]);
+			for (int test = 0; test < nn._testerE._testsCount; test++)
+				res += nn.Recalculate(test, nn._testerE._tests[test]);
 
 			Log($"Ended recalculate tests");
 			Log(res);
@@ -96,20 +93,20 @@ namespace AbsurdMoneySimulations
 			res = 0;
 
 			Log($"Started calculate tests");
-			for (int test = 0; test < _testerE._testsCount; test++)
-				res += NN.Calculate(test, _testerE._tests[test]);
+			for (int test = 0; test < nn._testerE._testsCount; test++)
+				res += nn.Calculate(test, nn._testerE._tests[test]);
 			Log($"Ended calculate tests");
 			Log(res);
 
 			Log($"==================================");
-			NN.Demutate();
+			nn.Demutate();
 			Log($"==================================");
 
 			res = 0;
 
 			Log($"Started recalculate tests");
-			for (int test = 0; test < _testerE._testsCount; test++)
-				res += NN.Recalculate(test, _testerE._tests[test]);
+			for (int test = 0; test < nn._testerE._testsCount; test++)
+				res += nn.Recalculate(test, nn._testerE._tests[test]);
 
 			Log($"Ended recalculate tests");
 			Log(res);
@@ -119,23 +116,24 @@ namespace AbsurdMoneySimulations
 			res = 0;
 
 			Log($"Started calculate tests");
-			for (int test = 0; test < _testerE._testsCount; test++)
-				res += Calculate(test, _testerE._tests[test]);
+			for (int test = 0; test < nn._testerE._testsCount; test++)
+				res += nn.Calculate(test, nn._testerE._tests[test]);
 			Log($"Ended calculate tests");
 			Log(res);
 		}
 
 		public static void TestTests()
 		{
+			NN nn = new NN();
 			string csv = "";
-			string[] subcsv = new string[NN._testerE._testsCount];
+			string[] subcsv = new string[nn._testerE._testsCount];
 
-			for (int test = 0; test < NN._testerE._testsCount; test++)
+			for (int test = 0; test < nn._testerE._testsCount; test++)
 			{
-				subcsv[test] = String.Join("\r\n", NN._testerE._tests[test]);
+				subcsv[test] = String.Join("\r\n", nn._testerE._tests[test]);
 
 				subcsv[test] += "\r\n\r\n\r\n";
-				subcsv[test] += NN._testerE._answers[test];
+				subcsv[test] += nn._testerE._answers[test];
 				subcsv[test] += "\r\n\r\n\r\n";
 
 				if (test % 50 == 0)
@@ -149,14 +147,16 @@ namespace AbsurdMoneySimulations
 
 		public static void TestAvailableGP()
 		{
+			NN nn = NN.Load();
+
 			string csv = "";
-			string[] subcsv = new string[NN._testerE.OriginalGrafic.Length];
+			string[] subcsv = new string[nn._testerE.OriginalGrafic.Length];
 
-			for (int i = 0; i < NN._testerE.OriginalGrafic.Length; i++)
-				subcsv[i] = NN._testerE.OriginalGrafic[i] + ",0\r\n";
+			for (int i = 0; i < nn._testerE.OriginalGrafic.Length; i++)
+				subcsv[i] = nn._testerE.OriginalGrafic[i] + ",0\r\n";
 
-			for (int i = 0; i < NN._testerE._availableGraficPoints.Count; i++)
-				subcsv[NN._testerE._availableGraficPoints[i]] = NN._testerE.OriginalGrafic[NN._testerE._availableGraficPoints[i]] + ",1\r\n";
+			for (int i = 0; i < nn._testerE._availableGraficPoints.Count; i++)
+				subcsv[nn._testerE._availableGraficPoints[i]] = nn._testerE.OriginalGrafic[nn._testerE._availableGraficPoints[i]] + ",1\r\n";
 
 			csv = string.Concat(subcsv);
 
@@ -167,29 +167,29 @@ namespace AbsurdMoneySimulations
 
 		public static void TestNeuralBattle()
 		{
-			NN.NeuralBattle();
+			Manager.NeuralBattle();
 		}
 
 		public static void StupiedTest()
 		{
-			NN.Create();
-			NN.Init();
-			NN.Mutate();
+			NN nn = NN.CreateBasicNN();
+
+			nn.Mutate();
 
 			for (int i = 0; i < 100; i++)
-				Log(NN.FindErrorRateSquared(NN._testerE));
+				Log(nn.FindErrorRateSquared(nn._testerE));
 		}
 
 		public static void StupiedTestR()
 		{
-			NN.Create();
-			NN.Init();
-			NN.Mutate();
+			NN nn = NN.CreateBasicNN();
 
-			Log("er_fb " + NN.FindErrorRateSquared(NN._testerE));
+			nn.Mutate();
+
+			Log("er_fb " + nn.FindErrorRateSquared(nn._testerE));
 
 			for (int i = 0; i < 100; i++)
-				Log("er_nfb " + NN.RefindErrorRateSquared(NN._testerE));
+				Log("er_nfb " + nn.RefindErrorRateSquared(nn._testerE));
 		}
 
 		public static void TestSelenium()
@@ -215,8 +215,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestCoresCountSpeed()
 		{
-			NN.Load();
-			NN.Init();
+			NN nn = NN.Load();
 
 			So(1);
 			So(2);
@@ -230,33 +229,33 @@ namespace AbsurdMoneySimulations
 				Storage._coresCount = coresCount;
 				long ms = DateTime.Now.Ticks;
 				for (int i = 0; i < 10; i++)
-					NN.FindErrorRateSquared(NN._testerE);
+					nn.FindErrorRateSquared(nn._testerE);
 				Log($"{Storage._coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
 		}
 
 		public static void TestMegatronLayers()
 		{
-			Load();
-			Init();
-			_testerE.InitFromNormalizedDerivativeGrafic("Grafic\\ForEvolution", "EVOLTION");
+			NN nn = NN.Load();
 
-			int test = Storage.rnd.Next(_testerE._testsCount);
-			string[] strings = new string[_inputWindow];
+			nn._testerE.FillTestsFromNormilizedDerivativeGrafic();
 
-			for (int i = 0; i < _testerE._tests[test].Length; i++)
-				strings[i] += _testerE._tests[test][i].ToString();
+			int test = Storage.rnd.Next(nn._testerE._testsCount);
+			string[] strings = new string[nn._inputWindow];
 
-			_testerE.InitFromNormalizedOriginalGrafic("Grafic\\ForEvolution", "EVOLTION");
+			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
+				strings[i] += nn._testerE._tests[test][i].ToString();
 
-			for (int i = 0; i < _testerE._tests[test].Length; i++)
-				strings[i] += "," + _testerE._tests[test][i].ToString();
+			nn._testerE.FillTestsFromOriginalGrafic();
 
-			Load();
-			Init();
-			Calculate(test, _testerE._tests[test]);
+			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
+				strings[i] += "," + nn._testerE._tests[test][i].ToString();
 
-			int subsCount = NN._layers[0]._values[test].Count();
+			nn = NN.Load();
+
+			nn.Calculate(test, nn._testerE._tests[test]);
+
+			int subsCount = nn._layers[0]._values[test].Count();
 			float inputSize = 300;
 			int head = 30;
 			int d = 2;
@@ -264,10 +263,10 @@ namespace AbsurdMoneySimulations
 
 			for (int sub = 0; sub < subsCount; sub++)
 			{
-				for (int v = 0 + head; v < _testerE._tests[test].Length - head; v++)
+				for (int v = 0 + head; v < nn._testerE._tests[test].Length - head; v++)
 				{
 					int j = (int)(((v - subsCount) / (inputSize - head)) * subSize);
-					strings[v] += "," + NN._layers[0]._values[test][sub][j];
+					strings[v] += "," + nn._layers[0]._values[test][sub][j];
 				}
 			}
 
@@ -277,14 +276,16 @@ namespace AbsurdMoneySimulations
 
 		public static void TestMutations()
 		{
+			NN nn = NN.Load();
+
 			FormsManager.OpenShowForm("normal distribution");
 			int width = 800;
-			NN._randomMutatesCount = 202200;
-			NN._randomMutatesScaleV2 = width / 2;
-			NN.FillRandomMutations();
+			nn._randomMutatesCount = 202200;
+			nn._randomMutatesScaleV2 = width / 2;
+			//nn.FillRandomMutations();
 			float[] distribution = new float[width];
-			for (int m = 0; m < NN._randomMutates.Count(); m++)
-				distribution[Convert.ToInt32(NN._randomMutates[m] * 0.99f) + width / 2]++;
+			for (int m = 0; m < nn._randomMutates.Count(); m++)
+				distribution[Convert.ToInt32(nn._randomMutates[m] * 0.99f) + width / 2]++;
 			float max = Extensions.Max(distribution);
 			Storage._bmp = new Bitmap(width, (int)max);
 			Graphics gr = Graphics.FromImage(Storage._bmp);
@@ -329,22 +330,22 @@ namespace AbsurdMoneySimulations
 
 		public static void TestRecursy()
 		{
-			InitTesters();
-			Create();
-			_layers = new List<Layer>();
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 5, new Linear()));
-			Init();
-			_layers[0].FillWeightsRandomly();
+			NN nn = NN.Load();
+
+			nn._layers = new List<Layer>();
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 5, new Linear()));
+
+			nn._layers[0].FillWeightsRandomly();
 
 			float[] ar = new float[] { 1, 1, 1, 1, 1 };
 
-			_layers[0].Calculate(0, ar);
-			Log(_layers[0].GetAnswer(0));
+			nn._layers[0].Calculate(0, ar);
+			Log(nn._layers[0].GetAnswer(0));
 
 			for (int i = 0; i < 20; i++)
 			{
-				_layers[0].Calculate(0, _layers[0].GetValues(0));
-				Log(_layers[0].GetAnswer(0));
+				nn._layers[0].Calculate(0, nn._layers[0].GetValues(0));
+				Log(nn._layers[0].GetAnswer(0));
 			}
 		}
 	}

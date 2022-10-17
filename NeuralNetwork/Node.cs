@@ -20,20 +20,23 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore]
 		public float[] _BPgradient;
 
+		[JsonIgnore]
+		private NN _ownerNN { get; set; }
+
 		public int _lastMutatedWeight;
 
 		public void FillRandomly()
 		{
-			float scale = MathF.Abs(NN._weightsInitMax - NN._weightsInitMin);
+			float scale = MathF.Abs(_ownerNN._weightsInitMax - _ownerNN._weightsInitMin);
 
 			for (int i = 0; i < _weights.Count(); i++)
-				_weights[i] = Storage.rnd.NextSingle() * scale + NN._weightsInitMin;
+				_weights[i] = Storage.rnd.NextSingle() * scale + _ownerNN._weightsInitMin;
 			_bias = 0;
 		}
 
 		public float Calculate(int test, float[] input, int start)
 		{
-			_biasvalues[test] = _bias * NN._biasInput;
+			_biasvalues[test] = _bias * _ownerNN._biasInput;
 			_summ[test] = _biasvalues[test];
 
 			for (int w = 0; w < _weights.Count(); w++)
@@ -56,7 +59,7 @@ namespace AbsurdMoneySimulations
 			else
 			{
 				_summ[test] -= _biasvalues[test];
-				_biasvalues[test] = _bias * NN._biasInput;
+				_biasvalues[test] = _bias * _ownerNN._biasInput;
 				_summ[test] += _biasvalues[test];
 			}
 
@@ -90,12 +93,12 @@ namespace AbsurdMoneySimulations
 		{
 			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
 			_BPgradient[test] += gwsumm * af.df(_summ[test]);
-			_BPgradient[test] = NN.CutGradient(_BPgradient[test]);
+			_BPgradient[test] = _ownerNN.CutGradient(_BPgradient[test]);
 		}
 
 		public void UseInertionForGradient(int test)
 		{
-			_BPgradient[test] *= NN._INERTION;
+			_BPgradient[test] *= _ownerNN._INERTION;
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)
@@ -114,12 +117,14 @@ namespace AbsurdMoneySimulations
 			{
 			}
 			for (int w = 0; w < _weights.Count(); w++)
-				_weights[w] -= NN._LEARNING_RATE * _BPgradient[test] * input[start + w];
-			_bias -= NN._LEARNING_RATE * _BPgradient[test] * NN._biasInput;
+				_weights[w] -= _ownerNN._LEARNING_RATE * _BPgradient[test] * input[start + w];
+			_bias -= _ownerNN._LEARNING_RATE * _BPgradient[test] * _ownerNN._biasInput;
 		}
 
-		public Node(int testsCount, int weightsCount)
+		public Node(NN nn, int testsCount, int weightsCount)
 		{
+			_ownerNN = nn;
+
 			_weights = new float[weightsCount];
 
 			InitValues(testsCount);
@@ -137,6 +142,11 @@ namespace AbsurdMoneySimulations
 			_biasvalues = new float[testsCount];
 
 			_BPgradient = new float[testsCount];
+		}
+
+		public void SetOwnerNN(NN ownerNN)
+		{
+			_ownerNN = ownerNN;
 		}
 	}
 }

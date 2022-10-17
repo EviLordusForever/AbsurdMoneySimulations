@@ -10,10 +10,7 @@
 		public override float df(float x)
 		{
 			if (MathF.Abs(x) > 900)
-			{
-				NN._vanishedGradients++;
-				return 0; ///////////////////////////////
-			}
+				throw new Exception("Vanished gradient");
 
 			float v = 0.19062f * MathF.Pow(1.1f, -x) / MathF.Pow(MathF.Pow(1.1f, -x) + 1, 2);
 			return v;

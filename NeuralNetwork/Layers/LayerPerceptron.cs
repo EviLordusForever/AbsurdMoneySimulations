@@ -173,14 +173,15 @@
 			return BPGradients;
 		}
 
-		public LayerPerceptron(int testsCount, int nodesCount, int weightsCount, ActivationFunction af)
+		public LayerPerceptron(NN ownerNN, int testsCount, int nodesCount, int weightsCount, ActivationFunction af)
 		{
+			_ownerNN = ownerNN;
 			_af = af;
 			_type = "perceptron";
 
 			_nodes = new Node[nodesCount];
 			for (int i = 0; i < _nodes.Count(); i++)
-				_nodes[i] = new Node(testsCount, weightsCount);
+				_nodes[i] = new Node(ownerNN, testsCount, weightsCount);
 
 			InitValues(testsCount);
 		}
@@ -196,6 +197,14 @@
 
 			for (int n = 0; n < _nodes.Count(); n++)
 				_nodes[n].InitValues(testsCount);
+		}
+
+		public override void InitLinksToOwnerNN(NN ownerNN)
+		{
+			_ownerNN = ownerNN;
+
+			for (int i = 0; i < _nodes.Count(); i++)
+				_nodes[i].SetOwnerNN(ownerNN);
 		}
 	}
 }

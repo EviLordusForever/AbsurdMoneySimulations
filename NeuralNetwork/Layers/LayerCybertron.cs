@@ -133,7 +133,7 @@
 			//And this
 		}
 
-		public LayerCybertron(int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, ActivationFunction af)
+		public LayerCybertron(NN ownerNN, int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, ActivationFunction af)
 		{
 			_type = "cybertron";
 
@@ -141,7 +141,7 @@
 
 			_perceptrons = new LayerPerceptron[perceptronsCount];
 			for (int p = 0; p < _perceptrons.Count(); p++)
-				_perceptrons[p] = new LayerPerceptron(testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount, af);
+				_perceptrons[p] = new LayerPerceptron(ownerNN, testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount, af);
 
 			InitValues(testsCount);
 		}
@@ -160,6 +160,12 @@
 				_perceptrons[p].InitValues(testsCount);
 				_perceptrons[p]._af = _af = new TanH();
 			}
+		}
+
+		public override void InitLinksToOwnerNN(NN ownerNN)
+		{
+			for (int p = 0; p < _perceptrons.Count(); p++)
+				_perceptrons[p].InitLinksToOwnerNN(ownerNN);
 		}
 	}
 }

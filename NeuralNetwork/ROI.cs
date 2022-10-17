@@ -10,35 +10,36 @@ namespace AbsurdMoneySimulations
 	{
 		public static void LetsDoIt()
 		{
-			NN.InitTesters();
+			NN nn = NN.Load();
 
 			string[] files = Directory.GetFiles(Disk._programFiles + "NN\\ROI");
 
-			float[,] predictions = new float[NN._testerV._testsCount, files.Length];
+			float[,] predictions = new float[nn._testerV._testsCount, files.Length];
 
 			string csv = "";
 
-			for (int nn = 0; nn < files.Length; nn++)
+			for (int n = 0; n < files.Length; n++)
 			{
-				NN.Load(files[nn]);
-				NN.Init();
-				for (int test = 0; test < NN._testerV._testsCount; test++)
-					predictions[test, nn] = NN.Calculate(test, NN._testerV._tests[test]);
+				nn = NN.Load(files[n]);
+
+				for (int test = 0; test < nn._testerV._testsCount; test++)
+					predictions[test, n] = nn.Calculate(test, nn._testerV._tests[test]);
 			}
 
-			for (int test = 0; test < NN._testerV._testsCount; test++)
+			for (int test = 0; test < nn._testerV._testsCount; test++)
 			{
-				csv += NN._testerV._answers[test] + ",";
+				csv += nn._testerV._answers[test] + ",";
 
-				for (int nn = 0; nn < files.Length; nn++)
-					csv += predictions[test, nn] + ",";
+				for (int n = 0; n < files.Length; n++)
+					csv += predictions[test, n] + ",";
 
 				///////////////////
 
 				int summ = 0;
 
-				for (int nn = 0; nn < files.Length; nn++)
-					if (predictions[test, nn] > 0 && NN._testerV._answers[test] > 0 || predictions[test, nn] < 0 && NN._testerV._answers[test] < 0)
+				for (int n = 0; n < files.Length; n++)
+					if (predictions[test, n] > 0 && nn._testerV._answers[test] > 0 || 
+						predictions[test, n] < 0 && nn._testerV._answers[test] < 0)
 					{
 						csv += "1,";
 						summ++;
@@ -59,10 +60,11 @@ namespace AbsurdMoneySimulations
 
 
 				float summ2 = 0;
-				for (int nn = 0; nn < files.Length; nn++)
-					summ2 += predictions[test, nn];
+				for (int n = 0; n < files.Length; n++)
+					summ2 += predictions[test, n];
 
-				if (summ2 > 0 && NN._testerV._answers[test] > 0 || summ2 < 0 && NN._testerV._answers[test] < 0)
+				if (summ2 > 0 && nn._testerV._answers[test] > 0 || 
+					summ2 < 0 && nn._testerV._answers[test] < 0)
 					csv += ",1,";
 				else
 					csv += ",0,";
@@ -70,15 +72,15 @@ namespace AbsurdMoneySimulations
 				////////////////////////
 
 				bool similar = true;
-				for (int nn = 1; nn < files.Length; nn++)
-					if (predictions[test, nn] > 0 && predictions[test, 0] < 0 ||
-						predictions[test, nn] < 0 && predictions[test, 0] > 0)
+				for (int n = 1; n < files.Length; n++)
+					if (predictions[test, n] > 0 && predictions[test, 0] < 0 ||
+						predictions[test, n] < 0 && predictions[test, 0] > 0)
 						similar = false;
 
 				if (similar)
 				{
-					if (NN._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
-						NN._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+					if (nn._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+						nn._testerV._answers[test] < 0 && predictions[test, 0] < 0)
 						csv += ",1,";
 					else
 						csv += ",-1,";
@@ -91,19 +93,19 @@ namespace AbsurdMoneySimulations
 
 
 				bool isPrediction = true;
-				for (int nn = 1; nn < files.Length; nn++)
-					if (predictions[test, nn] > 0 && predictions[test, 0] < 0 ||
-						predictions[test, nn] < 0 && predictions[test, 0] > 0)
+				for (int n = 1; n < files.Length; n++)
+					if (predictions[test, n] > 0 && predictions[test, 0] < 0 ||
+						predictions[test, n] < 0 && predictions[test, 0] > 0)
 						isPrediction = false;
 
-				for (int nn = 1; nn < files.Length; nn++)
-					if (Math.Abs(predictions[test, nn]) < 0.02f)
+				for (int n = 1; n < files.Length; n++)
+					if (Math.Abs(predictions[test, n]) < 0.02f)
 						isPrediction = false;
 
 				if (isPrediction)
 				{
-					if (NN._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
-						NN._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+					if (nn._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+						nn._testerV._answers[test] < 0 && predictions[test, 0] < 0)
 						csv += ",1,";
 					else
 						csv += ",-1,";
@@ -124,7 +126,7 @@ namespace AbsurdMoneySimulations
 				float predictionsCount = 0;
 				float wins = 0;
 
-				for (int test = 0; test < NN._testerV._testsCount; test++)
+				for (int test = 0; test < nn._testerV._testsCount; test++)
 				{
 					bool isPrediction = true;
 					for (int nn = 1; nn < files.Length; nn++)
@@ -140,8 +142,8 @@ namespace AbsurdMoneySimulations
 					{
 						predictionsCount++;
 
-						if (NN._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
-							NN._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+						if (nn._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+							nn._testerV._answers[test] < 0 && predictions[test, 0] < 0)
 							wins++;
 					}
 				}

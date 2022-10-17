@@ -1,41 +1,35 @@
 ﻿using static AbsurdMoneySimulations.Logger;
+using Newtonsoft.Json;
 
 namespace AbsurdMoneySimulations
 {
 	public class Tester
 	{
+		public const int _graficJumpLimit = 9000;
+
 		public int _testsCount;
 		public int _batchesCount;
 		public int _batchSize;
 
-		private float[] _originalGrafic;
-		private float[] _derivativeOfGrafic;
-		private float[] _normalizedDerivativeOfGrafic; //[-1, 1]
+		[JsonIgnore] private float[] _originalGrafic;
+		[JsonIgnore] private float[] _derivativeOfGrafic;
+		[JsonIgnore] private float[] _normalizedDerivativeOfGrafic; //[-1, 1]
 
-		public List<int> _availableGraficPoints;
-		public float[][] _tests;
-		public float[] _answers;
-		public byte[] _batch;
+		[JsonIgnore] public List<int> _availableGraficPoints;
+		[JsonIgnore] public float[][] _tests;
+		[JsonIgnore] public float[] _answers;
+		[JsonIgnore] public byte[] _batch;
 
-		public void InitFromNormalizedOriginalGrafic(string path, string reason)
+		[JsonIgnore] private NN _ownerNN { get; set; }
+
+		private void LoadGrafic(string path, string reason)
 		{
-			LoadOrigGrafic(path, reason);
+			LoadOriginalGrafic(path, reason);
 			FillDerivativeOfGrafic();
 			NormalizeDerivativeOfGrafic();
-
-			FillTestsFromOriginalGrafic();
 		}
 
-		public void InitFromNormalizedDerivativeGrafic(string path, string reason)
-		{
-			LoadOrigGrafic(path, reason);
-			FillDerivativeOfGrafic();
-			NormalizeDerivativeOfGrafic();
-
-			FillTestsFromNormilizedDerivativeGrafic();
-		}
-
-		private void LoadOrigGrafic(string graficFolder, string reason)
+		private void LoadOriginalGrafic(string graficFolder, string reason)
 		{
 			var files = Directory.GetFiles(Disk._programFiles + graficFolder);
 			var graficL = new List<float>();
@@ -52,7 +46,7 @@ namespace AbsurdMoneySimulations
 				{
 					graficL.Add(Convert.ToSingle(lines[l]));
 
-					if (l < lines.Length - NN._inputWindow - NN._horizon - 2)
+					if (l < lines.Length - _ownerNN._inputWindow - _ownerNN._horizon - 2)
 						_availableGraficPoints.Add(g);
 
 					l++; g++;
@@ -80,11 +74,11 @@ namespace AbsurdMoneySimulations
 			_normalizedDerivativeOfGrafic = new float[_originalGrafic.Length];
 
 			for (int i = 1; i < _derivativeOfGrafic.Length; i++)
-				_normalizedDerivativeOfGrafic[i] = NN._inputAF.f(_derivativeOfGrafic[i]);
+				_normalizedDerivativeOfGrafic[i] = _ownerNN._inputAF.f(_derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
 		}
 
-		private void FillTestsFromNormilizedDerivativeGrafic()
+		public void FillTestsFromNormilizedDerivativeGrafic()
 		{
 			int maximalDelta = _availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / _testsCount;
@@ -97,13 +91,13 @@ namespace AbsurdMoneySimulations
 			{
 				int offset = _availableGraficPoints[Convert.ToInt32(delta)];
 
-				_tests[test] = Extensions.SubArray(_normalizedDerivativeOfGrafic, offset, NN._inputWindow);
+				_tests[test] = Extensions.SubArray(_normalizedDerivativeOfGrafic, offset, _ownerNN._inputWindow);
 
-				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + NN._inputWindow, NN._horizon);
+				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = NN._answersAF.f(_answers[test]);
+				_answers[test] = _ownerNN._answersAF.f(_answers[test]);
 
 				test++;
 			}
@@ -111,7 +105,7 @@ namespace AbsurdMoneySimulations
 			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE grafic. ({_tests.Length})");
 		}
 
-		private void FillTestsFromOriginalGrafic()
+		public void FillTestsFromOriginalGrafic()
 		{
 			int maximalDelta = _availableGraficPoints.Count();
 			float delta_delta = 0.990f * maximalDelta / _testsCount;
@@ -124,14 +118,14 @@ namespace AbsurdMoneySimulations
 			{
 				int offset = _availableGraficPoints[Convert.ToInt32(delta)];
 
-				_tests[test] = Extensions.SubArray(_originalGrafic, offset, NN._inputWindow);
+				_tests[test] = Extensions.SubArray(_originalGrafic, offset, _ownerNN._inputWindow);
 				Normalize(test);
 
-				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + NN._inputWindow, NN._horizon);
+				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = NN._answersAF.f(_answers[test]);
+				_answers[test] = _ownerNN._answersAF.f(_answers[test]);
 
 				test++;
 			}
@@ -191,6 +185,7 @@ namespace AbsurdMoneySimulations
 				_batch[i] = 1;
 		}
 
+		[JsonIgnore]
 		public float[] OriginalGrafic
 		{
 			get
@@ -199,17 +194,32 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public Tester(int testsCount, int batchesCount, string graficPath, string reason)
+		public Tester()
 		{
+		}
+
+		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, bool originalOrDerivativeGrafic)
+		{
+			_ownerNN = ownerNN;
 			_testsCount = testsCount;
 			_batch = new byte[testsCount];
 			_batchesCount = batchesCount;
 			_batchSize = testsCount / batchesCount;
 
-			//InitFromNormalizedOriginalGrafic(graficPath, reason);
-			InitFromNormalizedDerivativeGrafic(graficPath, reason);
+			LoadGrafic(graficPath, reason);
+
+			if (originalOrDerivativeGrafic)
+				FillTestsFromOriginalGrafic();
+			else
+				FillTestsFromNormilizedDerivativeGrafic();
+
 			if (batchesCount == 1)
 				FillFullBatch();
+		}
+
+		public void SetOwnerNN(NN ownerNN)
+		{
+			_ownerNN = ownerNN;
 		}
 	}
 }

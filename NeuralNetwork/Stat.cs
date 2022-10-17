@@ -56,7 +56,7 @@ namespace AbsurdMoneySimulations
 			_scores = new float[_sections.Count];
 		}
 
-		public static string CalculateStatistics(Tester tester)
+		public static string CalculateStatistics(NN nn, Tester tester)
 		{
 			restart:
 
@@ -83,7 +83,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = NN.Calculate(test, tester._tests[test]);
+					float prediction = nn.Calculate(test, tester._tests[test]);
 
 					float reality = tester._answers[test];
 

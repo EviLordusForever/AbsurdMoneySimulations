@@ -106,7 +106,7 @@ namespace AbsurdMoneySimulations
 			}
 			//buffer /= valuesPerSubCount; //!!!!!!
 			_subs[sub]._BPgradient[test] += buffer;
-			_subs[sub]._BPgradient[test] = NN.CutGradient(_subs[sub]._BPgradient[test]);
+			_subs[sub]._BPgradient[test] = _ownerNN.CutGradient(_subs[sub]._BPgradient[test]);
 		}
 
 		private void CalculateOneSub(int test, float[][] input, int sub)
@@ -174,8 +174,9 @@ namespace AbsurdMoneySimulations
 			throw new NotImplementedException();
 		}
 
-		public LayerMegatron(int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d, ActivationFunction af)
+		public LayerMegatron(NN owner, int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d, ActivationFunction af)
 		{
+			_ownerNN = owner;
 			_af = af;
 			_type = "megatron";
 			_d = d;
@@ -183,7 +184,7 @@ namespace AbsurdMoneySimulations
 
 			_subs = new Node[subsCount];
 			for (int sub = 0; sub < _subs.Count(); sub++)
-				_subs[sub] = new Node(testsCount, weightsPerSubCount);
+				_subs[sub] = new Node(owner, testsCount, weightsPerSubCount);
 
 			InitValues(testsCount);
 		}
@@ -208,6 +209,14 @@ namespace AbsurdMoneySimulations
 
 			for (int s = 0; s < _subs.Count(); s++)
 				_subs[s].InitValues(testsCount); //does we need you? //
+		}
+
+		public override void InitLinksToOwnerNN(NN ownerNN)
+		{
+			_ownerNN = ownerNN;
+
+			for (int sub = 0; sub < _subs.Count(); sub++)
+				_subs[sub].SetOwnerNN(ownerNN);
 		}
 	}
 }

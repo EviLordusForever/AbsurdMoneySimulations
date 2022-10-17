@@ -11,18 +11,13 @@
 
 		public static void RecreateNN()
 		{
-			Thread myThread = new Thread(StartEvolutionThread);
+			Thread myThread = new Thread(RecreateNNThread);
 			myThread.Start();
 
-			void StartEvolutionThread()
+			void RecreateNNThread()
 			{
 				if (UserAsker.Ask("Are you shure?"))
-				{
-					NN.InitTesters();
-					NN.Create();
-					NN.Save();
-					NN.Init();
-				}
+					Manager.RecreateNN();
 			}
 		}
 
@@ -34,10 +29,7 @@
 
 			void StartEvolutionThread()
 			{
-				NN.Load();
-				NN.Init();
-
-				NN.EvolveByRandomMutations();
+				Manager.EvolveByRandomMutations();
 			}
 		}
 
@@ -50,7 +42,7 @@
 			void NeuralBattleThread()
 			{
 				if (UserAsker.Ask("Are you shure?"))
-					NN.NeuralBattle();
+					Manager.NeuralBattle();
 			}
 		}
 
@@ -62,10 +54,7 @@
 
 			void StartEvolutionThread()
 			{
-				NN.Load();
-				NN.Init();
-
-				NN.EvolveByBackPropagtion();
+				Manager.EvolveByBackPropagation();
 			}
 		}
 

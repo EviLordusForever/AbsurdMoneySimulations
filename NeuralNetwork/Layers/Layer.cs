@@ -5,6 +5,9 @@ namespace AbsurdMoneySimulations
 	public abstract class Layer
 	{
 		[JsonIgnore]
+		internal NN _ownerNN { get; set; }
+
+		[JsonIgnore]
 		public float[][][] _values; //[test][sub][value]
 
 		public ActivationFunction _af;
@@ -44,5 +47,7 @@ namespace AbsurdMoneySimulations
 		public abstract int WeightsCount { get; }
 
 		public abstract void InitValues(int testsCount);
+
+		public abstract void InitLinksToOwnerNN(NN ownerNN);
 	}
 }
