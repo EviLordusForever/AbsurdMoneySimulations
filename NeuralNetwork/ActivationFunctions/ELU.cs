@@ -23,5 +23,10 @@ namespace AbsurdMoneySimulations
 			else
 				return MathF.Pow(MathF.E, x);
 		}
+
+		public ELU()
+		{
+			_type = "ELU";
+		}
 	}
 }

@@ -27,5 +27,10 @@ namespace AbsurdMoneySimulations
 			else
 				return 0.25f;
 		}
+
+		public Avocado()
+		{
+			_type = "Avocado";
+		}
 	}
 }

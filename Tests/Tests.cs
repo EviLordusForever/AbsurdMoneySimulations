@@ -331,8 +331,8 @@ namespace AbsurdMoneySimulations
 		{
 			InitTesters();
 			Create();
-			_layers = new List<LayerAbstract>();
-			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 5));
+			_layers = new List<Layer>();
+			_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 5, new Linear()));
 			Init();
 			_layers[0].FillWeightsRandomly();
 

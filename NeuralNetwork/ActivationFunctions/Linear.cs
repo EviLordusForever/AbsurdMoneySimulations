@@ -11,5 +11,10 @@
 		{
 			return 1;
 		}
+
+		public Linear()
+		{
+			_type = "Linear";
+		}
 	}
 }

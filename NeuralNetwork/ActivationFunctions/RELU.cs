@@ -17,5 +17,10 @@
 			else
 				return 0;
 		}
+
+		public ReLU()
+		{
+			_type = "ReLU";
+		}
 	}
 }

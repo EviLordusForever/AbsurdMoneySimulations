@@ -22,20 +22,22 @@ namespace AbsurdMoneySimulations
 		public static float _randomMutatesScaleV2 = 10;
 		public static float _randomMutatesSmoothing = 0.03f;
 
-		public static float _LYAMBDA = 0.002f; //0.05f
+		public static float _LEARNING_RATE = 0.002f; //0.05f
 		public static float _INERTION = 0f; //0.8f
 
-		public const float _cutter = 10f;
+		public const float _gradientCutter = 10f;
 
 		public const float _biasInput = 0.01f;
 
-		public static int _vanishedGradients;
-		public static int _cuttedGradients;
-
-		public static ActivationFunction _inputAF = new Avocado();
+		public static ActivationFunction _inputAF = new TanH();
 		public static ActivationFunction _answersAF = new TanH();
 
-		public static List<LayerAbstract> _layers;
+		
+
+		public static List<Layer> _layers;
+
+		public static int _vanishedGradients;
+		public static int _cuttedGradients;
 
 		public static Tester _testerV;
 		public static Tester _testerE;
@@ -49,7 +51,7 @@ namespace AbsurdMoneySimulations
 
 		public static void Create()
 		{
-			_layers = new List<LayerAbstract>();
+			_layers = new List<Layer>();
 
 			/*			_layers.Add(new LayerMegatron(_testerE._testsCount, 3, 271, 30, 1));   //136 x 30 x 10 = 
 						_layers[0].FillWeightsRandomly();
@@ -76,13 +78,13 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			_layers.Add(new LayerPerceptron(4000, 3, 300)); //40 x 15 = 600
+			_layers.Add(new LayerPerceptron(4000, 3, 300, new SoftSign())); //40 x 15 = 600
 			_layers[0].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(4000, 3, 3)); //40 x 15 = 600
+			_layers.Add(new LayerPerceptron(4000, 3, 3, new SoftSign())); //40 x 15 = 600
 			_layers[1].FillWeightsRandomly();
 
-			_layers.Add(new LayerPerceptron(4000, 1, 3)); //40 x 15 = 600
+			_layers.Add(new LayerPerceptron(4000, 1, 3, new SoftSign())); //40 x 15 = 600
 			_layers[2].FillWeightsRandomly();
 
 
@@ -110,9 +112,10 @@ namespace AbsurdMoneySimulations
 			string json = File.ReadAllText(files[0]);
 
 			var jss = new JsonSerializerSettings();
-			jss.Converters.Add(new LayerAbstractConverter());
+			jss.Converters.Add(new AbstractConverterOfLayer());
+			jss.Converters.Add(new AbstractConverterOfActivationFunction());
 
-			_layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(json, jss);
+			_layers = JsonConvert.DeserializeObject<List<Layer>>(json, jss);
 
 			Log("Neural Network loaded from disk!");
 		}
@@ -123,9 +126,9 @@ namespace AbsurdMoneySimulations
 			string json = File.ReadAllText(path);
 
 			var jss = new JsonSerializerSettings();
-			jss.Converters.Add(new LayerAbstractConverter());
+			jss.Converters.Add(new AbstractConverterOfLayer());
 
-			_layers = JsonConvert.DeserializeObject<List<LayerAbstract>>(json, jss);
+			_layers = JsonConvert.DeserializeObject<List<Layer>>(json, jss);
 
 			Log("Neural Network loaded from disk!");
 		}
@@ -169,20 +172,12 @@ namespace AbsurdMoneySimulations
 			InitTesters();
 			FillRandomMutations();
 			InitValues();
-			InitActivationFunctions();
 		}
 
 		public static void InitTesters()
 		{
 			_testerV = new Tester(_testsCount, _batchSize, "Grafic//ForValidation", "VALIDATION");
 			_testerE = new Tester(4000, _batchSize, "Grafic//ForEvolution", "EVOLUTION");
-		}
-
-		public static void InitActivationFunctions()
-		{
-			for (int l = 0; l < _layers.Count - 1; l++)
-				_layers[l]._af = new Avocado();
-			_layers[_layers.Count - 1]._af = new TanH();
 		}
 
 		public static void InitValues()
@@ -307,7 +302,7 @@ namespace AbsurdMoneySimulations
 					v = er - old_er;
 					a = v - old_v;
 
-					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LYAMBDA)})");
+					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
 					Log($"vanished {_vanishedGradients} cutted {_cuttedGradients}");
 					Disk.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
 
@@ -642,10 +637,10 @@ namespace AbsurdMoneySimulations
 
 		public static float CutGradient(float g)
 		{
-			if (MathF.Abs(g) > _cutter)
+			if (MathF.Abs(g) > _gradientCutter)
 			{
 				_cuttedGradients++;
-				return _cutter * (g / g);
+				return _gradientCutter * (g / g);
 			}
 			else
 				return g;

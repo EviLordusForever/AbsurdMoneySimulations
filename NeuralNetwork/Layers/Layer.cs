@@ -2,15 +2,14 @@
 
 namespace AbsurdMoneySimulations
 {
-	public abstract class LayerAbstract
+	public abstract class Layer
 	{
 		[JsonIgnore]
 		public float[][][] _values; //[test][sub][value]
 
-		[JsonIgnore]
 		public ActivationFunction _af;
 
-		public int _type;
+		public string _type;
 
 		public abstract void FillWeightsRandomly();
 

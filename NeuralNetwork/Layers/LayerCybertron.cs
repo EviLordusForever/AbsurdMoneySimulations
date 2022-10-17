@@ -1,6 +1,6 @@
 ﻿namespace AbsurdMoneySimulations
 {
-	public class LayerCybertron : LayerAbstract
+	public class LayerCybertron : Layer
 	{
 		public LayerPerceptron[] _perceptrons;
 		public int _lastMutatedSub;
@@ -133,15 +133,15 @@
 			//And this
 		}
 
-		public LayerCybertron(int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount)
+		public LayerCybertron(int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, ActivationFunction af)
 		{
-			_type = 3;
+			_type = "cybertron";
 
 			this._outNodesSummCount = outNodesSummCount;
 
 			_perceptrons = new LayerPerceptron[perceptronsCount];
 			for (int p = 0; p < _perceptrons.Count(); p++)
-				_perceptrons[p] = new LayerPerceptron(testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount);
+				_perceptrons[p] = new LayerPerceptron(testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount, af);
 
 			InitValues(testsCount);
 		}

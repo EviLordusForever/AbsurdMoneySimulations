@@ -2,7 +2,7 @@
 
 namespace AbsurdMoneySimulations
 {
-	public class LayerMegatron : LayerAbstract
+	public class LayerMegatron : Layer
 	{
 		[JsonIgnore]
 		public float[][][] _unnormalizedValues;
@@ -174,9 +174,10 @@ namespace AbsurdMoneySimulations
 			throw new NotImplementedException();
 		}
 
-		public LayerMegatron(int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d)
+		public LayerMegatron(int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d, ActivationFunction af)
 		{
-			_type = 2;
+			_af = af;
+			_type = "megatron";
 			_d = d;
 			_outsPerSubCount = outsPerSubCount;
 

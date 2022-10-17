@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbsurdMoneySimulations.NeuralNetwork.ActivationFunctions
+namespace AbsurdMoneySimulations
 {
 	public class SoftPlus : ActivationFunction
 	{
@@ -16,6 +16,11 @@ namespace AbsurdMoneySimulations.NeuralNetwork.ActivationFunctions
 		public override float df(float x)
 		{
 			return 1 / (1 + MathF.Pow(MathF.E, -x));
+		}
+
+		public SoftPlus()
+		{
+			_type = "SoftPlus";
 		}
 	}
 }

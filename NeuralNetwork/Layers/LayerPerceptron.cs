@@ -1,6 +1,6 @@
 ﻿namespace AbsurdMoneySimulations
 {
-	public class LayerPerceptron : LayerAbstract
+	public class LayerPerceptron : Layer
 	{
 		public Node[] _nodes;
 		public int _lastMutatedNode;
@@ -173,9 +173,10 @@
 			return BPGradients;
 		}
 
-		public LayerPerceptron(int testsCount, int nodesCount, int weightsCount)
+		public LayerPerceptron(int testsCount, int nodesCount, int weightsCount, ActivationFunction af)
 		{
-			_type = 1;
+			_af = af;
+			_type = "perceptron";
 
 			_nodes = new Node[nodesCount];
 			for (int i = 0; i < _nodes.Count(); i++)

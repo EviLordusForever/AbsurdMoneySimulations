@@ -18,5 +18,10 @@
 			float v = 0.19062f * MathF.Pow(1.1f, -x) / MathF.Pow(MathF.Pow(1.1f, -x) + 1, 2);
 			return v;
 		}
+
+		public TanH()
+		{
+			_type = "TanH";
+		}
 	}
 }

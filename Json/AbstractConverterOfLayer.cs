@@ -3,14 +3,13 @@ using Newtonsoft.Json.Linq;
 
 namespace AbsurdMoneySimulations
 {
-
-	public class LayerAbstractConverter : JsonConverter
+	public class AbstractConverterOfLayer : JsonConverter
 	{
 		static JsonSerializerSettings _specifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new BaseSpecifiedConcreteClassConverter() };
 
 		public override bool CanConvert(Type objectType)
 		{
-			return (objectType == typeof(LayerAbstract));
+			return (objectType == typeof(Layer));
 		}
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -22,11 +21,11 @@ namespace AbsurdMoneySimulations
 			if (jo["_type"] != null)
 				switch (jo.GetValue("_type").ToString())
 				{
-					case "1":
+					case "perceptron":
 						return serializer.Deserialize(reader, typeof(LayerPerceptron));
-					case "2":
+					case "megatron":
 						return serializer.Deserialize(reader, typeof(LayerMegatron));
-					case "3":
+					case "cybertron":
 						return serializer.Deserialize(reader, typeof(LayerCybertron));
 					default:
 						throw new Exception();

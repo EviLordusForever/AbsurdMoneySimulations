@@ -114,8 +114,8 @@ namespace AbsurdMoneySimulations
 			{
 			}
 			for (int w = 0; w < _weights.Count(); w++)
-				_weights[w] -= NN._LYAMBDA * _BPgradient[test] * input[start + w];
-			_bias -= NN._LYAMBDA * _BPgradient[test] * NN._biasInput;
+				_weights[w] -= NN._LEARNING_RATE * _BPgradient[test] * input[start + w];
+			_bias -= NN._LEARNING_RATE * _BPgradient[test] * NN._biasInput;
 		}
 
 		public Node(int testsCount, int weightsCount)
