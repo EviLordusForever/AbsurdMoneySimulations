@@ -59,18 +59,19 @@ namespace AbsurdMoneySimulations
 			nn._randomMutatesScaleV2 = 10;
 			nn._randomMutatesSmoothing = 0.03f;
 
-			nn._LEARNING_RATE = 0.0002f; //0.05f
+			nn._LEARNING_RATE = 0.000002f; //0.05f
 			nn._INERTION = 0f; //0.8f
 
 			nn._gradientCutter = 10f;
 
 			nn._biasInput = 0.01f;
 
-			nn._inputAF = new TanH();
-			nn._answersAF = new TanH();
+			nn._inputAF = new SoftSign();
+			nn._answersAF = new SoftSign();
 
-			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", false);
 			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", false);
+			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", false);
+			
 
 
 			/*			_layers.Add(new LayerMegatron(_testerE._testsCount, 3, 271, 30, 1));   //136 x 30 x 10 = 
@@ -98,13 +99,13 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			nn._layers.Add(new LayerPerceptron(nn, 4000, 3, 300, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 3, 300, new SoftSign())); //40 x 15 = 600
 			nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, 4000, 3, 3, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 3, 3, new SoftSign())); //40 x 15 = 600
 			nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, 4000, 1, 3, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 3, new SoftSign())); //40 x 15 = 600
 			nn._layers[2].FillWeightsRandomly();
 
 			nn.Init();
@@ -202,7 +203,6 @@ namespace AbsurdMoneySimulations
 
 		private void InitTesters()
 		{
-			////////////FIX ME?????????????????
 			_testerV = new Tester(this, _testerV._testsCount, _testerV._batchSize, "Grafic//ForValidation", "VALIDATION", false);
 			_testerE = new Tester(this, _testerE._testsCount, _testerE._batchSize, "Grafic//ForEvolution", "EVOLUTION", false);
 
@@ -318,7 +318,8 @@ namespace AbsurdMoneySimulations
 
 					if (Generation % 1 == 0)
 					{
-						_testerE.FillBatchBy(50);
+						//_testerE.FillBatchBy(50);
+						_testerE.FillFullBatch();
 						Log("Batch refilled");
 					}
 
@@ -331,7 +332,7 @@ namespace AbsurdMoneySimulations
 
 					old_ert = ert;
 					ert = FindErrorRate(_testerV);
-					Log($"ert: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
+					Log($"validation loss: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
 					old_er = er;
 					er = FindErrorRate(_testerE);
 
@@ -339,7 +340,7 @@ namespace AbsurdMoneySimulations
 					v = er - old_er;
 					a = v - old_v;
 
-					Log($"er: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
+					Log($"train loss: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
 					Log($"vanished {_vanishedGradients} cutted {_cuttedGradients}");
 					Disk.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
 
@@ -385,14 +386,11 @@ namespace AbsurdMoneySimulations
 
 		private void UseInertionForBPGradients(Tester tester)
 		{
-			if (_INERTION != 1f)
-			{
-				for (int test = 0; test < tester._tests.Length; test++)
-					for (int layer = _layers.Count - 2; layer >= 0; layer--)
-						_layers[layer].UseInertionForGradient(test);
+			for (int test = 0; test < tester._tests.Length; test++)
+				for (int layer = _layers.Count - 2; layer >= 0; layer--)
+					_layers[layer].UseInertionForGradient(test);
 
-				Log("Inertion for gradients used!");
-			}
+			Log("Inertion for gradients used!");
 		}
 
 		private void FindBPGradients(Tester tester)

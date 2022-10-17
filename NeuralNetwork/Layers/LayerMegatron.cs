@@ -174,9 +174,9 @@ namespace AbsurdMoneySimulations
 			throw new NotImplementedException();
 		}
 
-		public LayerMegatron(NN owner, int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d, ActivationFunction af)
+		public LayerMegatron(NN ownerNN, int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d, ActivationFunction af)
 		{
-			_ownerNN = owner;
+			_ownerNN = ownerNN;
 			_af = af;
 			_type = "megatron";
 			_d = d;
@@ -184,7 +184,7 @@ namespace AbsurdMoneySimulations
 
 			_subs = new Node[subsCount];
 			for (int sub = 0; sub < _subs.Count(); sub++)
-				_subs[sub] = new Node(owner, testsCount, weightsPerSubCount);
+				_subs[sub] = new Node(ownerNN, testsCount, weightsPerSubCount);
 
 			InitValues(testsCount);
 		}

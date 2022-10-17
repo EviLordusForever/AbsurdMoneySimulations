@@ -10,7 +10,7 @@ namespace AbsurdMoneySimulations
 	{
 		public override float f(float x)
 		{
-			return MathF.Abs(x) / (1 + MathF.Abs(x));
+			return x / (1 + MathF.Abs(x));
 		}
 
 		public override float df(float x)

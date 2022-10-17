@@ -179,7 +179,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		private void FillFullBatch()
+		public void FillFullBatch()
 		{
 			for (int i = 0; i < _testsCount; i++)
 				_batch[i] = 1;
