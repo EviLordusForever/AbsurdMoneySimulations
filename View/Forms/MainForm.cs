@@ -62,5 +62,10 @@
 		{
 			Core.StartROI();
 		}
+
+		private void button10_Click(object sender, EventArgs e)
+		{
+			Core.StartDrawOtcIndicators();
+		}
 	}
 }

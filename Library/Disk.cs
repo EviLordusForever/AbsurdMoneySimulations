@@ -25,6 +25,11 @@ namespace AbsurdMoneySimulations
 			image.Save(path);
 		}
 
+		public static void SaveImageToProgramFiles(Bitmap image, string path)
+		{
+			image.Save(_programFiles + path);
+		}
+
 		public static void CreateDirectory(string path)
 		{
 			Directory.CreateDirectory(path);

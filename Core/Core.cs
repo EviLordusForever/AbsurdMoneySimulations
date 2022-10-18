@@ -80,5 +80,21 @@
 				ROI.LetsDoIt();
 			}
 		}
+
+		public static void StartDrawOtcIndicators()
+		{
+			Thread myThread = new Thread(OTC);
+			myThread.Name = "OTC indicators drawer";
+			myThread.Start();
+
+			void OTC()
+			{
+				DrawerOfOtcIndicators drawer = new DrawerOfOtcIndicators();
+				NN nn = NN.Load();
+				nn._testerE.FillTestsFromOriginalGrafic();
+				
+				drawer.Draw(nn._testerE.OriginalGrafic);
+			}
+		}
 	}
 }
