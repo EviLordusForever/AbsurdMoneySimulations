@@ -69,8 +69,8 @@ namespace AbsurdMoneySimulations
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", true, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", true, 0, 0);
+			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
+			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
 			
 
 
@@ -206,8 +206,8 @@ namespace AbsurdMoneySimulations
 
 		private void InitTesters()
 		{
-			_testerV = new Tester(this, _testerV._testsCount, _testerV._batchSize, "Grafic//ForValidation", "VALIDATION", _testerV._fromOriginalOrDerivative, _testerV._moveInputsOverZero, _testerV._moveAnswersOverZero);
-			_testerE = new Tester(this, _testerE._testsCount, _testerE._batchSize, "Grafic//ForEvolution", "EVOLUTION", _testerE._fromOriginalOrDerivative, _testerE._moveInputsOverZero, _testerE._moveAnswersOverZero);
+			_testerV = new Tester(this, _testerV._testsCount, _testerV._batchSize, "Grafic//ForValidation", "VALIDATION", _testerV._graficLoadingType, _testerV._moveInputsOverZero, _testerV._moveAnswersOverZero);
+			_testerE = new Tester(this, _testerE._testsCount, _testerE._batchSize, "Grafic//ForEvolution", "EVOLUTION", _testerE._graficLoadingType, _testerE._moveInputsOverZero, _testerE._moveAnswersOverZero);
 
 			Log("Testers were initialized");
 		}

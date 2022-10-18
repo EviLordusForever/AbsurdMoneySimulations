@@ -13,13 +13,15 @@ namespace AbsurdMoneySimulations
 
 		public int _moveAnswersOverZero;
 		public int _moveInputsOverZero;
-		public bool _fromOriginalOrDerivative;
+		public int _graficLoadingType;
 
 		[JsonIgnore] private float[] _originalGrafic;
 		[JsonIgnore] private float[] _derivativeOfGrafic;
 		[JsonIgnore] private float[] _normalizedDerivativeOfGrafic; //[-1, 1]
+		[JsonIgnore] private float[] _horizonGrafic; //[-1, 1]
 
 		[JsonIgnore] public List<int> _availableGraficPoints;
+		[JsonIgnore] public List<int> _availableGraficPointsForHorizon;
 		[JsonIgnore] public float[][] _tests;
 		[JsonIgnore] public float[] _answers;
 		[JsonIgnore] public byte[] _batch;
@@ -31,6 +33,7 @@ namespace AbsurdMoneySimulations
 			LoadOriginalGrafic(path, reason);
 			FillDerivativeOfGrafic();
 			NormalizeDerivativeOfGrafic();
+			FillHorizonOfGrafic();
 		}
 
 		private void LoadOriginalGrafic(string graficFolder, string reason)
@@ -38,6 +41,7 @@ namespace AbsurdMoneySimulations
 			var files = Directory.GetFiles(Disk._programFiles + graficFolder);
 			var graficL = new List<float>();
 			_availableGraficPoints = new List<int>();
+			_availableGraficPointsForHorizon = new List<int>();
 
 			int g = 0;
 
@@ -51,7 +55,12 @@ namespace AbsurdMoneySimulations
 					graficL.Add(Convert.ToSingle(lines[l]));
 
 					if (l < lines.Length - _ownerNN._inputWindow - _ownerNN._horizon - 2)
+					{
 						_availableGraficPoints.Add(g);
+
+						if (l > _ownerNN._horizon)
+							_availableGraficPointsForHorizon.Add(g);
+					}
 
 					l++; g++;
 				}
@@ -61,7 +70,7 @@ namespace AbsurdMoneySimulations
 
 			_originalGrafic = graficL.ToArray();
 			Log($"Original (and discrete) grafic for {reason} loaded.");
-			Log("Also available grafic points are loaded.");
+			Log("Also available grafic points (x2) are loaded.");
 			Log("Grafic length: " + _originalGrafic.Length + ".");
 		}
 
@@ -80,6 +89,14 @@ namespace AbsurdMoneySimulations
 			for (int i = 1; i < _derivativeOfGrafic.Length; i++)
 				_normalizedDerivativeOfGrafic[i] = _ownerNN._inputAF.f(_derivativeOfGrafic[i]);
 			Log("Derivative of grafic is normilized.");
+		}
+
+		private void FillHorizonOfGrafic()
+		{
+			_horizonGrafic = new float[_originalGrafic.Length];
+			for (int i = _ownerNN._horizon; i < _originalGrafic.Length; i++)
+				_horizonGrafic[i] = _originalGrafic[i] - _originalGrafic[i - _ownerNN._horizon];
+			Log("HorizonGrafic is filled.");
 		}
 
 		public void FillTestsFromNormilizedDerivativeGrafic()
@@ -161,6 +178,37 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public void FillTestsFromHorizonGrafic()
+		{
+			int maximalDelta = _availableGraficPoints.Count();
+			float delta_delta = 0.990f * maximalDelta / _testsCount;
+
+			_tests = new float[_testsCount][];
+			_answers = new float[_testsCount];
+
+			int test = 0;
+			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += delta_delta)
+			{
+				int offset = _availableGraficPointsForHorizon[Convert.ToInt32(delta)];
+
+				_tests[test] = Extensions.SubArray(_horizonGrafic, offset, _ownerNN._inputWindow);
+				Normalize(test);
+
+				_answers[test] = _horizonGrafic[offset + _ownerNN._inputWindow + _ownerNN._horizon];
+				_answers[test] = _ownerNN._answersAF.f(_answers[test]) + _moveAnswersOverZero;
+
+				test++;
+			}
+
+			Log($"Tests and answers for NN are filled from NORMALIZED HORIZON(!!!) grafic. ({_tests.Length})");
+
+			void Normalize(int test)
+			{
+				for (int i = 0; i < _tests[test].Length; i++)
+					_tests[test][i] = _ownerNN._inputAF.f(_tests[test][i]) - _moveInputsOverZero;
+			}
+		}
+
 		public void FillBatch()
 		{
 			if (_batchesCount > 1)
@@ -215,9 +263,9 @@ namespace AbsurdMoneySimulations
 		{
 		}
 
-		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, bool originalOrDerivativeGrafic, int moveInputsOverZero, int moveAnswersOverZero)
+		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, int graficLoadingType, int moveInputsOverZero, int moveAnswersOverZero)
 		{
-			_fromOriginalOrDerivative = originalOrDerivativeGrafic;
+			_graficLoadingType = graficLoadingType;
 			_ownerNN = ownerNN;
 			_testsCount = testsCount;
 			_batch = new byte[testsCount];
@@ -229,13 +277,17 @@ namespace AbsurdMoneySimulations
 
 			LoadGrafic(graficPath, reason);
 
-			if (originalOrDerivativeGrafic)
-				FillTestsFromOriginalGrafic();
-			else
-				FillTestsFromNormilizedDerivativeGrafic();
-
 			if (batchesCount == 1)
 				FillFullBatch();
+
+			if (graficLoadingType == 0)
+				FillTestsFromOriginalGrafic();
+			else if (graficLoadingType == 1)
+				FillTestsFromNormilizedDerivativeGrafic();
+			else if (graficLoadingType == 2)
+				FillTestsFromHorizonGrafic();
+			else
+				throw new Exception();
 		}
 
 		public void SetOwnerNN(NN ownerNN)
