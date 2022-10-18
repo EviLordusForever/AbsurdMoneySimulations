@@ -59,18 +59,18 @@ namespace AbsurdMoneySimulations
 			nn._randomMutatesScaleV2 = 10;
 			nn._randomMutatesSmoothing = 0.03f;
 
-			nn._LEARNING_RATE = 0.000002f; //0.05f
-			nn._INERTION = 0f; //0.8f
-
 			nn._gradientCutter = 10f;
 
 			nn._biasInput = 0.01f;
 
+			nn._LEARNING_RATE = 0.001f; //0.05f
+			nn._INERTION = 0f; //0.8f
+
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", false);
-			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", false);
+			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", true, 0, 0);
+			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", true, 0, 0);
 			
 
 
@@ -99,14 +99,17 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 3, 300, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 300, new SoftSign())); //40 x 15 = 600
 			nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 3, 3, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
 			nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 3, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
 			nn._layers[2].FillWeightsRandomly();
+
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 10, new SoftSign())); //40 x 15 = 600
+			nn._layers[3].FillWeightsRandomly();
 
 			nn.Init();
 
@@ -203,8 +206,8 @@ namespace AbsurdMoneySimulations
 
 		private void InitTesters()
 		{
-			_testerV = new Tester(this, _testerV._testsCount, _testerV._batchSize, "Grafic//ForValidation", "VALIDATION", false);
-			_testerE = new Tester(this, _testerE._testsCount, _testerE._batchSize, "Grafic//ForEvolution", "EVOLUTION", false);
+			_testerV = new Tester(this, _testerV._testsCount, _testerV._batchSize, "Grafic//ForValidation", "VALIDATION", _testerV._fromOriginalOrDerivative, _testerV._moveInputsOverZero, _testerV._moveAnswersOverZero);
+			_testerE = new Tester(this, _testerE._testsCount, _testerE._batchSize, "Grafic//ForEvolution", "EVOLUTION", _testerE._fromOriginalOrDerivative, _testerE._moveInputsOverZero, _testerE._moveAnswersOverZero);
 
 			Log("Testers were initialized");
 		}

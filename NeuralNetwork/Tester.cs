@@ -11,6 +11,10 @@ namespace AbsurdMoneySimulations
 		public int _batchesCount;
 		public int _batchSize;
 
+		public int _moveAnswersOverZero;
+		public int _moveInputsOverZero;
+		public bool _fromOriginalOrDerivative;
+
 		[JsonIgnore] private float[] _originalGrafic;
 		[JsonIgnore] private float[] _derivativeOfGrafic;
 		[JsonIgnore] private float[] _normalizedDerivativeOfGrafic; //[-1, 1]
@@ -93,16 +97,24 @@ namespace AbsurdMoneySimulations
 
 				_tests[test] = Extensions.SubArray(_normalizedDerivativeOfGrafic, offset, _ownerNN._inputWindow);
 
+				Normalize(test);
+
 				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = _ownerNN._answersAF.f(_answers[test]);
+				_answers[test] = _ownerNN._answersAF.f(_answers[test]) + _moveAnswersOverZero;
 
 				test++;
 			}
 
 			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE grafic. ({_tests.Length})");
+
+			void Normalize(int test)
+			{
+				for (int i = 0; i < _tests[test].Length; i++)
+					_tests[test][i] += _moveInputsOverZero;
+			}
 		}
 
 		public void FillTestsFromOriginalGrafic()
@@ -125,7 +137,7 @@ namespace AbsurdMoneySimulations
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = _ownerNN._answersAF.f(_answers[test]);
+				_answers[test] = _ownerNN._answersAF.f(_answers[test]) + _moveAnswersOverZero;
 
 				test++;
 			}
@@ -133,14 +145,19 @@ namespace AbsurdMoneySimulations
 			Log($"Tests and answers for NN are filled from NORMILIZED ORIGINAL grafic. ({_tests.Length})");
 
 			void Normalize(int test)
-			{
-				float min = Extensions.Min(_tests[test]);
-				float max = Extensions.Max(_tests[test]);
-				float scale = max - min;
+			{				
+				float final = _tests[test][_tests[test].Length - 1];
 
 				for (int i = 0; i < _tests[test].Length; i++)
-					//_tests[test][i] = 2 * (_tests[test][i] - min) / scale - 1;
-					_tests[test][i] = (_tests[test][i] - min) / scale;
+					_tests[test][i] = _tests[test][i] - final;
+
+				float min = Extensions.Min(_tests[test]);
+				float max = Extensions.Max(_tests[test]);
+
+				max = MathF.Max(MathF.Abs(max), MathF.Abs(min));
+
+				for (int i = 0; i < _tests[test].Length; i++)
+					_tests[test][i] = _tests[test][i] / max + _moveInputsOverZero;
 			}
 		}
 
@@ -198,13 +215,17 @@ namespace AbsurdMoneySimulations
 		{
 		}
 
-		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, bool originalOrDerivativeGrafic)
+		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, bool originalOrDerivativeGrafic, int moveInputsOverZero, int moveAnswersOverZero)
 		{
+			_fromOriginalOrDerivative = originalOrDerivativeGrafic;
 			_ownerNN = ownerNN;
 			_testsCount = testsCount;
 			_batch = new byte[testsCount];
 			_batchesCount = batchesCount;
 			_batchSize = testsCount / batchesCount;
+
+			_moveAnswersOverZero = moveAnswersOverZero;
+			_moveInputsOverZero = moveInputsOverZero;
 
 			LoadGrafic(graficPath, reason);
 

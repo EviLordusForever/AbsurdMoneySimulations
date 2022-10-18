@@ -86,7 +86,15 @@ namespace AbsurdMoneySimulations
 
 		public void FindBPGradient(int test, ActivationFunction af, float desiredValue)
 		{
-			_BPgradient[test] = (af.f(_summ[test]) - desiredValue) * af.df(_summ[test]);
+			try
+			{
+				_BPgradient[test] = (af.f(_summ[test]) - desiredValue) * af.df(_summ[test]);
+			}
+			catch (VanishedGradientException ex)
+			{
+				_ownerNN._vanishedGradients++;
+				_BPgradient[test] = 0;
+			}
 		}
 
 		public void FindBPGradient(int test, ActivationFunction af, float[] gradients, float[] weights)

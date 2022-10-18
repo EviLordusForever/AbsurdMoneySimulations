@@ -17,10 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Scripts\Test1.js">
+    <None Update="Trading\Scripts\Test1.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Scripts\Test2.js">
+    <None Update="Trading\Scripts\Test2.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
