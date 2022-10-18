@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbsurdMoneySimulations
 {
-	public static class ROI
+	public static class Swarm
 	{
 		public static void LetsDoIt()
 		{

@@ -77,7 +77,7 @@
 
 			void StartTraderThread()
 			{
-				ROI.LetsDoIt();
+				Swarm.LetsDoIt();
 			}
 		}
 
