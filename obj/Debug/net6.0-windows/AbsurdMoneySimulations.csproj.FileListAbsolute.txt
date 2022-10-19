@@ -26,3 +26,4 @@ E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\ICSharpCode.SharpZ
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\WebDriverManager.dll
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\Test1.js
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\Test2.js
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\MathNet.Numerics.dll

@@ -116,6 +116,11 @@
 			Log(text.ToString());
 		}
 
+		public static void Log(double text)
+		{
+			Log(text.ToString());
+		}
+
 		public static void Log(int text)
 		{
 			Log(text.ToString());

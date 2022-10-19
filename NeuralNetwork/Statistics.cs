@@ -1,19 +1,21 @@
 ﻿using static AbsurdMoneySimulations.Logger;
 using static AbsurdMoneySimulations.Storage;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
 	public static class Statistics
 	{
-		public static float _er;
+		public static float _loss;
 		public static List<Section> _sections;
 
-		public static float[,] _winsPerCore;
-		public static float[] _wins;
-		public static float[,] _testsPerCore;
-		public static float[] _tests;
+		public static int[,] _winsPerCore;
+		public static int[] _wins;
+		public static int[,] _testsPerCore;
+		public static int[] _tests;
 
 		public static float[] _scores;
+		public static double[] _randomnesses;
 
 		static Statistics()
 		{
@@ -37,11 +39,12 @@ namespace AbsurdMoneySimulations
 			_sections.Add(new Section(new float[][] { new float[] { -1, -0.2f }, new float[] { 0.2f, 1 } }));
 			_sections.Add(new Section(new float[][] { new float[] { -1, -0.1f }, new float[] { 0.1f, 1 } }));
 
-			_winsPerCore = new float[_coresCount, _sections.Count];
-			_wins = new float[_sections.Count];
-			_testsPerCore = new float[_coresCount, _sections.Count];
-			_tests = new float[_sections.Count];
+			_winsPerCore = new int[_coresCount, _sections.Count];
+			_wins = new int[_sections.Count];
+			_testsPerCore = new int[_coresCount, _sections.Count];
+			_tests = new int[_sections.Count];
 			_scores = new float[_sections.Count];
+			_randomnesses = new double[_sections.Count];
 		}
 
 		public static string CalculateStatistics(NN nn, Tester tester)
@@ -101,11 +104,12 @@ namespace AbsurdMoneySimulations
 
 
 			for (int core = 0; core < _coresCount; core++)
-				_er += suber[core];
+				_loss += suber[core];
 
-			_er /= tester._testsCount;
+			_loss /= tester._testsCount;
 
 			CalculateScores();
+			CalculateCDFs();
 
 			return StatToString();
 		}
@@ -130,7 +134,19 @@ namespace AbsurdMoneySimulations
 					_wins[section] += _winsPerCore[core, section];
 					_tests[section] += _testsPerCore[core, section];
 				}
-				_scores[section] = MathF.Round(_wins[section] / _tests[section], 3);
+
+				_scores[section] = MathF.Round((float)_wins[section] / _tests[section], 3);
+			}
+		}
+
+		public static void CalculateCDFs()
+		{
+			for (int section = 0; section < _sections.Count; section++)
+			{
+				if (_wins[section] > _tests[section] / 2f)
+					_randomnesses[section] = 1 - Math2.CumulativeDistributionFunction(_wins[section], _tests[section], 0.5);
+				else
+					_randomnesses[section] = 1 - Math2.CumulativeDistributionFunction(_tests[section] - _wins[section], _tests[section], 0.5);
 			}
 		}
 
@@ -149,15 +165,17 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-			_er = 0;
+			_loss = 0;
 		}
 
 		static string StatToString()
 		{
 			string stat = "========================\n";
 			for (int section = 0; section < _wins.Length; section++)
-				stat += $"({_sections[section].ToString()}): {_wins[section]} / {_tests[section]} ({_scores[section]})\n";
-			stat += $"loss: {_er}\n";
+			{
+				stat += String.Format("{0,-25} {1,-12} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
+			}
+			stat += $"loss: {_loss}\n";
 			stat += $"========================";
 			return stat;
 		}

@@ -235,7 +235,7 @@ namespace AbsurdMoneySimulations
 			_randomMutates = new float[_randomMutatesCount];
 
 			for (int m = 0; m < _randomMutatesCount; m++)
-				_randomMutates[m] = Math2.NormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing, rnd);
+				_randomMutates[m] = Math2.LikeNormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing, rnd);
 
 			Log("Random mutations are filled.");
 		}
@@ -246,7 +246,7 @@ namespace AbsurdMoneySimulations
 			string history = "";
 			float er = 0;
 			float record = FindErrorRate(_testerE);
-			Log("Received current er_fb: " + record);
+			Log("Current train loss: " + record);
 
 			for (int Generation = 0; ; Generation++)
 			{
@@ -311,17 +311,17 @@ namespace AbsurdMoneySimulations
 				float a = 0;
 
 				float ert = FindErrorRate(_testerV);
-				Log("Current ert: " + ert);
+				Log("Current validation loss: " + ert);
 				float ert_record = GetErtRecord();
-				Log("Current ert_record: " + ert_record);
+				Log("Validation loss record: " + ert_record);
 				float er = FindErrorRate(_testerE);
-				Log("Current er: " + er);
+				Log("Current train loss: " + er);
 				float old_er = er;
 				float old_ert = ert;				
 
-				for (int Generation = 0; ; Generation++)
+				for (int Generation = 1; ; Generation++)
 				{
-					Log($"G{Generation} b{Generation % 20 + 1}");
+					Log($"G{Generation} b{Generation % 20}");
 
 					if (Generation % 1 == 0)
 					{
@@ -354,7 +354,7 @@ namespace AbsurdMoneySimulations
 					Save(this);
 					EarlyStopping();
 
-					if (Generation % 20 == 19)
+					if (Generation % 20 == 1)
 					{
 						string validation = Statistics.CalculateStatistics(this,_testerV);
 						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);

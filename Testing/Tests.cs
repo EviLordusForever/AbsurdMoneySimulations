@@ -9,7 +9,8 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestMegatronLayers);
+			Thread myThread = new Thread(TestCombinations);
+			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
 
@@ -348,6 +349,53 @@ namespace AbsurdMoneySimulations
 				nn._layers[0].Calculate(0, nn._layers[0].GetValues(0));
 				Log(nn._layers[0].GetAnswer(0));
 			}
+		}
+
+		public static void TestCombinations()
+		{
+			Log(Math2.Combinations1(5, 1));
+			Log(Math2.Combinations1(5, 2));
+			Log(Math2.Combinations1(5, 3));
+			Log(Math2.Combinations1(5, 4));
+			Log(Math2.Combinations1(5, 5));
+			Log(Math2.Combinations1(13, 5));
+
+
+			Log(Math2.Combinations0(5, 1));
+			Log(Math2.Combinations0(5, 2));
+			Log(Math2.Combinations0(5, 3));
+			Log(Math2.Combinations0(5, 4));
+			Log(Math2.Combinations0(5, 5));
+			Log(Math2.Combinations0(13, 5));
+			Log(Math2.Combinations0(20, 5));
+
+			Log($"==============");
+			Log($"At least 5 from 5 {Math2.CumulativeDistributionFunction(5, 5, 0.5)}");
+			Log($"At least 2 from 4 {Math2.CumulativeDistributionFunction(2, 4, 0.5)}");
+			Log($"At least 5 from 10 {Math2.CumulativeDistributionFunction(5, 10, 0.5)}");
+			Log($"At least 500 from 1000 {Math2.CumulativeDistributionFunction(500, 1000, 0.5)}");
+			Log($"At least 499 from 1000 {Math2.CumulativeDistributionFunction(499, 1000, 0.5)}");
+			Log($"At least 1 from 5 {Math2.CumulativeDistributionFunction(1, 5, 0.5)}");
+			Log($"At least 2 from 5 {Math2.CumulativeDistributionFunction(2, 5, 0.5)}");
+			Log($"At least 3 from 5 {Math2.CumulativeDistributionFunction(3, 5, 0.5)}");
+
+			int yes = 0;
+			int no = 0;
+			for (int i = 0; i < 100000; i++)
+			{
+				int count = 0;
+				for (int p = 0; p < 4; p++)
+					if (Storage.rnd.Next(2) == 1)
+						count++;
+
+				if (count >= 2)
+					yes++;
+				else
+					no++;
+			}
+
+			Log($"yes {yes}");
+			Log($"no {no}");
 		}
 	}
 }

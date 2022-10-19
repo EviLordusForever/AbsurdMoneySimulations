@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "w7xpirum7ONx39AwFfG+TFUp7Ec2xWW24LkDEH9v830j+OxDrBuFPUTCr5l2Syg2TNOUZ+6jB6HR81SREd3Uuw==",
+  "dgSpecHash": "azxrq+3diJyNnjT+LKHs/3Ni0u42RPm/lp8YVS3fDir9K4dNfohmR278kYGSr0QvHD0Z7oesX7X1JfV9XRYloQ==",
   "success": true,
   "projectFilePath": "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\anglesharp\\0.17.1\\anglesharp.0.17.1.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
