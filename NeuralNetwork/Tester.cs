@@ -260,35 +260,37 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public Tester()
+		public void Init(NN ownerNN, string graficPath, string reason)
 		{
+			_ownerNN = ownerNN;
+			_batch = new byte[_testsCount];
+
+			LoadGrafic(graficPath, reason);
+
+			if (_batchesCount == 1)
+				FillFullBatch();
+
+			if (_graficLoadingType == 0)
+				FillTestsFromOriginalGrafic();
+			else if (_graficLoadingType == 1)
+				FillTestsFromNormilizedDerivativeGrafic();
+			else if (_graficLoadingType == 2)
+				FillTestsFromHorizonGrafic();
+			else
+				throw new Exception();
 		}
 
 		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, int graficLoadingType, int moveInputsOverZero, int moveAnswersOverZero)
 		{
-			_graficLoadingType = graficLoadingType;
-			_ownerNN = ownerNN;
 			_testsCount = testsCount;
-			_batch = new byte[testsCount];
 			_batchesCount = batchesCount;
 			_batchSize = testsCount / batchesCount;
 
 			_moveAnswersOverZero = moveAnswersOverZero;
 			_moveInputsOverZero = moveInputsOverZero;
+			_graficLoadingType = graficLoadingType;
 
-			LoadGrafic(graficPath, reason);
-
-			if (batchesCount == 1)
-				FillFullBatch();
-
-			if (graficLoadingType == 0)
-				FillTestsFromOriginalGrafic();
-			else if (graficLoadingType == 1)
-				FillTestsFromNormilizedDerivativeGrafic();
-			else if (graficLoadingType == 2)
-				FillTestsFromHorizonGrafic();
-			else
-				throw new Exception();
+			Init(ownerNN, graficPath, reason);
 		}
 
 		public void SetOwnerNN(NN ownerNN)

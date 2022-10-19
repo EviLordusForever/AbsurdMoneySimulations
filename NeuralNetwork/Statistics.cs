@@ -109,7 +109,7 @@ namespace AbsurdMoneySimulations
 			_loss /= tester._testsCount;
 
 			CalculateScores();
-			CalculateCDFs();
+			CalculateRandomnesses();
 
 			return StatToString();
 		}
@@ -139,7 +139,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void CalculateCDFs()
+		public static void CalculateRandomnesses()
 		{
 			for (int section = 0; section < _sections.Count; section++)
 			{
@@ -172,9 +172,8 @@ namespace AbsurdMoneySimulations
 		{
 			string stat = "========================\n";
 			for (int section = 0; section < _wins.Length; section++)
-			{
 				stat += String.Format("{0,-25} {1,-12} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
-			}
+
 			stat += $"loss: {_loss}\n";
 			stat += $"========================";
 			return stat;

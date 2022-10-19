@@ -92,7 +92,7 @@ namespace AbsurdMoneySimulations
 			}
 			catch (VanishedGradientException ex)
 			{
-				_ownerNN._vanishedGradients++;
+				_ownerNN._vanishedGradientsCount++;
 				_BPgradient[test] = 0;
 			}
 		}

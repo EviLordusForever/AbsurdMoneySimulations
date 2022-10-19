@@ -179,7 +179,7 @@ namespace AbsurdMoneySimulations
 			nn.Mutate();
 
 			for (int i = 0; i < 100; i++)
-				Log(nn.FindErrorRateSquared(nn._testerE));
+				Log(nn.FindLossSquared(nn._testerE));
 		}
 
 		public static void StupiedTestR()
@@ -188,10 +188,10 @@ namespace AbsurdMoneySimulations
 
 			nn.Mutate();
 
-			Log("er_fb " + nn.FindErrorRateSquared(nn._testerE));
+			Log("er_fb " + nn.FindLossSquared(nn._testerE));
 
 			for (int i = 0; i < 100; i++)
-				Log("er_nfb " + nn.RefindErrorRateSquared(nn._testerE));
+				Log("er_nfb " + nn.RefindLossSquared(nn._testerE));
 		}
 
 		public static void TestSelenium()
@@ -231,7 +231,7 @@ namespace AbsurdMoneySimulations
 				Storage._coresCount = coresCount;
 				long ms = DateTime.Now.Ticks;
 				for (int i = 0; i < 10; i++)
-					nn.FindErrorRateSquared(nn._testerE);
+					nn.FindLossSquared(nn._testerE);
 				Log($"{Storage._coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
 		}
@@ -286,8 +286,8 @@ namespace AbsurdMoneySimulations
 			nn._randomMutatesScaleV2 = width / 2;
 			//nn.FillRandomMutations();
 			float[] distribution = new float[width];
-			for (int m = 0; m < nn._randomMutates.Count(); m++)
-				distribution[Convert.ToInt32(nn._randomMutates[m] * 0.99f) + width / 2]++;
+			for (int m = 0; m < nn._randomMutations.Count(); m++)
+				distribution[Convert.ToInt32(nn._randomMutations[m] * 0.99f) + width / 2]++;
 			float max = Math2.Max(distribution);
 			Storage._bmp = new Bitmap(width, (int)max);
 			Graphics gr = Graphics.FromImage(Storage._bmp);

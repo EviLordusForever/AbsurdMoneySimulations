@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 			{
 				NN nn = NN.Load();
 
-				float record = nn.FindErrorRateSquared(nn._testerE);
+				float record = nn.FindLossSquared(nn._testerE);
 				Log($"record {record}");
 				var files = Directory.GetFiles(Library.Disk2._programFiles + "NN");
 
@@ -21,7 +21,7 @@ namespace AbsurdMoneySimulations
 				{
 					nn = NN.CreateBasicNN();
 
-					float er = nn.FindErrorRateSquared(nn._testerE);
+					float er = nn.FindLossSquared(nn._testerE);
 					Log($"er {er}");
 
 					if (er < record)

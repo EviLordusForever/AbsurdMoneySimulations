@@ -36,9 +36,9 @@ namespace AbsurdMoneySimulations
 
 		public string _name;
 
-		[JsonIgnore] public int _vanishedGradients;
-		[JsonIgnore] public int _cuttedGradients;
-		[JsonIgnore] public float[] _randomMutates;
+		[JsonIgnore] public int _vanishedGradientsCount;
+		[JsonIgnore] public int _cuttedGradientsCount;
+		[JsonIgnore] public float[] _randomMutations;
 		[JsonIgnore] public float _mutagen;
 		[JsonIgnore] public int _lastMutatedLayer;
 
@@ -208,9 +208,8 @@ namespace AbsurdMoneySimulations
 
 		private void InitTesters()
 		{
-			_testerV = new Tester(this, _testerV._testsCount, _testerV._batchSize, "Grafic//ForValidation", "VALIDATION", _testerV._graficLoadingType, _testerV._moveInputsOverZero, _testerV._moveAnswersOverZero);
-			_testerE = new Tester(this, _testerE._testsCount, _testerE._batchSize, "Grafic//ForEvolution", "EVOLUTION", _testerE._graficLoadingType, _testerE._moveInputsOverZero, _testerE._moveAnswersOverZero);
-
+			_testerV.Init(this, "Grafic//ForValidation", "VALIDATION");
+			_testerE.Init(this, "Grafic//ForEvolution", "EVOLUTION");
 			Log("Testers were initialized");
 		}
 
@@ -232,10 +231,10 @@ namespace AbsurdMoneySimulations
 
 		private void FillRandomMutations()
 		{
-			_randomMutates = new float[_randomMutatesCount];
+			_randomMutations = new float[_randomMutatesCount];
 
 			for (int m = 0; m < _randomMutatesCount; m++)
-				_randomMutates[m] = Math2.LikeNormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing, rnd);
+				_randomMutations[m] = Math2.LikeNormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing, rnd);
 
 			Log("Random mutations are filled.");
 		}
@@ -245,7 +244,7 @@ namespace AbsurdMoneySimulations
 			short previous = 0;
 			string history = "";
 			float er = 0;
-			float record = FindErrorRate(_testerE);
+			float record = FindLoss(_testerE);
 			Log("Current train loss: " + record);
 
 			for (int Generation = 0; ; Generation++)
@@ -255,7 +254,7 @@ namespace AbsurdMoneySimulations
 				SelectLayerForMutation();
 				Mutate();
 
-				er = RefindErrorRateSquared(_testerE);
+				er = RefindLossSquared(_testerE);
 
 				if (er < record)
 				{
@@ -271,7 +270,7 @@ namespace AbsurdMoneySimulations
 				{
 					Log($" ▽ Bad mutation. Go back. ({_mutagen})");
 					Demutate();
-					er = FindErrorRate(_testerE);
+					er = FindLoss(_testerE);
 				}
 
 				history += record + "\r\n";
@@ -283,7 +282,7 @@ namespace AbsurdMoneySimulations
 					history = "";
 
 					Log("(!) er_nfb: " + er);
-					er = FindErrorRate(_testerE);
+					er = FindLoss(_testerE);
 					Log("(!) er_fb: " + er);
 
 					string validation = Statistics.CalculateStatistics(this, _testerV);
@@ -310,14 +309,14 @@ namespace AbsurdMoneySimulations
 				float old_v = 0;
 				float a = 0;
 
-				float ert = FindErrorRate(_testerV);
-				Log("Current validation loss: " + ert);
-				float ert_record = GetErtRecord();
-				Log("Validation loss record: " + ert_record);
-				float er = FindErrorRate(_testerE);
-				Log("Current train loss: " + er);
-				float old_er = er;
-				float old_ert = ert;				
+				float vLoss = FindLoss(_testerV);
+				Log("Current validation loss: " + vLoss);
+				float vLossRecord = GetVLossRecord();
+				Log("Validation loss record: " + vLossRecord);
+				float tLoss = FindLoss(_testerE);
+				Log("Current train loss: " + tLoss);
+				float oldTLoss = tLoss;
+				float oldVLoss = vLoss;				
 
 				for (int Generation = 1; ; Generation++)
 				{
@@ -330,26 +329,26 @@ namespace AbsurdMoneySimulations
 						Log("Batch refilled");
 					}
 
-					_vanishedGradients = 0;
-					_cuttedGradients = 0;
+					_vanishedGradientsCount = 0;
+					_cuttedGradientsCount = 0;
 
 					UseInertionForBPGradients(_testerE);
 					FindBPGradients(_testerE);
 					CorrectWeightsByBP(_testerE);
 
-					old_ert = ert;
-					ert = FindErrorRate(_testerV);
-					Log($"validation loss: {string.Format("{0:F8}", ert)} (v {string.Format("{0:F8}", ert - old_ert)})");
-					old_er = er;
-					er = FindErrorRate(_testerE);
+					oldVLoss = vLoss;
+					vLoss = FindLoss(_testerV);
+					Log($"validation loss: {string.Format("{0:F8}", vLoss)} (v {string.Format("{0:F8}", vLoss - oldVLoss)})");
+					oldTLoss = tLoss;
+					tLoss = FindLoss(_testerE);
 
 					old_v = v;
-					v = er - old_er;
+					v = tLoss - oldTLoss;
 					a = v - old_v;
 
-					Log($"train loss: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
-					Log($"vanished {_vanishedGradients} cutted {_cuttedGradients}");
-					Disk2.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
+					Log($"train loss: {string.Format("{0:F8}", tLoss)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
+					Log($"vanished {_vanishedGradientsCount} cutted {_cuttedGradientsCount}");
+					Disk2.WriteToProgramFiles("EvolveHistory", "csv", $"{tLoss}, {vLoss}\r\n", true);
 
 					Save(this);
 					EarlyStopping();
@@ -368,16 +367,16 @@ namespace AbsurdMoneySimulations
 
 				void EarlyStopping()
 				{
-					if (ert <= ert_record)
+					if (vLoss <= vLossRecord)
 					{
-						ert_record = ert;
+						vLossRecord = vLoss;
 						Disk2.ClearDirectory($"{Disk2._programFiles}\\NN\\EarlyStopping");
-						File.Copy($"{Disk2._programFiles}\\NN\\{_name}.json", $"{Disk2._programFiles}\\NN\\EarlyStopping\\{_name} ({ert}).json");
+						File.Copy($"{Disk2._programFiles}\\NN\\{_name}.json", $"{Disk2._programFiles}\\NN\\EarlyStopping\\{_name} ({vLoss}).json");
 						Log(" ▲ NN copied for early stopping.");
 					}
 				}
 
-				float GetErtRecord()
+				float GetVLossRecord()
 				{
 					string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\EarlyStopping");
 					if (files.Length > 0)
@@ -442,12 +441,12 @@ namespace AbsurdMoneySimulations
 			Log("Weights are corrected!");
 		}
 
-		public float FindErrorRate(Tester tester)
+		public float FindLoss(Tester tester)
 		{
-			return FindErrorRateSquared(tester);
+			return FindLossSquared(tester);
 		}
 
-		public float FindErrorRateLinear(Tester tester)
+		public float FindLossLinear(Tester tester)
 		{
 			restart:
 
@@ -506,7 +505,7 @@ namespace AbsurdMoneySimulations
 			return er;
 		}
 
-		public float FindErrorRateSquared(Tester tester)
+		public float FindLossSquared(Tester tester)
 		{
 			restart:
 
@@ -565,7 +564,7 @@ namespace AbsurdMoneySimulations
 			return er;
 		}
 
-		public float RefindErrorRateSquared(Tester tester)
+		public float RefindLossSquared(Tester tester)
 		{
 			restart:
 
@@ -634,7 +633,7 @@ namespace AbsurdMoneySimulations
 		public void Mutate()
 		{
 			SelectLayerForMutation();
-			_mutagen = _randomMutates[Storage.rnd.Next(_randomMutates.Length)];
+			_mutagen = _randomMutations[Storage.rnd.Next(_randomMutations.Length)];
 			_layers[_lastMutatedLayer].Mutate(_mutagen);
 			Log($"Layer {_lastMutatedLayer} is mutated.");
 		}
@@ -648,7 +647,7 @@ namespace AbsurdMoneySimulations
 		{
 			if (MathF.Abs(g) > _gradientCutter)
 			{
-				_cuttedGradients++;
+				_cuttedGradientsCount++;
 				return _gradientCutter * (g / g);
 			}
 			else
