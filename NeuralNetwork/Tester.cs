@@ -9,12 +9,14 @@ namespace AbsurdMoneySimulations
 		public const int _graficJumpLimit = 9000;
 
 		public int _testsCount;
-		public int _batchesCount;
 		public int _batchSize;
 
 		public int _moveAnswersOverZero;
 		public int _moveInputsOverZero;
 		public int _graficLoadingType;
+
+		public string _graficPath;
+		public string _reason;
 
 		[JsonIgnore] private float[] _originalGrafic;
 		[JsonIgnore] private float[] _derivativeOfGrafic;
@@ -212,12 +214,19 @@ namespace AbsurdMoneySimulations
 
 		public void FillBatch()
 		{
-			if (_batchesCount > 1)
+			FillBatchBy(_batchSize);
+		}
+
+		public void FillBatchBy(int count)
+		{
+			if (count == _testsCount)
+				FillFullBatch();
+			else
 			{
 				_batch = new byte[_testsCount];
 
 				int i = 0;
-				while (i < _batchSize)
+				while (i < count)
 				{
 					int n = Storage.rnd.Next(_testsCount);
 					if (_batch[n] == 0)
@@ -225,22 +234,6 @@ namespace AbsurdMoneySimulations
 						_batch[n] = 1;
 						i++;
 					}
-				}
-			}
-		}
-
-		public void FillBatchBy(int count)
-		{
-			_batch = new byte[_testsCount];
-
-			int i = 0;
-			while (i < count)
-			{
-				int n = Storage.rnd.Next(_testsCount);
-				if (_batch[n] == 0)
-				{
-					_batch[n] = 1;
-					i++;
 				}
 			}
 		}
@@ -265,32 +258,37 @@ namespace AbsurdMoneySimulations
 			_ownerNN = ownerNN;
 			_batch = new byte[_testsCount];
 
-			LoadGrafic(graficPath, reason);
+			if (graficPath != null)
+			{
+				LoadGrafic(graficPath, reason);
 
-			if (_batchesCount == 1)
-				FillFullBatch();
+				if (_batchSize == _testsCount)
+					FillFullBatch();
 
-			if (_graficLoadingType == 0)
-				FillTestsFromOriginalGrafic();
-			else if (_graficLoadingType == 1)
-				FillTestsFromNormilizedDerivativeGrafic();
-			else if (_graficLoadingType == 2)
-				FillTestsFromHorizonGrafic();
-			else
-				throw new Exception();
+				if (_graficLoadingType == 0)
+					FillTestsFromOriginalGrafic();
+				else if (_graficLoadingType == 1)
+					FillTestsFromNormilizedDerivativeGrafic();
+				else if (_graficLoadingType == 2)
+					FillTestsFromHorizonGrafic();
+				else
+					throw new Exception();
+			}
 		}
 
-		public Tester(NN ownerNN, int testsCount, int batchesCount, string graficPath, string reason, int graficLoadingType, int moveInputsOverZero, int moveAnswersOverZero)
+		public Tester(NN ownerNN, int testsCount, int batchSize, string graficPath, string reason, int graficLoadingType, int moveInputsOverZero, int moveAnswersOverZero)
 		{
 			_testsCount = testsCount;
-			_batchesCount = batchesCount;
-			_batchSize = testsCount / batchesCount;
+			_batchSize = batchSize;
 
 			_moveAnswersOverZero = moveAnswersOverZero;
 			_moveInputsOverZero = moveInputsOverZero;
 			_graficLoadingType = graficLoadingType;
 
-			Init(ownerNN, graficPath, reason);
+			_graficPath = graficPath;
+			_reason = reason;
+
+			Init(ownerNN, _graficPath, _reason);
 		}
 
 		public void SetOwnerNN(NN ownerNN)

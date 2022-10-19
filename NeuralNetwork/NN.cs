@@ -27,7 +27,6 @@ namespace AbsurdMoneySimulations
 
 		public ActivationFunction _inputAF;
 		public ActivationFunction _answersAF;
-		
 
 		public List<Layer> _layers;
 
@@ -73,20 +72,20 @@ namespace AbsurdMoneySimulations
 			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
 
 
-			nn._layers.Add(new LayerMegatron(nn, nn._testerE._testsCount, 3, 271, 30, 1, new SoftSign()));   //136 x 30 x 10 = 
-			nn._layers[0].FillWeightsRandomly();
+			/*			nn._layers.Add(new LayerMegatron(nn, nn._testerE._testsCount, 3, 271, 30, 1, new SoftSign()));   //136 x 30 x 10 = 
+						nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerCybertron(nn, nn._testerE._testsCount, 3, 271, 5, 15, new SoftSign())); //6 x 136 x 10 = 
-			nn._layers[1].FillWeightsRandomly();
+						nn._layers.Add(new LayerCybertron(nn, nn._testerE._testsCount, 3, 271, 5, 15, new SoftSign())); //6 x 136 x 10 = 
+						nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 15, new SoftSign())); //5 x 60 = 300
-			nn._layers[2].FillWeightsRandomly();
+						nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 15, new SoftSign())); //5 x 60 = 300
+						nn._layers[2].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, new SoftSign())); //5 x 5 =  25
-			nn._layers[3].FillWeightsRandomly();
+						nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, new SoftSign())); //5 x 5 =  25
+						nn._layers[3].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, new SoftSign())); //5 x 5 =  25
-			nn._layers[4].FillWeightsRandomly();
+						nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, new SoftSign())); //5 x 5 =  25
+						nn._layers[4].FillWeightsRandomly();*/
 
 
 			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
@@ -98,20 +97,17 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			/*nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 300, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 300, new SoftSign())); //40 x 15 = 600
 			nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 6, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
 			nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 6, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, new SoftSign())); //40 x 15 = 600
 			nn._layers[2].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 6, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, new SoftSign())); //40 x 15 = 600
 			nn._layers[3].FillWeightsRandomly();
-
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 6, new SoftSign())); //40 x 15 = 600
-			nn._layers[4].FillWeightsRandomly();*/
 
 			nn.Init();
 
@@ -133,7 +129,7 @@ namespace AbsurdMoneySimulations
 		public static NN Load()
 		{
 			var files = Directory.GetFiles(Disk2._programFiles + "\\NN");
-			
+
 			string json = File.ReadAllText(files[0]);
 
 			var jss = new JsonSerializerSettings();
@@ -141,7 +137,7 @@ namespace AbsurdMoneySimulations
 			jss.Converters.Add(new AbstractConverterOfActivationFunction());
 
 			Log("Neural Network loaded from disk!");
-			
+
 			NN nn = JsonConvert.DeserializeObject<NN>(json, jss);
 			nn._name = Text2.StringInsideLast(files[0], "\\", ".json");
 			nn.Init();
@@ -201,7 +197,7 @@ namespace AbsurdMoneySimulations
 		{
 			//Initialises values which are not saved to JSON
 			InitLinksToMe();
-			InitTesters();			
+			InitTesters();
 			FillRandomMutations();
 			InitValues();
 		}
@@ -316,7 +312,7 @@ namespace AbsurdMoneySimulations
 				float tLoss = FindLoss(_testerE);
 				Log("Current train loss: " + tLoss);
 				float oldTLoss = tLoss;
-				float oldVLoss = vLoss;				
+				float oldVLoss = vLoss;
 
 				for (int Generation = 1; ; Generation++)
 				{
@@ -324,8 +320,8 @@ namespace AbsurdMoneySimulations
 
 					if (Generation % 1 == 0)
 					{
-						_testerE.FillBatchBy(1000);
-						//_testerE.FillFullBatch();
+						//_testerE.FillBatchBy(1000);
+						_testerE.FillFullBatch();
 						Log("Batch refilled");
 					}
 
@@ -353,11 +349,11 @@ namespace AbsurdMoneySimulations
 					Save(this);
 					EarlyStopping();
 
-					if (Generation % 20 == 1)
+					if (Generation % 20 == 19)
 					{
-						string validation = Statistics.CalculateStatistics(this,_testerV);
+						string validation = Statistics.CalculateStatistics(this, _testerV);
 						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
-						string evolition = Statistics.CalculateStatistics(this,_testerE);
+						string evolition = Statistics.CalculateStatistics(this, _testerE);
 						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Evolution"), true);
 
 						Log("Evolution dataset:\n" + evolition);
@@ -401,15 +397,52 @@ namespace AbsurdMoneySimulations
 
 		private void FindBPGradients(Tester tester)
 		{
-			for (int test = 0; test < tester._tests.Length; test++)
-				if (tester._batch[test] == 1)
-				{
-					_layers[_layers.Count - 1].FindBPGradient(test, tester._answers[test]);
-					for (int layer = _layers.Count - 2; layer >= 0; layer--)
-						_layers[layer].FindBPGradient(test, _layers[layer + 1].AllBPGradients(test), _layers[layer + 1].AllWeights);
-				}
+			restart:
 
-			SaveLastLayerWeights(); //
+			int testsPerCoreCount = tester._testsCount / _coresCount;
+
+			int alive = _coresCount;
+
+			Thread[] subThreads = new Thread[_coresCount];
+
+			for (int core = 0; core < _coresCount; core++)
+			{
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Name = "Core " + core;
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core);
+			}
+
+			void SubThread(object obj)
+			{
+				int core = (int)obj;
+
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
+					if (tester._batch[test] == 1)
+					{
+						_layers[_layers.Count - 1].FindBPGradient(test, tester._answers[test]);
+						for (int layer = _layers.Count - 2; layer >= 0; layer--)
+							_layers[layer].FindBPGradient(test, _layers[layer + 1].AllBPGradients(test), _layers[layer + 1].AllWeights);
+					}
+
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks;
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THE THREAD IS STACKED");
+					for (int core = 0; core < _coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
+			}
+
+			SaveLastLayerWeights();
 			Log("Gradients are found!");
 
 			void SaveLastLayerWeights()
@@ -462,6 +495,7 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Name = "Core " + core;
 				subThreads[core].Priority = ThreadPriority.Highest;
 				subThreads[core].Start(core);
 			}
@@ -496,7 +530,6 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-
 			for (int core = 0; core < _coresCount; core++)
 				er += suber[core];
 
@@ -521,6 +554,7 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Name = "Core " + core;
 				subThreads[core].Priority = ThreadPriority.Highest;
 				subThreads[core].Start(core);
 			}
@@ -580,6 +614,7 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Name = "Core " + core;
 				subThreads[core].Priority = ThreadPriority.Highest;
 				subThreads[core].Start(core);
 			}

@@ -64,6 +64,7 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < _coresCount; core++)
 			{
 				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Name = "Core " + core;
 				subThreads[core].Priority = ThreadPriority.Highest;
 				subThreads[core].Start(core);
 			}
