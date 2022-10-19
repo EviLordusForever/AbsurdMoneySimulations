@@ -1,4 +1,6 @@
-﻿namespace AbsurdMoneySimulations
+﻿using Library;
+
+namespace AbsurdMoneySimulations
 {
 	public static class MinimalWinrateFinder
 	{
@@ -45,7 +47,7 @@
 
 			FormsManager._mainForm.Invoke(new Action(() =>
 			{
-				FormsManager._showForm.BackgroundImage = Extensions.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, FormsManager._showForm.ClientSize.Height);
+				FormsManager._showForm.BackgroundImage = Graphics2.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, FormsManager._showForm.ClientSize.Height);
 			}));
 
 			Logger.Log("Profit table successfully created.");

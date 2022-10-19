@@ -3,74 +3,103 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
 	public static class Swarm
 	{
-		public static void LetsDoIt()
+		public static void CalculateSwarmStatistics()
 		{
-			NN nn = NN.Load();
-
-			string[] files = Directory.GetFiles(Disk._programFiles + "NN\\ROI");
-
-			float[,] predictions = new float[nn._testerV._testsCount, files.Length];
-
+			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			NN nn = NN.Load(files[0]);
+			Tester tester = nn._testerV;
+			float[,] predictions = new float[tester._testsCount, files.Length];
 			string csv = "";
 
-			for (int n = 0; n < files.Length; n++)
-			{
-				nn = NN.Load(files[n]);
+			CalculateAllPredictions();
 
-				for (int test = 0; test < nn._testerV._testsCount; test++)
-					predictions[test, n] = nn.Calculate(test, nn._testerV._tests[test]);
+			for (int test = 0; test < tester._testsCount; test++)
+			{
+				WriteAnswer(test);
+				WritePredictions(test);
+				WriteResultsForPredictions(test);
+				WriteCommonResultsHard(test);
+				WriteCommonResultsSoft(test);
+				WriteCommonResultSimilar(test);
+				WriteCommonResultsSimilarAndCutted(test, 0.02f);
+				csv += "\r\n";				
 			}
 
-			for (int test = 0; test < nn._testerV._testsCount; test++)
-			{
-				csv += nn._testerV._answers[test] + ",";
+			LogStatisticsForCutter(0, 0.03f, 0.001f);
 
+			Disk2.WriteToProgramFiles("Swarm test", "csv", csv, false);
+			Logger.Log("done");
+
+			void CalculateAllPredictions()
+			{
+				for (int n = 0; n < files.Length; n++)
+				{
+					nn = NN.Load(files[n]);
+
+					for (int test = 0; test < tester._testsCount; test++)
+						predictions[test, n] = nn.Calculate(test, nn._testerV._tests[test]);
+				}
+			}
+
+			void WriteAnswer(int test)
+			{
+				csv += tester._answers[test] + ",";
+			}
+
+			void WritePredictions(int test)
+			{
 				for (int n = 0; n < files.Length; n++)
 					csv += predictions[test, n] + ",";
+			}
 
-				///////////////////
+			void WriteResultsForPredictions(int test)
+			{
+				for (int n = 0; n < files.Length; n++)
+					if (predictions[test, n] > 0 && tester._answers[test] > 0 ||
+						predictions[test, n] < 0 && tester._answers[test] < 0)
+						csv += "1,";
+					else
+						csv += "0,";
+			}
 
+			void WriteCommonResultsHard(int test)
+			{
 				int summ = 0;
 
 				for (int n = 0; n < files.Length; n++)
-					if (predictions[test, n] > 0 && nn._testerV._answers[test] > 0 || 
-						predictions[test, n] < 0 && nn._testerV._answers[test] < 0)
-					{
-						csv += "1,";
+					if (predictions[test, n] > 0 && tester._answers[test] > 0 ||
+						predictions[test, n] < 0 && tester._answers[test] < 0)
 						summ++;
-					}
 					else
-					{
-						csv += "0,";
 						summ--;
-					}
 
 				if (summ == files.Length)
 					csv += "1,";
 				else
 					csv += "0,";
+			}
 
-
-				////////////////////
-
-
-				float summ2 = 0;
+			void WriteCommonResultsSoft(int test)
+			{
+				float summ = 0;
 				for (int n = 0; n < files.Length; n++)
-					summ2 += predictions[test, n];
+					summ += predictions[test, n];
 
-				if (summ2 > 0 && nn._testerV._answers[test] > 0 || 
-					summ2 < 0 && nn._testerV._answers[test] < 0)
+				if (summ > 0 && tester._answers[test] > 0 ||
+					summ < 0 && tester._answers[test] < 0)
 					csv += ",1,";
 				else
 					csv += ",0,";
+			}
 
-				////////////////////////
-
+			void WriteCommonResultSimilar(int test)
+			{
 				bool similar = true;
 				for (int n = 1; n < files.Length; n++)
 					if (predictions[test, n] > 0 && predictions[test, 0] < 0 ||
@@ -79,19 +108,18 @@ namespace AbsurdMoneySimulations
 
 				if (similar)
 				{
-					if (nn._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
-						nn._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+					if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
+						tester._answers[test] < 0 && predictions[test, 0] < 0)
 						csv += ",1,";
 					else
 						csv += ",-1,";
 				}
 				else
 					csv += ",0,";
+			}
 
-
-				//////////////////////////////
-
-
+			void WriteCommonResultsSimilarAndCutted(int test, float cutter)
+			{
 				bool isPrediction = true;
 				for (int n = 1; n < files.Length; n++)
 					if (predictions[test, n] > 0 && predictions[test, 0] < 0 ||
@@ -99,62 +127,53 @@ namespace AbsurdMoneySimulations
 						isPrediction = false;
 
 				for (int n = 1; n < files.Length; n++)
-					if (Math.Abs(predictions[test, n]) < 0.02f)
+					if (Math.Abs(predictions[test, n]) < cutter)
 						isPrediction = false;
 
 				if (isPrediction)
 				{
-					if (nn._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
-						nn._testerV._answers[test] < 0 && predictions[test, 0] < 0)
+					if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
+						tester._answers[test] < 0 && predictions[test, 0] < 0)
 						csv += ",1,";
 					else
 						csv += ",-1,";
 				}
 				else
 					csv += ",0,";
-
-				///////////////////////////////////////////
-
-				csv += "\r\n";				
 			}
 
-			for (float d = 0; d < 0.03; d += 0.001f)
-				So(d);
-
-			void So(float d)
+			void LogStatisticsForCutter(float start, float end, float step)
 			{
-				float predictionsCount = 0;
-				float wins = 0;
-
-				for (int test = 0; test < nn._testerV._testsCount; test++)
+				for (float cutter = start; cutter <= end; cutter += step)
 				{
-					bool isPrediction = true;
-					for (int nn = 1; nn < files.Length; nn++)
-						if (predictions[test, nn] > 0 && predictions[test, 0] < 0 ||
-							predictions[test, nn] < 0 && predictions[test, 0] > 0)
-							isPrediction = false;
+					float predictionsCount = 0;
+					float wins = 0;
 
-					for (int nn = 1; nn < files.Length; nn++)
-						if (Math.Abs(predictions[test, nn]) < d)
-							isPrediction = false;
-
-					if (isPrediction)
+					for (int test = 0; test < tester._testsCount; test++)
 					{
-						predictionsCount++;
+						bool isPrediction = true;
+						for (int nn = 1; nn < files.Length; nn++)
+							if (predictions[test, nn] > 0 && predictions[test, 0] < 0 ||
+								predictions[test, nn] < 0 && predictions[test, 0] > 0)
+								isPrediction = false;
 
-						if (nn._testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
-							nn._testerV._answers[test] < 0 && predictions[test, 0] < 0)
-							wins++;
+						for (int nn = 1; nn < files.Length; nn++)
+							if (Math.Abs(predictions[test, nn]) < cutter)
+								isPrediction = false;
+
+						if (isPrediction)
+						{
+							predictionsCount++;
+
+							if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
+								tester._answers[test] < 0 && predictions[test, 0] < 0)
+								wins++;
+						}
 					}
+
+					Logger.Log($"d{cutter}: {wins}/{predictionsCount}");
 				}
-
-				Logger.Log($"d{d}: {wins}/{predictionsCount}");
 			}
-
-			Disk.WriteToProgramFiles("ROI test", "csv", csv, false);
-			Logger.Log("done");
-
-
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using static AbsurdMoneySimulations.Logger;
 using Newtonsoft.Json;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
@@ -38,7 +39,7 @@ namespace AbsurdMoneySimulations
 
 		private void LoadOriginalGrafic(string graficFolder, string reason)
 		{
-			var files = Directory.GetFiles(Disk._programFiles + graficFolder);
+			var files = Directory.GetFiles(Disk2._programFiles + graficFolder);
 			var graficL = new List<float>();
 			_availableGraficPoints = new List<int>();
 			_availableGraficPointsForHorizon = new List<int>();
@@ -65,7 +66,7 @@ namespace AbsurdMoneySimulations
 					l++; g++;
 				}
 
-				Log($"Loaded grafic: \"{TextMethods.StringInsideLast(files[f], "\\", ".")}\"");
+				Log($"Loaded grafic: \"{Text2.StringInsideLast(files[f], "\\", ".")}\"");
 			}
 
 			_originalGrafic = graficL.ToArray();
@@ -112,11 +113,11 @@ namespace AbsurdMoneySimulations
 			{
 				int offset = _availableGraficPoints[Convert.ToInt32(delta)];
 
-				_tests[test] = Extensions.SubArray(_normalizedDerivativeOfGrafic, offset, _ownerNN._inputWindow);
+				_tests[test] = Array2.SubArray(_normalizedDerivativeOfGrafic, offset, _ownerNN._inputWindow);
 
 				Normalize(test);
 
-				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
+				float[] ar = Array2.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
@@ -147,10 +148,10 @@ namespace AbsurdMoneySimulations
 			{
 				int offset = _availableGraficPoints[Convert.ToInt32(delta)];
 
-				_tests[test] = Extensions.SubArray(_originalGrafic, offset, _ownerNN._inputWindow);
+				_tests[test] = Array2.SubArray(_originalGrafic, offset, _ownerNN._inputWindow);
 				Normalize(test);
 
-				float[] ar = Extensions.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
+				float[] ar = Array2.SubArray(_derivativeOfGrafic, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
@@ -168,8 +169,8 @@ namespace AbsurdMoneySimulations
 				for (int i = 0; i < _tests[test].Length; i++)
 					_tests[test][i] = _tests[test][i] - final;
 
-				float min = Extensions.Min(_tests[test]);
-				float max = Extensions.Max(_tests[test]);
+				float min = Math2.Min(_tests[test]);
+				float max = Math2.Max(_tests[test]);
 
 				max = MathF.Max(MathF.Abs(max), MathF.Abs(min));
 
@@ -180,7 +181,7 @@ namespace AbsurdMoneySimulations
 
 		public void FillTestsFromHorizonGrafic()
 		{
-			int maximalDelta = _availableGraficPoints.Count();
+			int maximalDelta = _availableGraficPointsForHorizon.Count();
 			float delta_delta = 0.990f * maximalDelta / _testsCount;
 
 			_tests = new float[_testsCount][];
@@ -191,7 +192,7 @@ namespace AbsurdMoneySimulations
 			{
 				int offset = _availableGraficPointsForHorizon[Convert.ToInt32(delta)];
 
-				_tests[test] = Extensions.SubArray(_horizonGrafic, offset, _ownerNN._inputWindow);
+				_tests[test] = Array2.SubArray(_horizonGrafic, offset, _ownerNN._inputWindow);
 				Normalize(test);
 
 				_answers[test] = _horizonGrafic[offset + _ownerNN._inputWindow + _ownerNN._horizon];

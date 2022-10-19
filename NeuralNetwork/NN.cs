@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using static AbsurdMoneySimulations.Logger;
 using static AbsurdMoneySimulations.Storage;
-
+using Library;
 
 namespace AbsurdMoneySimulations
 {
@@ -48,7 +48,7 @@ namespace AbsurdMoneySimulations
 
 			nn._layers = new List<Layer>();
 
-			nn._horizon = 29;
+			nn._horizon = 60; //
 			nn._inputWindow = 300;
 			nn._weightsInitMin = -1f;
 			nn._weightsInitMax = 1f;
@@ -71,23 +71,22 @@ namespace AbsurdMoneySimulations
 
 			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
 			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
-			
 
 
-			/*			_layers.Add(new LayerMegatron(_testerE._testsCount, 3, 271, 30, 1));   //136 x 30 x 10 = 
-						_layers[0].FillWeightsRandomly();
+			nn._layers.Add(new LayerMegatron(nn, nn._testerE._testsCount, 3, 271, 30, 1, new SoftSign()));   //136 x 30 x 10 = 
+			nn._layers[0].FillWeightsRandomly();
 
-						_layers.Add(new LayerCybertron(_testerE._testsCount, 3, 271, 5, 15)); //6 x 136 x 10 = 
-						_layers[1].FillWeightsRandomly();
+			nn._layers.Add(new LayerCybertron(nn, nn._testerE._testsCount, 3, 271, 5, 15, new SoftSign())); //6 x 136 x 10 = 
+			nn._layers[1].FillWeightsRandomly();
 
-						_layers.Add(new LayerPerceptron(_testerE._testsCount, 10, 15)); //5 x 60 = 300
-						_layers[2].FillWeightsRandomly();
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 15, new SoftSign())); //5 x 60 = 300
+			nn._layers[2].FillWeightsRandomly();
 
-						_layers.Add(new LayerPerceptron(_testerE._testsCount, 5, 10)); //5 x 5 =  25
-						_layers[3].FillWeightsRandomly();
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, new SoftSign())); //5 x 5 =  25
+			nn._layers[3].FillWeightsRandomly();
 
-						_layers.Add(new LayerPerceptron(_testerE._testsCount, 1, 5)); //5 x 5 =  25
-						_layers[4].FillWeightsRandomly();*/
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, new SoftSign())); //5 x 5 =  25
+			nn._layers[4].FillWeightsRandomly();
 
 
 			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
@@ -99,17 +98,20 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 300, new SoftSign())); //40 x 15 = 600
+			/*nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 300, new SoftSign())); //40 x 15 = 600
 			nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 6, new SoftSign())); //40 x 15 = 600
 			nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 6, new SoftSign())); //40 x 15 = 600
 			nn._layers[2].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 10, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 6, 6, new SoftSign())); //40 x 15 = 600
 			nn._layers[3].FillWeightsRandomly();
+
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 6, new SoftSign())); //40 x 15 = 600
+			nn._layers[4].FillWeightsRandomly();*/
 
 			nn.Init();
 
@@ -119,7 +121,7 @@ namespace AbsurdMoneySimulations
 
 		public static void Save(NN nn)
 		{
-			var files = Directory.GetFiles(Disk._programFiles + "\\NN");
+			var files = Directory.GetFiles(Disk2._programFiles + "\\NN");
 
 			JsonSerializerSettings jss = new JsonSerializerSettings();
 			jss.Formatting = Formatting.Indented;
@@ -130,7 +132,7 @@ namespace AbsurdMoneySimulations
 
 		public static NN Load()
 		{
-			var files = Directory.GetFiles(Disk._programFiles + "\\NN");
+			var files = Directory.GetFiles(Disk2._programFiles + "\\NN");
 			
 			string json = File.ReadAllText(files[0]);
 
@@ -141,7 +143,7 @@ namespace AbsurdMoneySimulations
 			Log("Neural Network loaded from disk!");
 			
 			NN nn = JsonConvert.DeserializeObject<NN>(json, jss);
-			nn._name = TextMethods.StringInsideLast(files[0], "\\", ".json");
+			nn._name = Text2.StringInsideLast(files[0], "\\", ".json");
 			nn.Init();
 			return nn;
 		}
@@ -157,7 +159,7 @@ namespace AbsurdMoneySimulations
 
 			NN nn = JsonConvert.DeserializeObject<NN>(json, jss);
 
-			nn._name = TextMethods.StringInsideLast(path, "\\", ".json");
+			nn._name = Text2.StringInsideLast(path, "\\", ".json");
 			return nn;
 		}
 
@@ -233,7 +235,7 @@ namespace AbsurdMoneySimulations
 			_randomMutates = new float[_randomMutatesCount];
 
 			for (int m = 0; m < _randomMutatesCount; m++)
-				_randomMutates[m] = Extensions.NormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing);
+				_randomMutates[m] = Math2.NormalDistribution(_randomMutatesScaleV2, _randomMutatesSharpness, _randomMutatesSmoothing, rnd);
 
 			Log("Random mutations are filled.");
 		}
@@ -277,17 +279,17 @@ namespace AbsurdMoneySimulations
 				if (Generation % 100 == 99)
 				{
 					Save(this);
-					Disk.WriteToProgramFiles("EvolveHistory", "csv", history, true);
+					Disk2.WriteToProgramFiles("EvolveHistory", "csv", history, true);
 					history = "";
 
 					Log("(!) er_nfb: " + er);
 					er = FindErrorRate(_testerE);
 					Log("(!) er_fb: " + er);
 
-					string validation = Stat.CalculateStatistics(this, _testerV);
-					Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
-					string evolition = Stat.CalculateStatistics(this, _testerE);
-					Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Evolution"), true);
+					string validation = Statistics.CalculateStatistics(this, _testerV);
+					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
+					string evolition = Statistics.CalculateStatistics(this, _testerE);
+					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Evolution"), true);
 
 					Log("Evolution dataset:\n" + evolition);
 					Log("Validation dataset:\n" + validation);
@@ -297,6 +299,8 @@ namespace AbsurdMoneySimulations
 
 		public void EvolveByBackPropagtion()
 		{
+			//Just very very important function
+
 			Thread myThread = new Thread(SoThread);
 			myThread.Start();
 
@@ -321,8 +325,8 @@ namespace AbsurdMoneySimulations
 
 					if (Generation % 1 == 0)
 					{
-						//_testerE.FillBatchBy(50);
-						_testerE.FillFullBatch();
+						_testerE.FillBatchBy(1000);
+						//_testerE.FillFullBatch();
 						Log("Batch refilled");
 					}
 
@@ -345,17 +349,17 @@ namespace AbsurdMoneySimulations
 
 					Log($"train loss: {string.Format("{0:F8}", er)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
 					Log($"vanished {_vanishedGradients} cutted {_cuttedGradients}");
-					Disk.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
+					Disk2.WriteToProgramFiles("EvolveHistory", "csv", $"{er}, {ert}\r\n", true);
 
 					Save(this);
 					EarlyStopping();
 
 					if (Generation % 20 == 19)
 					{
-						string validation = Stat.CalculateStatistics(this,_testerV);
-						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Validation") + "\n", true);
-						string evolition = Stat.CalculateStatistics(this,_testerE);
-						Disk.WriteToProgramFiles("Stat", "csv", Stat.StatToCsv("Evolution"), true);
+						string validation = Statistics.CalculateStatistics(this,_testerV);
+						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
+						string evolition = Statistics.CalculateStatistics(this,_testerE);
+						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Evolution"), true);
 
 						Log("Evolution dataset:\n" + evolition);
 						Log("Validation dataset:\n" + validation);
@@ -367,18 +371,18 @@ namespace AbsurdMoneySimulations
 					if (ert <= ert_record)
 					{
 						ert_record = ert;
-						Disk.ClearDirectory($"{Disk._programFiles}\\NN\\EarlyStopping");
-						File.Copy($"{Disk._programFiles}\\NN\\{_name}.json", $"{Disk._programFiles}\\NN\\EarlyStopping\\{_name} ({ert}).json");
+						Disk2.ClearDirectory($"{Disk2._programFiles}\\NN\\EarlyStopping");
+						File.Copy($"{Disk2._programFiles}\\NN\\{_name}.json", $"{Disk2._programFiles}\\NN\\EarlyStopping\\{_name} ({ert}).json");
 						Log(" ▲ NN copied for early stopping.");
 					}
 				}
 
 				float GetErtRecord()
 				{
-					string[] files = Directory.GetFiles(Disk._programFiles + "NN\\EarlyStopping");
+					string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\EarlyStopping");
 					if (files.Length > 0)
 					{
-						string record = TextMethods.StringInsideLast(files[0], " (", ").json");
+						string record = Text2.StringInsideLast(files[0], " (", ").json");
 						return Convert.ToSingle(record);
 					}
 					else
@@ -416,7 +420,7 @@ namespace AbsurdMoneySimulations
 				for (int w = 0; w < (_layers[_layers.Count - 1] as LayerPerceptron)._nodes[0]._weights.Length; w++)
 					str += (_layers[_layers.Count - 1] as LayerPerceptron)._nodes[0]._weights[w] + ",";
 
-				Disk.WriteToProgramFiles("weights", "csv", str + "\n", true);
+				Disk2.WriteToProgramFiles("weights", "csv", str + "\n", true);
 			}
 		}
 

@@ -1,4 +1,6 @@
-﻿namespace AbsurdMoneySimulations
+﻿using Library;
+
+namespace AbsurdMoneySimulations
 {
 	public static class BetsSimulator
 	{
@@ -47,7 +49,7 @@
 				DrawHorizontalLines();
 				DrawIndicatorField();
 				DrawAverageAndRisk();
-				Storage._bmp = Extensions.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, Storage._bmp.Height);
+				Storage._bmp = Graphics2.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, Storage._bmp.Height);
 				gr = Graphics.FromImage(Storage._bmp);
 				WriteLoosersPercentage();
 				WriteProfit();
@@ -169,7 +171,7 @@
 
 				void VisualiseBitmapToForm()
 				{
-					Storage._bmp = Extensions.RescaleBitmap(Storage._bmp, Storage._bmp.Width, FormsManager._showForm.ClientSize.Height);
+					Storage._bmp = Graphics2.RescaleBitmap(Storage._bmp, Storage._bmp.Width, FormsManager._showForm.ClientSize.Height);
 
 					FormsManager._mainForm.Invoke(new Action(() =>
 					{

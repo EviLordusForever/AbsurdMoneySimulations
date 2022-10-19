@@ -1,4 +1,6 @@
-﻿namespace AbsurdMoneySimulations
+﻿using Library;
+
+namespace AbsurdMoneySimulations
 {
 	public class LayerCybertron : Layer
 	{
@@ -48,7 +50,7 @@
 		{
 			//very hard to explain without drawing
 			for (int n = 0; n < _perceptrons.Count(); n++)
-				_perceptrons[n].FindBPGradient(test, innerBPGradients, Extensions.SubArray(innerWeights, n * _perceptrons[0]._nodes.Count(), _perceptrons[0]._nodes.Count()));
+				_perceptrons[n].FindBPGradient(test, innerBPGradients, Array2.SubArray(innerWeights, n * _perceptrons[0]._nodes.Count(), _perceptrons[0]._nodes.Count()));
 		}
 
 		public override void FindBPGradient(int test, float desiredValue)
@@ -115,7 +117,7 @@
 				float[][] weights = _perceptrons[0].AllWeights;
 
 				for (int p = 1; p < _perceptrons.Length; p++)
-					weights = Extensions.Concatenate(weights, _perceptrons[p].AllWeights);
+					weights = Array2.Concatenate(weights, _perceptrons[p].AllWeights);
 
 				return weights;
 				//TEST THIS !!!!!
@@ -127,7 +129,7 @@
 			float[] gradients = _perceptrons[0].AllBPGradients(test);
 
 			for (int p = 1; p < _perceptrons.Length; p++)
-				gradients = Extensions.Concatenate(gradients, _perceptrons[p].AllBPGradients(test));
+				gradients = Array2.Concatenate(gradients, _perceptrons[p].AllBPGradients(test));
 
 			return gradients;
 			//And this

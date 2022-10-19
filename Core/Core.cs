@@ -77,7 +77,7 @@
 
 			void StartTraderThread()
 			{
-				Swarm.LetsDoIt();
+				Swarm.CalculateSwarmStatistics();
 			}
 		}
 

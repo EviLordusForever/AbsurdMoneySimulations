@@ -13,67 +13,65 @@ namespace AbsurdMoneySimulations
 			ActivationFunction af = new SoftSign();
 			Bitmap bmp = new Bitmap(grafic.Length, 1100);
 			Graphics gr = Graphics.FromImage(bmp);
-			int d = 3;
-
+			int xScale = 3;
 
 			gr.Clear(Color.White);
-			DrawOne(Pens.Green, -30, 50);
-			DrawOne(Pens.Red, 30, 150);
-			DrawOne(Pens.Red, 60, 250);
-			DrawOne(Pens.Red, 90, 350);
-			DrawOne(Pens.Red, 120, 450);
-			DrawOne(Pens.Red, 150, 550);
-			DrawOne(Pens.Red, 180, 650);
-			DrawOne(Pens.Red, 210, 750);
-			DrawOne(Pens.Red, 240, 850);
-			DrawOne(Pens.Red, 270, 950);
-			DrawOne(Pens.Red, 300, 1050);
+			DrawIndicator1(Pens.Green, -30, 50);
+			DrawIndicator1(Pens.Red, 30, 150);
+			DrawIndicator1(Pens.Red, 60, 250);
+			DrawIndicator1(Pens.Red, 90, 350);
+			DrawIndicator1(Pens.Red, 120, 450);
+			DrawIndicator1(Pens.Red, 150, 550);
+			DrawIndicator1(Pens.Red, 180, 650);
+			DrawIndicator1(Pens.Red, 210, 750);
+			DrawIndicator1(Pens.Red, 240, 850);
+			DrawIndicator1(Pens.Red, 270, 950);
+			DrawIndicator1(Pens.Red, 300, 1050);
 
 			for (int i = 0; i < grafic.Length; i += 30)
 				gr.DrawLine(Pens.Black, i, 0, i, bmp.Height);
 
-			Disk.SaveImageToProgramFiles(bmp, "OTC.bmp");
+			Library.Disk2.SaveImageToProgramFiles(bmp, "OTC.bmp");
 			Logger.Log("done #1");
 
 			//////////////////////////////
 
-			bmp = new Bitmap(grafic.Length * d, 100);
+			bmp = new Bitmap(grafic.Length * xScale, 100);
 			gr = Graphics.FromImage(bmp);
-
 			gr.Clear(Color.White);
 
 			Pen pen = new Pen(Color.FromArgb(255, 255, 0, 0), 1);
-			DrawSecond(pen, 30);
+			DrawIndicator2(pen, 30);
 			pen = new Pen(Color.FromArgb(235, 255, 0, 0), 1);
-			DrawSecond(pen, 60);
+			DrawIndicator2(pen, 60);
 			pen = new Pen(Color.FromArgb(215, 255, 0, 0), 1);
-			DrawSecond(pen, 90);
+			DrawIndicator2(pen, 90);
 			pen = new Pen(Color.FromArgb(195, 255, 0, 0), 1);
-			DrawSecond(pen, 120);
+			DrawIndicator2(pen, 120);
 			pen = new Pen(Color.FromArgb(175, 255, 0, 0), 1);
-			DrawSecond(pen, 150);
+			DrawIndicator2(pen, 150);
 			pen = new Pen(Color.FromArgb(155, 255, 0, 0), 1);
-			DrawSecond(pen, 180);
+			DrawIndicator2(pen, 180);
 			pen = new Pen(Color.FromArgb(135, 255, 0, 0), 1);
-			DrawSecond(pen, 210);
+			DrawIndicator2(pen, 210);
 			pen = new Pen(Color.FromArgb(115, 255, 0, 0), 1);
-			DrawSecond(pen, 240);
+			DrawIndicator2(pen, 240);
 			pen = new Pen(Color.FromArgb(95, 255, 0, 0), 1);
-			DrawSecond(pen, 270);
+			DrawIndicator2(pen, 270);
 			pen = new Pen(Color.FromArgb(85, 255, 0, 0), 1);
-			DrawSecond(pen, 300);
+			DrawIndicator2(pen, 300);
 
 			gr.DrawLine(Pens.Black, 0, 50, bmp.Width, 50);
 
-			DrawSecond(Pens.Green, -30);
+			DrawIndicator2(Pens.Green, -30);
 
-			DrawThird();
+			DrawAverageOfIndicators2();
 
-
-			Disk.SaveImageToProgramFiles(bmp, "OTC2.bmp");
+			Library.Disk2.SaveImageToProgramFiles(bmp, "OTC2.bmp");
 			Logger.Log("done #2");
 
-			void DrawOne(Pen pen, int gOffset, int yOffset)
+
+			void DrawIndicator1(Pen pen, int gOffset, int yOffset)
 			{
 				for (int v = 0; v < grafic.Length; v++)
 				{
@@ -82,19 +80,19 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-			void DrawSecond(Pen pen, int gOffset)
+			void DrawIndicator2(Pen pen, int gOffset)
 			{
 				float oldY = 0;
 				for (int v = 0; v < grafic.Length; v++)
 				{
 					float y = af.f(Differense(v, gOffset) / 15f) * 50;
 
-					gr.DrawLine(pen, (v-1)*d, 50 - oldY, v*d, 50 - y);
+					gr.DrawLine(pen, (v-1)*xScale, 50 - oldY, v*xScale, 50 - y);
 					oldY = y;
 				}
 			}
 
-			void DrawThird()
+			void DrawAverageOfIndicators2()
 			{
 				float oldY = 0;
 				for (int v = 0; v < grafic.Length; v++)
@@ -111,7 +109,7 @@ namespace AbsurdMoneySimulations
 					y /= 512 + 256 + 128 + 64 + 32 + 16 + 8 + 4 + 2;
 					y = af.f(y / 15f) * 50;
 
-					gr.DrawLine(Pens.Blue, (v - 1) * d, 50 - oldY, v * d, 50 - y);
+					gr.DrawLine(Pens.Blue, (v - 1) * xScale, 50 - oldY, v * xScale, 50 - y);
 					oldY = y;
 				}
 			}

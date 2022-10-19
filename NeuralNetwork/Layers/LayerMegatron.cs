@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
@@ -82,7 +83,7 @@ namespace AbsurdMoneySimulations
 		{
 			int gradientsPerSubCount = innerBPGradients.Count() / _subs.Count();
 			for (int sub = 0; sub < _subs.Count(); sub++)
-				FindBPGradientOneSub(test, sub, Extensions.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Extensions.SubArray(innerWeights, sub * _outsPerSubCount, _outsPerSubCount));
+				FindBPGradientOneSub(test, sub, Array2.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Array2.SubArray(innerWeights, sub * _outsPerSubCount, _outsPerSubCount));
 		}
 
 		public override void FindBPGradient(int test, float desiredValue)

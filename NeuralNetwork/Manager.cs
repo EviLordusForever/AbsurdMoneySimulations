@@ -15,7 +15,7 @@ namespace AbsurdMoneySimulations
 
 				float record = nn.FindErrorRateSquared(nn._testerE);
 				Log($"record {record}");
-				var files = Directory.GetFiles(Disk._programFiles + "NN");
+				var files = Directory.GetFiles(Library.Disk2._programFiles + "NN");
 
 				for (int n = 0; ; n++)
 				{
@@ -38,9 +38,9 @@ namespace AbsurdMoneySimulations
 
 		public static void RecreateNN()
 		{
-			Disk.DeleteFileFromProgramFiles("EvolveHistory.csv");
-			Disk.DeleteFileFromProgramFiles("weights.csv");
-			Disk.ClearDirectory(Disk._programFiles + "NN\\EarlyStopping");
+			Library.Disk2.DeleteFileFromProgramFiles("EvolveHistory.csv");
+			Library.Disk2.DeleteFileFromProgramFiles("weights.csv");
+			Library.Disk2.ClearDirectory(Library.Disk2._programFiles + "NN\\EarlyStopping");
 
 			NN nn = NN.CreateBasicNN();
 			NN.Save(nn);

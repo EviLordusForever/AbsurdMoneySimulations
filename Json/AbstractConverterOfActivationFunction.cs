@@ -36,6 +36,8 @@ namespace AbsurdMoneySimulations
 						return serializer.Deserialize(reader, typeof(SoftSign));
 					case "TanH":
 						return serializer.Deserialize(reader, typeof(TanH));
+					case "LeakyReLU":
+						return serializer.Deserialize(reader, typeof(LeakyReLU));
 					default:
 						throw new Exception();
 				}

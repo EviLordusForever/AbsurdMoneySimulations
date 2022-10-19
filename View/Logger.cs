@@ -212,7 +212,7 @@
 		static Logger()
 		{
 			_logText = "";
-			_writer = new StreamWriter(Disk._programFiles + "Logs\\log.log", true);
+			_writer = new StreamWriter(Library.Disk2._programFiles + "Logs\\log.log", true);
 			StartFlusher();
 			StartVisualiser();
 		}

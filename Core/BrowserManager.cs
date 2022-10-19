@@ -26,7 +26,7 @@ namespace AbsurdMoneySimulations
 
 		public static void ExecuteScript(string scriptName)
 		{
-			string script = File.ReadAllText(Disk._currentDirectory + "\\Scripts\\" + scriptName + ".js");
+			string script = File.ReadAllText(Library.Disk2._currentDirectory + "\\Scripts\\" + scriptName + ".js");
 			_driver.Scripts().ExecuteScript(script);
 		}
 
