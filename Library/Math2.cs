@@ -67,6 +67,23 @@ namespace Library
 			return min;
 		}
 
+		public static double CalculateRandomness(double k, int n, double p)
+		{
+			if (k == n / 2.0)
+				return 1;
+			else
+			{
+				double randomness;
+
+				if (k <= n / 2.0)
+					randomness = CumulativeDistributionFunction(k, n, 0.5);
+				else
+					randomness = CumulativeDistributionFunction(n - k, n, 0.5);
+
+				return randomness * 2;
+			}
+		}
+
 		public static float LikeNormalDistribution(float scale, float centralization, float smoothing, Random rnd)
 		{
 			//actually THIS is not normal distribution, but who cares
@@ -77,7 +94,7 @@ namespace Library
 			return sign * scale * y;
 		}
 
-		public static double CumulativeDistributionFunction(int k, int n, double p)
+		public static double CumulativeDistributionFunction(double k, int n, double p)
 		{
 			var d = new MathNet.Numerics.Distributions.Binomial(p, n);
 			return d.CumulativeDistribution(k);

@@ -49,7 +49,7 @@ namespace AbsurdMoneySimulations
 		public static void EvolveByBackPropagation()
 		{
 			NN nn = NN.Load();
-			nn._LEARNING_RATE = 0.0001f;
+			nn._LEARNING_RATE = 0.0002f;
 
 			nn.EvolveByBackPropagtion();
 		}

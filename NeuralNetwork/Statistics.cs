@@ -143,12 +143,7 @@ namespace AbsurdMoneySimulations
 		public static void CalculateRandomnesses()
 		{
 			for (int section = 0; section < _sections.Count; section++)
-			{
-				if (_wins[section] > _tests[section] / 2f)
-					_randomnesses[section] = 1 - Math2.CumulativeDistributionFunction(_wins[section], _tests[section], 0.5);
-				else
-					_randomnesses[section] = 1 - Math2.CumulativeDistributionFunction(_tests[section] - _wins[section], _tests[section], 0.5);
-			}
+				_randomnesses[section] = Math2.CalculateRandomness(_wins[section], _tests[section], 0.5f);
 		}
 
 		public static void ClearStat()
@@ -173,7 +168,8 @@ namespace AbsurdMoneySimulations
 		{
 			string stat = "========================\n";
 			for (int section = 0; section < _wins.Length; section++)
-				stat += String.Format("{0,-25} {1,-12} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
+				if (_tests[section] > 0)
+					stat += String.Format("{0,-25} {1,-12} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
 
 			stat += $"loss: {_loss}\n";
 			stat += $"========================";

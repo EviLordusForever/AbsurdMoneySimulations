@@ -97,16 +97,16 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 300, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 15, 300, new SoftSign())); //40 x 15 = 600
 			nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 15, new SoftSign())); //40 x 15 = 600
 			nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 10, new SoftSign())); //40 x 15 = 600
 			nn._layers[2].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 10, new SoftSign())); //40 x 15 = 600
 			nn._layers[3].FillWeightsRandomly();
 
 			nn.Init();
@@ -320,8 +320,8 @@ namespace AbsurdMoneySimulations
 
 					if (Generation % 1 == 0)
 					{
-						//_testerE.FillBatchBy(1000);
-						_testerE.FillFullBatch();
+						_testerE.FillBatchBy(100);
+						//_testerE.FillFullBatch();
 						Log("Batch refilled");
 					}
 

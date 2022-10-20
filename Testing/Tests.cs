@@ -396,6 +396,23 @@ namespace AbsurdMoneySimulations
 
 			Log($"yes {yes}");
 			Log($"no {no}");
+
+			Log("==================");
+			string csv = "";
+
+			int n = 100;
+
+			var a = new MathNet.Numerics.Distributions.Binomial(0.5, n);
+
+			for (int k = 0; k <= n; k++)
+			{
+				csv += a.Probability(k) * 13 + ",";
+				csv += Math2.CalculateRandomness(k, n, 0.5) + "\n";
+				Log(Math2.CalculateRandomness(k, n, 0.5));
+			}
+
+			Disk2.WriteToProgramFiles("Cumulative", ".csv", csv, false);
+			Log($"done");
 		}
 	}
 }
