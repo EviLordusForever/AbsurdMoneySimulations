@@ -53,5 +53,12 @@ namespace AbsurdMoneySimulations
 
 			nn.EvolveByBackPropagtion();
 		}
+
+		public static void FindDetailedSectionsStatistics()
+		{
+			NN nn = NN.Load();
+			Statistics.CalculateStatistics(nn, nn._testerV);
+			Statistics.FindDetailedSectionsStatistics(nn._testerV);
+		}
 	}
 }

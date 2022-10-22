@@ -55,12 +55,17 @@
 
 		private void button9_Click(object sender, EventArgs e)
 		{
-			Core.StartROI();
+			Core.StartSwarm();
 		}
 
 		private void button10_Click(object sender, EventArgs e)
 		{
 			Core.StartDrawOtcIndicators();
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			Core.StartFindDetailedSectionsStatistics();
 		}
 	}
 }

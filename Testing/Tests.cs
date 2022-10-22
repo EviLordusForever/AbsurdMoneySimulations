@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestTests);
+			Thread myThread = new Thread(TestDetailedStat);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
@@ -273,6 +273,11 @@ namespace AbsurdMoneySimulations
 
 			Disk2.WriteToProgramFiles("Cumulative", ".csv", csv, false);
 			Log($"done");
+		}
+
+		public static void TestDetailedStat()
+		{
+			Manager.FindDetailedSectionsStatistics();
 		}
 	}
 }

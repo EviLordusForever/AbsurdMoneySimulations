@@ -38,7 +38,7 @@ namespace AbsurdMoneySimulations
 
 			nn._layers = new List<Layer>();
 
-			nn._horizon = 60; //
+			nn._horizon = 60;
 			nn._inputWindow = 300;
 			nn._weightsInitMin = -1f;
 			nn._weightsInitMax = 1f;

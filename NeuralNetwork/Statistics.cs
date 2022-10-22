@@ -13,6 +13,7 @@ namespace AbsurdMoneySimulations
 		public static int[] _wins;
 		public static int[,] _testsPerCore;
 		public static int[] _tests;
+		private static float[] _predictions;
 
 		public static float[] _scores;
 		public static double[] _randomnesses;
@@ -49,6 +50,8 @@ namespace AbsurdMoneySimulations
 
 		public static string CalculateStatistics(NN nn, Tester tester)
 		{
+			_predictions = new float[tester._testsCount];
+
 			restart:
 
 			ClearStat();
@@ -76,6 +79,7 @@ namespace AbsurdMoneySimulations
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
 					float prediction = nn.Calculate(test, tester._tests[test], false);
+					_predictions[test] = prediction;
 
 					float reality = tester._answers[test];
 
@@ -182,6 +186,54 @@ namespace AbsurdMoneySimulations
 			for (int section = 0; section < _wins.Length; section++)
 				stat += $"{_scores[section]},";
 			return stat;
+		}
+
+		public static void FindDetailedSectionsStatistics(Tester tester)
+		{
+			string csv = Method(-1, 1, 0.001f, false);
+			Disk2.WriteToProgramFiles("Detailed Sections Statistics (Both sides)", "csv", csv, false);
+			Log("Detatiled sections statistics created (Both sides)");
+
+			csv = Method(0, 1, 0.001f, true);
+			Disk2.WriteToProgramFiles("Detailed Sections Statistics (Single Side)", "csv", csv, false);
+			Log("Detatiled sections statistics created (Single side)");
+
+			string Method(float cutterMin, float cutterMax, float step, bool SingleSide)
+			{
+				float predictionsCount = 0;
+				float wins = 0;
+				string csv = "";
+				for (float cutter = cutterMin; cutter <= cutterMax; cutter += step)
+				{
+					predictionsCount = 0;
+					wins = 0;
+
+					for (int test = 0; test < tester._testsCount; test++)
+					{
+						if (!SingleSide)
+						{
+							if (cutter >= 0 && _predictions[test] >= cutter ||
+								cutter < 0 && _predictions[test] <= cutter)
+								CheckWin(test);
+						}
+						else if (MathF.Abs(_predictions[test]) >= cutter)
+							CheckWin(test);
+					}
+
+					if (predictionsCount > 0)
+						csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount},from,{predictionsCount / tester._testsCount}\n";
+				}
+				return csv;
+
+				void CheckWin(int test)
+				{
+					predictionsCount++;
+
+					if (tester._answers[test] > 0 && _predictions[test] > 0 ||
+						tester._answers[test] < 0 && _predictions[test] < 0)
+						wins++;
+				}
+			}
 		}
 	}
 

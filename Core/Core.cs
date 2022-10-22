@@ -57,15 +57,27 @@
 			}
 		}
 
-		public static void StartROI()
+		public static void StartSwarm()
 		{
-			Thread myThread = new Thread(StartTraderThread);
-			myThread.Name = "ROI";
+			Thread myThread = new Thread(StartSwarmThread);
+			myThread.Name = "Swarm";
 			myThread.Start();
 
-			void StartTraderThread()
+			void StartSwarmThread()
 			{
 				Swarm.CalculateSwarmStatistics();
+			}
+		}
+
+		public static void StartFindDetailedSectionsStatistics()
+		{
+			Thread myThread = new Thread(StartFindDetailedSectionsStatisticsThread);
+			myThread.Name = "Det.Stat.Thread";
+			myThread.Start();
+
+			void StartFindDetailedSectionsStatisticsThread()
+			{
+				Manager.FindDetailedSectionsStatistics();
 			}
 		}
 
