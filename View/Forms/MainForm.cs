@@ -67,5 +67,10 @@
 		{
 			Core.StartFindDetailedSectionsStatistics();
 		}
+
+		private void button11_Click(object sender, EventArgs e)
+		{
+			Core.StartSwarmEvolution();
+		}
 	}
 }

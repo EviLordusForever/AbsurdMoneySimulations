@@ -96,5 +96,17 @@
 				drawer.Draw(nn._testerE.OriginalGrafic);
 			}
 		}
+
+		public static void StartSwarmEvolution()
+		{
+			Thread myThread = new Thread(SwarmEvolutionThread);
+			myThread.Name = "Swarm Evolution Thread";
+			myThread.Start();
+
+			void SwarmEvolutionThread()
+			{
+				Swarm.EvolveSwarm();
+			}
+		}
 	}
 }

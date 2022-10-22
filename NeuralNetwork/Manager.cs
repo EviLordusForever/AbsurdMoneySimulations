@@ -1,4 +1,5 @@
 ﻿using static AbsurdMoneySimulations.Logger;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
@@ -57,8 +58,10 @@ namespace AbsurdMoneySimulations
 		public static void FindDetailedSectionsStatistics()
 		{
 			NN nn = NN.Load();
+			Statistics.CalculateStatistics(nn, nn._testerE);
+			Statistics.FindDetailedSectionsStatistics(nn._testerE, "Training");
 			Statistics.CalculateStatistics(nn, nn._testerV);
-			Statistics.FindDetailedSectionsStatistics(nn._testerV);
+			Statistics.FindDetailedSectionsStatistics(nn._testerV, "Validation");
 		}
 	}
 }

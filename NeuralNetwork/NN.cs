@@ -29,6 +29,8 @@ namespace AbsurdMoneySimulations
 
 		public string _name;
 
+		public int _generation;
+
 		[JsonIgnore] public int _vanishedGradientsCount;
 		[JsonIgnore] public int _cuttedGradientsCount;
 
@@ -56,6 +58,7 @@ namespace AbsurdMoneySimulations
 			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
 			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
 
+			nn._generation = 1;
 
 			/*			nn._layers.Add(new LayerMegatron(nn, nn._testerE._testsCount, 3, 271, 30, 1, new SoftSign()));   //136 x 30 x 10 = 
 						nn._layers[0].FillWeightsRandomly();
@@ -191,121 +194,125 @@ namespace AbsurdMoneySimulations
 
 		public void EvolveByBackPropagtion()
 		{
+			EvolveByBackPropagtion(1000000000);
+		}
+
+		public void EvolveByBackPropagtion(int count)
+		{
 			//Just very very important function
 
-			Thread myThread = new Thread(SoThread);
-			myThread.Start();
+			float v = 0;
+			float old_v = 0;
+			float a = 0;
 
-			void SoThread()
+			float vLossRecord = GetVLossRecord();
+			Log("Validation loss record: " + vLossRecord);
+
+			float vLoss = FindLoss(_testerV, false);
+			Log("Current validation loss: " + vLoss);
+
+			float tLoss = FindLoss(_testerE, false);
+			Log("Current train loss: " + tLoss);
+
+			float oldTLoss = tLoss;
+			float oldVLoss = vLoss;
+
+			for (int localGeneration = 0; localGeneration < count; localGeneration++)
 			{
-				float v = 0;
-				float old_v = 0;
-				float a = 0;
+				_generation++;
 
-				float vLossRecord = GetVLossRecord();
-				Log("Validation loss record: " + vLossRecord);
+				Log($"G{_generation} ({localGeneration}) ({_generation % 20})");
 
-				float vLoss = FindLoss(_testerV, false);
-				Log("Current validation loss: " + vLoss);
+				_vanishedGradientsCount = 0;
+				_cuttedGradientsCount = 0;
 
-				float tLoss = FindLoss(_testerE, false);
-				Log("Current train loss: " + tLoss);
+				FillBatch();
+				UseMomentumForBPGradients(_testerE);
+				FindBPGradients(_testerE);
+				CorrectWeightsByBP(_testerE);
 
-				float oldTLoss = tLoss;
-				float oldVLoss = vLoss;
+				oldVLoss = vLoss;
+				vLoss = FindLoss(_testerV, false);
 
-				for (int Generation = 1; ; Generation++)
+				Dropout();
+
+				oldTLoss = tLoss;
+				tLoss = FindLoss(_testerE, true);
+
+				FindSpeed();
+				FindAcceleration();
+
+				LogAllInformation();
+				SaveEvolveHistory();
+				Save(this);
+				EarlyStopping();
+
+				if (localGeneration % 20 == 19)
 				{
-					Log($"G{Generation} b{Generation % 20}");
+					string validation = Statistics.CalculateStatistics(this, _testerV);
+					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
+					string evolition = Statistics.CalculateStatistics(this, _testerE);
+					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Evolution"), true);
 
-					_vanishedGradientsCount = 0;
-					_cuttedGradientsCount = 0;
-
-					FillBatch();
-					UseMomentumForBPGradients(_testerE);
-					FindBPGradients(_testerE);
-					CorrectWeightsByBP(_testerE);
-
-					oldVLoss = vLoss;
-					vLoss = FindLoss(_testerV, false);
-
-					Dropout();
-					
-					oldTLoss = tLoss;
-					tLoss = FindLoss(_testerE, true);
-
-					FindSpeed();
-					FindAcceleration();
-
-					LogAllInformation();
-					SaveEvolveHistory();
-					Save(this);
-					EarlyStopping();
-
-					if (Generation % 20 == 19)
-					{
-						string validation = Statistics.CalculateStatistics(this, _testerV);
-						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
-						string evolition = Statistics.CalculateStatistics(this, _testerE);
-						Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Evolution"), true);
-
-						Log("Evolution dataset:\n" + evolition);
-						Log("Validation dataset:\n" + validation);
-					}
+					Log("Evolution dataset:\n" + evolition);
+					Log("Validation dataset:\n" + validation);
 				}
+			}
 
-				void FillBatch()
+			Log($"SUCCESSFULLY EVOLVED {count} GENERATIONS");
+
+			void FillBatch()
+			{
+				_testerE.FillBatchBy(200);
+				//testerE.FillFullBatch();
+				Log("Batch refilled");
+			}
+
+			void EarlyStopping()
+			{
+				if (vLoss <= vLossRecord)
 				{
-					_testerE.FillBatchBy(200);
-					//testerE.FillFullBatch();
-					Log("Batch refilled");
+					vLossRecord = vLoss;
+					var path = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
+					Disk2.ClearDirectory($"{Disk2._programFiles}\\NN\\EarlyStopping");
+					File.Copy(path, $"{Disk2._programFiles}\\NN\\EarlyStopping\\{_name} ({vLoss}).json");
+					Log(" ▲ NN copied for early stopping.");
 				}
+			}
 
-				void EarlyStopping()
-				{
-					if (vLoss <= vLossRecord)
-					{
-						vLossRecord = vLoss;
-						Disk2.ClearDirectory($"{Disk2._programFiles}\\NN\\EarlyStopping");
-						File.Copy($"{Disk2._programFiles}\\NN\\{_name}.json", $"{Disk2._programFiles}\\NN\\EarlyStopping\\{_name} ({vLoss}).json");
-						Log(" ▲ NN copied for early stopping.");
-					}
-				}
+			void FindSpeed()
+			{
+				old_v = v;
+				v = tLoss - oldTLoss;
+			}
 
-				void FindSpeed()
-				{
-					old_v = v;
-					v = tLoss - oldTLoss;
-				}
+			void FindAcceleration()
+			{
+				a = v - old_v;
+			}
 
-				void FindAcceleration()
-				{
-					a = v - old_v;
-				}
+			void LogAllInformation()
+			{
+				Log($"validation loss: {string.Format("{0:F8}", vLoss)} (v {string.Format("{0:F8}", vLoss - oldVLoss)})");
+				Log($"train loss: {string.Format("{0:F8}", tLoss)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
+				Log($"vanished {_vanishedGradientsCount} cutted {_cuttedGradientsCount}");
+			}
 
-				void LogAllInformation()
-				{
-					Log($"validation loss: {string.Format("{0:F8}", vLoss)} (v {string.Format("{0:F8}", vLoss - oldVLoss)})");
-					Log($"train loss: {string.Format("{0:F8}", tLoss)} (v {string.Format("{0:F8}", v)}) (a {string.Format("{0:F8}", a)}) (lmd {string.Format("{0:F7}", _LEARNING_RATE)})");
-					Log($"vanished {_vanishedGradientsCount} cutted {_cuttedGradientsCount}");
-				}
+			void SaveEvolveHistory()
+			{
+				Disk2.WriteToProgramFiles("EvolveHistory", "csv", $"{tLoss}, {vLoss}\r\n", true);
+			}
 
-				void SaveEvolveHistory()
+			float GetVLossRecord()
+			{
+				string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\EarlyStopping");
+				if (files.Length > 0)
 				{
-					Disk2.WriteToProgramFiles("EvolveHistory", "csv", $"{tLoss}, {vLoss}\r\n", true);
+					string record = Text2.StringInsideLast(files[0], " (", ").json");
+					return Convert.ToSingle(record);
 				}
-
-				float GetVLossRecord()
-				{
-					string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\EarlyStopping");
-					if (files.Length > 0)
-					{
-						string record = Text2.StringInsideLast(files[0], " (", ").json");
-						return Convert.ToSingle(record);
-					}
-					else
-						return 1f;
-				}
+				else
+					return 1f;
 			}
 		}
 

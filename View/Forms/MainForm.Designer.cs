@@ -38,6 +38,7 @@
 			this.button9 = new System.Windows.Forms.Button();
 			this.button10 = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
+			this.button11 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// button1
@@ -72,7 +73,7 @@
 			// 
 			// button5
 			// 
-			this.button5.Location = new System.Drawing.Point(12, 338);
+			this.button5.Location = new System.Drawing.Point(12, 363);
 			this.button5.Name = "button5";
 			this.button5.Size = new System.Drawing.Size(456, 23);
 			this.button5.TabIndex = 4;
@@ -122,7 +123,7 @@
 			// 
 			// button10
 			// 
-			this.button10.Location = new System.Drawing.Point(12, 309);
+			this.button10.Location = new System.Drawing.Point(12, 334);
 			this.button10.Name = "button10";
 			this.button10.Size = new System.Drawing.Size(456, 23);
 			this.button10.TabIndex = 9;
@@ -132,7 +133,7 @@
 			// 
 			// button3
 			// 
-			this.button3.Location = new System.Drawing.Point(12, 280);
+			this.button3.Location = new System.Drawing.Point(12, 305);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(456, 23);
 			this.button3.TabIndex = 10;
@@ -140,11 +141,22 @@
 			this.button3.UseVisualStyleBackColor = true;
 			this.button3.Click += new System.EventHandler(this.button3_Click);
 			// 
+			// button11
+			// 
+			this.button11.Location = new System.Drawing.Point(12, 276);
+			this.button11.Name = "button11";
+			this.button11.Size = new System.Drawing.Size(456, 23);
+			this.button11.TabIndex = 11;
+			this.button11.Text = "Swarm Evolution";
+			this.button11.UseVisualStyleBackColor = true;
+			this.button11.Click += new System.EventHandler(this.button11_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(481, 401);
+			this.Controls.Add(this.button11);
 			this.Controls.Add(this.button3);
 			this.Controls.Add(this.button10);
 			this.Controls.Add(this.button9);
@@ -176,5 +188,6 @@
 		private Button button9;
 		private Button button10;
 		private Button button3;
+		private Button button11;
 	}
 }

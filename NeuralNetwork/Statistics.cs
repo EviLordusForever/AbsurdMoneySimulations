@@ -188,15 +188,15 @@ namespace AbsurdMoneySimulations
 			return stat;
 		}
 
-		public static void FindDetailedSectionsStatistics(Tester tester)
+		public static void FindDetailedSectionsStatistics(Tester tester, string name)
 		{
 			string csv = Method(-1, 1, 0.001f, false);
-			Disk2.WriteToProgramFiles("Detailed Sections Statistics (Both sides)", "csv", csv, false);
-			Log("Detatiled sections statistics created (Both sides)");
+			Disk2.WriteToProgramFiles($"Detailed Sections Statistics ({name}) (Both sides)", "csv", csv, false);
+			Log($"Detatiled sections statistics created ({name}) (Both sides)");
 
 			csv = Method(0, 1, 0.001f, true);
-			Disk2.WriteToProgramFiles("Detailed Sections Statistics (Single Side)", "csv", csv, false);
-			Log("Detatiled sections statistics created (Single side)");
+			Disk2.WriteToProgramFiles($"Detailed Sections Statistics ({name}) (Single Side)", "csv", csv, false);
+			Log($"Detatiled sections statistics created ({name}) (Single side)");
 
 			string Method(float cutterMin, float cutterMax, float step, bool SingleSide)
 			{

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Library;
+﻿using Library;
+using static AbsurdMoneySimulations.Logger;
 
 namespace AbsurdMoneySimulations
 {
@@ -196,6 +192,26 @@ namespace AbsurdMoneySimulations
 				}
 				Disk2.WriteToProgramFiles("cuttersTest", "csv", csv, false); 
 			}
+		}
+
+		public static void EvolveSwarm()
+		{
+			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+
+			while (true)
+				for (int nnn = 0; nnn < files.Length; nnn++)
+				{
+					NN nn = NN.Load(files[nnn]);
+					nn._LEARNING_RATE = 0.002f;
+					nn.EvolveByBackPropagtion(200);
+
+					Thread.Sleep(1000);
+					File.Delete(files[nnn]);
+					string[] file0 = Directory.GetFiles(Disk2._programFiles + "\\NN");
+					File.Copy(file0[0], files[nnn]);
+					Log($"Copied swarm nn #{nnn} to swarm");
+					Thread.Sleep(1000);
+				}
 		}
 	}
 }
