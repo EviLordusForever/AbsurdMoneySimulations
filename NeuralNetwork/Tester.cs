@@ -20,8 +20,8 @@ namespace AbsurdMoneySimulations
 
 		[JsonIgnore] private float[] _originalGrafic;
 		[JsonIgnore] private float[] _derivativeOfGrafic;
-		[JsonIgnore] private float[] _normalizedDerivativeOfGrafic; //[-1, 1]
-		[JsonIgnore] private float[] _horizonGrafic; //[-1, 1]
+		[JsonIgnore] private float[] _normalizedDerivativeOfGrafic;
+		[JsonIgnore] private float[] _horizonGrafic;
 
 		[JsonIgnore] public List<int> _availableGraficPoints;
 		[JsonIgnore] public List<int> _availableGraficPointsForHorizon;
@@ -183,6 +183,8 @@ namespace AbsurdMoneySimulations
 
 		public void FillTestsFromHorizonGrafic()
 		{
+			float standartDeviation = 0;
+
 			int maximalDelta = _availableGraficPointsForHorizon.Count();
 			float delta_delta = 0.990f * maximalDelta / _testsCount;
 
@@ -195,20 +197,30 @@ namespace AbsurdMoneySimulations
 				int offset = _availableGraficPointsForHorizon[Convert.ToInt32(delta)];
 
 				_tests[test] = Array2.SubArray(_horizonGrafic, offset, _ownerNN._inputWindow);
-				Normalize(test);
+				FindStandartDeviation();
+				Normalize();
 
 				_answers[test] = _horizonGrafic[offset + _ownerNN._inputWindow + _ownerNN._horizon];
-				_answers[test] = _ownerNN._answersAF.f(_answers[test]) + _moveAnswersOverZero;
+				_answers[test] = _ownerNN._answersAF.f(_answers[test] / standartDeviation) + _moveAnswersOverZero;
 
 				test++;
 			}
 
 			Log($"Tests and answers for NN are filled from NORMALIZED HORIZON(!!!) grafic. ({_tests.Length})");
 
-			void Normalize(int test)
+			void FindStandartDeviation()
+			{
+				standartDeviation = 0;
+				for (int i = 0; i < _tests[test].Length; i++)
+					standartDeviation += MathF.Pow(_tests[test][i], 2);
+				standartDeviation /= _tests[test].Length;
+				standartDeviation = MathF.Sqrt(standartDeviation);
+			}
+
+			void Normalize()
 			{
 				for (int i = 0; i < _tests[test].Length; i++)
-					_tests[test][i] = _ownerNN._inputAF.f(_tests[test][i]) - _moveInputsOverZero;
+					_tests[test][i] = _ownerNN._inputAF.f(_tests[test][i] / standartDeviation) + _moveInputsOverZero;
 			}
 		}
 

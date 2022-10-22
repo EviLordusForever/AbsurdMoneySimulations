@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestCombinations);
+			Thread myThread = new Thread(TestTests);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
@@ -23,7 +23,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestTests()
 		{
-			NN nn = new NN();
+			NN nn = NN.Load();
 			string csv = "";
 			string[] subcsv = new string[nn._testerE._testsCount];
 

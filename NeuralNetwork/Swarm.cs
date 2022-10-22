@@ -12,7 +12,7 @@ namespace AbsurdMoneySimulations
 		public static void CalculateSwarmStatistics()
 		{
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
-			NN nn = NN.Load(files[0]);
+			NN nn = NN.Load();
 			
 			Tester tester = nn._testerV;
 			float[,] predictions = new float[tester._testsCount, files.Length];
@@ -29,11 +29,11 @@ namespace AbsurdMoneySimulations
 				WriteCommonResultsHard(test);
 				WriteCommonResultsSoft(test);
 				WriteCommonResultSimilar(test);
-				WriteCommonResultsSimilarAndCutted(test, 0.02f);
+				WriteCommonResultsSimilarAndCutted(test, 0.31f);
 				csv += "\r\n";				
 			}
 
-			LogStatisticsForCutter(0, 0.03f, 0.001f);
+			LogStatisticsForCutter(0, 0.8f, 0.01f);
 
 			Disk2.WriteToProgramFiles("Swarm test", "csv", csv, false);
 			Logger.Log("done");
@@ -163,6 +163,7 @@ namespace AbsurdMoneySimulations
 
 			void LogStatisticsForCutter(float start, float end, float step)
 			{
+				string csv = "";
 				for (float cutter = start; cutter <= end; cutter += step)
 				{
 					float predictionsCount = 0;
@@ -190,8 +191,10 @@ namespace AbsurdMoneySimulations
 						}
 					}
 
-					Logger.Log($"d{cutter}: {wins}/{predictionsCount}");
+					Logger.Log($"d{cutter}: {wins}/{predictionsCount} ({wins / predictionsCount})");
+					csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount}\n";
 				}
+				Disk2.WriteToProgramFiles("cuttersTest", "csv", csv, false); 
 			}
 		}
 	}
