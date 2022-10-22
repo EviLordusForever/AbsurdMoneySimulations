@@ -228,7 +228,7 @@ namespace AbsurdMoneySimulations
 				int i = 0;
 				while (i < count)
 				{
-					int n = Storage.rnd.Next(_testsCount);
+					int n = Math2.rnd.Next(_testsCount);
 					if (_batch[n] == 0)
 					{
 						_batch[n] = 1;

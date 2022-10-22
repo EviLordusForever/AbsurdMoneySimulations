@@ -62,7 +62,7 @@ namespace AbsurdMoneySimulations
 					money = startMoney;
 					oldmoney = money;
 
-					pen = new Pen(Color.FromArgb(Storage.rnd.Next(255), Storage.rnd.Next(255), Storage.rnd.Next(255)));
+					pen = new Pen(Color.FromArgb(Math2.rnd.Next(255), Math2.rnd.Next(255), Math2.rnd.Next(255)));
 
 					for (int b = 0; b < betsCount; b++)
 					{
@@ -149,7 +149,7 @@ namespace AbsurdMoneySimulations
 					lastBet = CalculateBet();
 
 					winBefore = win;
-					win = Storage.rnd.NextDouble() < winrate;
+					win = Math2.rnd.NextDouble() < winrate;
 
 					if (win)
 					{

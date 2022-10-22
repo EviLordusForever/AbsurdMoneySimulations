@@ -21,109 +21,6 @@ namespace AbsurdMoneySimulations
 			nn = NN.Load();
 		}
 
-		public static void TestCalculateRecalculate()
-		{
-			NN nn = NN.CreateBasicNN();
-
-
-			Log("LML: " + nn._lastMutatedLayer);
-			int goods = 0;
-			int bads = 0;
-			int neutral = 0;
-
-			for (int test = 0; test < nn._testerE._testsCount; test++)
-			{
-				float before = nn.Calculate(test, nn._testerE._tests[test]);
-				nn.Mutate();
-				float after1 = nn.Recalculate(test, nn._testerE._tests[test]);
-				float after2 = nn.Calculate(test, nn._testerE._tests[test]);
-				nn.Demutate();
-				float again1 = nn.Recalculate(test, nn._testerE._tests[test]);
-				float again2 = nn.Calculate(test, nn._testerE._tests[test]);
-
-				bool good = (before == again1 && before == again2) && (after1 == after2);
-
-				if (good)
-					if (before != after1)
-						goods++;
-					else neutral++;
-				else
-				{
-					bads++;
-					Log($"ERROR: {before} {after1} {after2} {again1} {again2}");
-				}
-			}
-
-			Log($"goods {goods}");
-			Log($"bads {bads}");
-			Log($"neutral {neutral}");
-		}
-
-		public static void TestSpeed()
-		{
-			NN nn = NN.CreateBasicNN();
-
-			int goods = 0;
-			int bads = 0;
-			int neutral = 0;
-
-			Log($"==================================");
-
-			float res = 0;
-
-			Log($"Started calculate tests");
-			for (int test = 0; test < nn._testerE._testsCount; test++)
-				res += nn.Calculate(test, nn._testerE._tests[test]);
-			Log($"Ended calculate tests");
-			Log(res);
-
-			Log($"==================================");
-			nn.Mutate();
-			Log($"==================================");
-
-			res = 0;
-
-			Log($"Started recalculate tests");
-			for (int test = 0; test < nn._testerE._testsCount; test++)
-				res += nn.Recalculate(test, nn._testerE._tests[test]);
-
-			Log($"Ended recalculate tests");
-			Log(res);
-
-			Log($"==================================");
-
-			res = 0;
-
-			Log($"Started calculate tests");
-			for (int test = 0; test < nn._testerE._testsCount; test++)
-				res += nn.Calculate(test, nn._testerE._tests[test]);
-			Log($"Ended calculate tests");
-			Log(res);
-
-			Log($"==================================");
-			nn.Demutate();
-			Log($"==================================");
-
-			res = 0;
-
-			Log($"Started recalculate tests");
-			for (int test = 0; test < nn._testerE._testsCount; test++)
-				res += nn.Recalculate(test, nn._testerE._tests[test]);
-
-			Log($"Ended recalculate tests");
-			Log(res);
-
-			Log($"==================================");
-
-			res = 0;
-
-			Log($"Started calculate tests");
-			for (int test = 0; test < nn._testerE._testsCount; test++)
-				res += nn.Calculate(test, nn._testerE._tests[test]);
-			Log($"Ended calculate tests");
-			Log(res);
-		}
-
 		public static void TestTests()
 		{
 			NN nn = new NN();
@@ -176,22 +73,8 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = NN.CreateBasicNN();
 
-			nn.Mutate();
-
 			for (int i = 0; i < 100; i++)
-				Log(nn.FindLossSquared(nn._testerE));
-		}
-
-		public static void StupiedTestR()
-		{
-			NN nn = NN.CreateBasicNN();
-
-			nn.Mutate();
-
-			Log("er_fb " + nn.FindLossSquared(nn._testerE));
-
-			for (int i = 0; i < 100; i++)
-				Log("er_nfb " + nn.RefindLossSquared(nn._testerE));
+				Log(nn.FindLossSquared(nn._testerE, false));
 		}
 
 		public static void TestSelenium()
@@ -231,7 +114,7 @@ namespace AbsurdMoneySimulations
 				Storage._coresCount = coresCount;
 				long ms = DateTime.Now.Ticks;
 				for (int i = 0; i < 10; i++)
-					nn.FindLossSquared(nn._testerE);
+					nn.FindLossSquared(nn._testerE, false);
 				Log($"{Storage._coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
 		}
@@ -242,7 +125,7 @@ namespace AbsurdMoneySimulations
 
 			nn._testerE.FillTestsFromNormilizedDerivativeGrafic();
 
-			int test = Storage.rnd.Next(nn._testerE._testsCount);
+			int test = Math2.rnd.Next(nn._testerE._testsCount);
 			string[] strings = new string[nn._inputWindow];
 
 			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
@@ -255,7 +138,7 @@ namespace AbsurdMoneySimulations
 
 			nn = NN.Load();
 
-			nn.Calculate(test, nn._testerE._tests[test]);
+			nn.Calculate(test, nn._testerE._tests[test], false);
 
 			int subsCount = nn._layers[0]._values[test].Count();
 			float inputSize = 300;
@@ -274,29 +157,6 @@ namespace AbsurdMoneySimulations
 
 			Disk2.WriteToProgramFiles("MegatronTest", "csv", string.Join('\n', strings), false);
 			Log("done");
-		}
-
-		public static void TestMutations()
-		{
-			NN nn = NN.Load();
-
-			FormsManager.OpenShowForm("normal distribution");
-			int width = 800;
-			nn._randomMutatesCount = 202200;
-			nn._randomMutatesScaleV2 = width / 2;
-			//nn.FillRandomMutations();
-			float[] distribution = new float[width];
-			for (int m = 0; m < nn._randomMutations.Count(); m++)
-				distribution[Convert.ToInt32(nn._randomMutations[m] * 0.99f) + width / 2]++;
-			float max = Math2.Max(distribution);
-			Storage._bmp = new Bitmap(width, (int)max);
-			Graphics gr = Graphics.FromImage(Storage._bmp);
-			for (int i = 0; i < distribution.Count(); i++)
-				gr.DrawLine(Pens.Black, i, max, i, max - distribution[i]);
-			FormsManager._mainForm.Invoke(new Action(() =>
-			{
-				FormsManager._showForm.BackgroundImage = Graphics2.RescaleBitmap(Storage._bmp, Storage._bmp.Width, FormsManager._showForm.ClientSize.Height);
-			}));
 		}
 
 		public static void TestRefs()
@@ -335,39 +195,39 @@ namespace AbsurdMoneySimulations
 			NN nn = NN.Load();
 
 			nn._layers = new List<Layer>();
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 5, new Linear()));
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 5, 0, new Linear()));
 
 			nn._layers[0].FillWeightsRandomly();
 
 			float[] ar = new float[] { 1, 1, 1, 1, 1 };
 
-			nn._layers[0].Calculate(0, ar);
+			nn._layers[0].Calculate(0, ar, false);
 			Log(nn._layers[0].GetAnswer(0));
 
 			for (int i = 0; i < 20; i++)
 			{
-				nn._layers[0].Calculate(0, nn._layers[0].GetValues(0));
+				nn._layers[0].Calculate(0, nn._layers[0].GetValues(0), false);
 				Log(nn._layers[0].GetAnswer(0));
 			}
 		}
 
 		public static void TestCombinations()
 		{
+			Log(Math2.Combinations2(5, 1));
+			Log(Math2.Combinations2(5, 2));
+			Log(Math2.Combinations2(5, 3));
+			Log(Math2.Combinations2(5, 4));
+			Log(Math2.Combinations2(5, 5));
+			Log(Math2.Combinations2(13, 5));
+
+
 			Log(Math2.Combinations1(5, 1));
 			Log(Math2.Combinations1(5, 2));
 			Log(Math2.Combinations1(5, 3));
 			Log(Math2.Combinations1(5, 4));
 			Log(Math2.Combinations1(5, 5));
 			Log(Math2.Combinations1(13, 5));
-
-
-			Log(Math2.Combinations0(5, 1));
-			Log(Math2.Combinations0(5, 2));
-			Log(Math2.Combinations0(5, 3));
-			Log(Math2.Combinations0(5, 4));
-			Log(Math2.Combinations0(5, 5));
-			Log(Math2.Combinations0(13, 5));
-			Log(Math2.Combinations0(20, 5));
+			Log(Math2.Combinations1(20, 5));
 
 			Log($"==============");
 			Log($"At least 5 from 5 {Math2.CumulativeDistributionFunction(5, 5, 0.5)}");
@@ -385,7 +245,7 @@ namespace AbsurdMoneySimulations
 			{
 				int count = 0;
 				for (int p = 0; p < 4; p++)
-					if (Storage.rnd.Next(2) == 1)
+					if (Math2.rnd.Next(2) == 1)
 						count++;
 
 				if (count >= 2)
@@ -407,8 +267,8 @@ namespace AbsurdMoneySimulations
 			for (int k = 0; k <= n; k++)
 			{
 				csv += a.Probability(k) * 13 + ",";
-				csv += Math2.CalculateRandomness(k, n, 0.5) + "\n";
-				Log(Math2.CalculateRandomness(k, n, 0.5));
+				csv += Math2.CalculateRandomness(k, n) + "\n";
+				Log(Math2.CalculateRandomness(k, n));
 			}
 
 			Disk2.WriteToProgramFiles("Cumulative", ".csv", csv, false);

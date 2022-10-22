@@ -21,18 +21,6 @@
 			}
 		}
 
-		public static void StartEvolutionByRandomMutations()
-		{
-			Thread myThread = new Thread(StartEvolutionThread);
-			myThread.Name = "EVOLUTION thread";
-			myThread.Start();
-
-			void StartEvolutionThread()
-			{
-				Manager.EvolveByRandomMutations();
-			}
-		}
-
 		public static void StartNeuralBattle()
 		{
 			Thread myThread = new Thread(NeuralBattleThread);

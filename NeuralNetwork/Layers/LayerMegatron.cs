@@ -8,75 +8,48 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore]
 		public float[][][] _unnormalizedValues;
 
-		public Node[] _subs; //[sub]
-		public int _d;
+		[JsonIgnore]
+		public bool[] _dropoutLayer;
+
+		[JsonIgnore]
+		public bool[] _falseLayer;
+
+		public Node[] _subs;
+		public int _step;
+		public int _weightsPerSubCount;
 		public int _outsPerSubCount;
 		public int _lastMutatedSub;
 
 		public override void FillWeightsRandomly()
 		{
-			//FillByLogic();
-			//return;
-
-			//or
 			for (int sub = 0; sub < _subs.Count(); sub++)
 				_subs[sub].FillRandomly();
 		}
 
-		public void FillByLogic()
-		{
-			float[][] ars = new float[15][];
-
-			ars[0] = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			ars[1] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-			ars[2] = new float[] { 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1, 1, 1, 1, -1, -1, -1 };
-			ars[3] = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0.1f, 0.2f, 0.5f, 0.65f, 0.8f, 0.9f, 1, 1, 0.9f, 0.8f, 0.65f, 0.5f, 0.2f, 0.1f, 0, 0, 0, 0, 0, 0, 0, 0 };
-			ars[4] = new float[] { -1.5f, -1.4f, -1.3f, -1.2f, -1.1f, -1f, -0.9f, -0.8f, -0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f };
-
-			ars[5] = new float[] { -1, -1, -1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, -1, -1, -1, -1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 };
-			ars[6] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
-			ars[7] = new float[] { 0, 0.5f, 1, 1, 1, 1, 0.5f, -0.5f, -1, -1, -1, -1, -0.5f, 0, 0, 0, 0, -0.5f, -1, -1, -1, -1, -0.5f, 0.5f, 1, 1, 1, 1, 0.5f, 0 };
-			ars[8] = new float[] { 0, 0.5f, -1, -1, -1, -1, -0.5f, 0.5f, 1, 1, 1, 1, 0.5f, 0, 0, 0, 0, 0.5f, -1, -1, -1, -1, -0.5f, 0.5f, 1, 1, 1, 1, 0.5f, 0 };
-			ars[9] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-
-			ars[10] = new float[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-			ars[11] = new float[] { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 };
-			ars[12] = new float[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-			ars[13] = new float[] { 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1 };
-			ars[14] = new float[] { 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1 };
-
-			for (int s = 0; s < _subs.Count(); s++)
-			{
-				for (int w = 0; w < 30; w++)
-					_subs[s]._weights[w] = ars[s][w];
-			}
-		}
-
-		public override void Calculate(int test, float[][] input)
+		public override void Calculate(int test, float[][] input, bool withDropout)
 		{
 			for (int sub = 0; sub < _subs.Length; sub++)
-				CalculateOneSub(test, input, sub);
+				CalculateOneSub(test, input, sub, withDropout);
 		}
 
-		public override void Calculate(int test, float[] input)
+		private void CalculateOneSub(int test, float[][] input, int sub, bool withDropout)
 		{
-			throw new NotImplementedException();
+			for (int v = 0; v < _values[test][sub].Length; v++)
+			{
+				if (withDropout)
+					_unnormalizedValues[test][sub][v] = _subs[sub].Calculate(test, input[0], v * _step, _dropoutLayer) / (1 - _dropoutProbability);
+				else
+
+				_values[test][sub][v] = _af.f(_unnormalizedValues[test][sub][v]);
+			}
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		public override void Dropout()
 		{
-			if (lrs == LayerRecalculateStatus.OneWeightChanged)
-			{
-				CalculateOneSub(test, input, _lastMutatedSub);
-				lrs = LayerRecalculateStatus.OneSubChanged;
-				lrs._lastMutatedSub = _lastMutatedSub;
-				return lrs;
-			}
-			else
-			{
-				Calculate(test, input);
-				return LayerRecalculateStatus.Full;
-			}
+			//How better to dropout megatron?
+			if (_dropoutProbability > 0)
+				for (int i = 0; i < _dropoutLayer.Length; i++)
+					_dropoutLayer[i] = Math2.rnd.NextSingle() <= _dropoutProbability;
 		}
 
 		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
@@ -84,17 +57,6 @@ namespace AbsurdMoneySimulations
 			int gradientsPerSubCount = innerBPGradients.Count() / _subs.Count();
 			for (int sub = 0; sub < _subs.Count(); sub++)
 				FindBPGradientOneSub(test, sub, Array2.SubArray(innerBPGradients, sub * gradientsPerSubCount, gradientsPerSubCount), Array2.SubArray(innerWeights, sub * _outsPerSubCount, _outsPerSubCount));
-		}
-
-		public override void FindBPGradient(int test, float desiredValue)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void UseInertionForGradient(int test)
-		{
-			for (int sub = 0; sub < _subs.Count(); sub++)
-				_subs[sub].UseInertionForGradient(test);
 		}
 
 		private void FindBPGradientOneSub(int test, int sub, float[] innerBPGradients, float[][] innerWeights)
@@ -105,29 +67,15 @@ namespace AbsurdMoneySimulations
 				float gwsumm = Node.FindSummOfBPGradientsPerWeights(innerBPGradients, innerWeights[n]);
 				buffer += gwsumm * _af.df(_unnormalizedValues[test][sub][n]);
 			}
-			//buffer /= valuesPerSubCount; //!!!!!!
+			//buffer /= valuesPerSubCount;
 			_subs[sub]._BPgradient[test] += buffer;
 			_subs[sub]._BPgradient[test] = _ownerNN.CutGradient(_subs[sub]._BPgradient[test]);
 		}
 
-		private void CalculateOneSub(int test, float[][] input, int sub)
+		public override void UseMomentumForGradient(int test)
 		{
-			for (int v = 0; v < _values[test][sub].Length; v++)
-			{
-				_unnormalizedValues[test][sub][v] = _subs[sub].Calculate(test, input[0], v * _d);
-				_values[test][sub][v] = _af.f(_unnormalizedValues[test][sub][v]);
-			}
-		}
-
-		public override void Mutate(float mutagen)
-		{
-			_lastMutatedSub = Storage.rnd.Next(_subs.Count());
-			_subs[_lastMutatedSub].Mutate(mutagen);
-		}
-
-		public override void Demutate(float mutagen)
-		{
-			_subs[_lastMutatedSub].Demutate(mutagen);
+			for (int sub = 0; sub < _subs.Count(); sub++)
+				_subs[sub].UseInertionForGradient(test);
 		}
 
 		public override void CorrectWeightsByBP(int test, float[][] input)
@@ -139,12 +87,7 @@ namespace AbsurdMoneySimulations
 		private void CorrectWeightsByBPOneSub(int test, int sub, float[] input)
 		{
 			for (int v = 0; v < _values[test][sub].Length; v++)
-				_subs[sub].CorrectWeightsByBP(test, input, v * _d);
-		}
-
-		public override float GetAnswer(int test)
-		{
-			throw new NotImplementedException();
+				_subs[sub].CorrectWeightsByBP(test, input, v * _step);
 		}
 
 		public override float[][] GetValues(int test)
@@ -160,28 +103,15 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public override float[][] AllWeights
+		public LayerMegatron(NN ownerNN, int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int step, float dropoutProbability, ActivationFunction af)
 		{
-			get
-			{
-				throw new NotImplementedException();
-				//maybe somewhen it will be implemented...
-				//but probably no.
-			}
-		}
-
-		public override float[] AllBPGradients(int test)
-		{
-			throw new NotImplementedException();
-		}
-
-		public LayerMegatron(NN ownerNN, int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int d, ActivationFunction af)
-		{
+			_type = "megatron";
 			_ownerNN = ownerNN;
 			_af = af;
-			_type = "megatron";
-			_d = d;
+			_step = step;
 			_outsPerSubCount = outsPerSubCount;
+			_weightsPerSubCount = weightsPerSubCount;
+			_dropoutProbability = dropoutProbability;
 
 			_subs = new Node[subsCount];
 			for (int sub = 0; sub < _subs.Count(); sub++)
@@ -209,7 +139,13 @@ namespace AbsurdMoneySimulations
 			}
 
 			for (int s = 0; s < _subs.Count(); s++)
-				_subs[s].InitValues(testsCount); //does we need you? //
+				_subs[s].InitValues(testsCount); //does we need you? // ??? //
+
+			_dropoutLayer = new bool[_weightsPerSubCount];
+			_falseLayer = new bool[_weightsPerSubCount];
+
+			for (int f = 0; f < _weightsPerSubCount; f++)
+				_falseLayer[f] = false;
 		}
 
 		public override void InitLinksToOwnerNN(NN ownerNN)
@@ -218,6 +154,36 @@ namespace AbsurdMoneySimulations
 
 			for (int sub = 0; sub < _subs.Count(); sub++)
 				_subs[sub].SetOwnerNN(ownerNN);
+		}
+
+		public override float[][] AllWeights
+		{
+			get
+			{
+				throw new NotImplementedException();
+				//maybe somewhen it will be implemented...
+				//but probably no.
+			}
+		}
+
+		public override float[] AllBPGradients(int test)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Calculate(int test, float[] input, bool withDropout)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override float GetAnswer(int test)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void FindBPGradient(int test, float desiredValue)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

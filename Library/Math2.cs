@@ -4,6 +4,8 @@ namespace Library
 {
 	public static class Math2
 	{
+		public static Random rnd = new Random();
+
 		public static int Factorial(int number)
 		{
 			int n = 1;
@@ -11,10 +13,10 @@ namespace Library
 			for (int i = 1; i <= number; i++)
 				n *= i;
 
-			return n; // returns 1 when number is 0
+			return n;
 		}
 
-		public static int Combinations0(int n, int k)
+		public static int Combinations1(int n, int k)
 		{
 			if (n < k || n < 1 || k < 1)
 				return 0;
@@ -22,17 +24,17 @@ namespace Library
 				return 1;
 			if (k == 1)
 				return n;
-			return Combinations0(n - 1, k - 1) + Combinations0(n - 1, k);
+			return Combinations1(n - 1, k - 1) + Combinations1(n - 1, k);
 		}
 
-		public static int Combinations1(int n, int k)
+		public static int Combinations2(int n, int k)
 		{
 			if (n > 13)
 				throw new ArgumentException();
 			return Factorial(n) / (Factorial(k) * Factorial(n - k));
 		}
 
-		public static double Combinations2(int n, int k)
+		public static double Combinations3(int n, int k)
 		{
 			double ret = 1;
 			while (k > 0)
@@ -67,7 +69,7 @@ namespace Library
 			return min;
 		}
 
-		public static double CalculateRandomness(double k, int n, double p)
+		public static double CalculateRandomness(double k, int n)
 		{
 			if (k == n / 2.0)
 				return 1;
@@ -84,26 +86,27 @@ namespace Library
 			}
 		}
 
-		public static float LikeNormalDistribution(float scale, float centralization, float smoothing, Random rnd)
+		public static double CalculateRandomness(double k, int n, double p)
 		{
-			//actually THIS is not normal distribution, but who cares
-			float x = rnd.NextSingle();
-			float y = (MathF.Pow(x, centralization) + x * smoothing) / (smoothing + 1);
-			int sign = rnd.Next(2) * 2 - 1;
+			if (k == n * p)
+				return 1;
+			else
+			{
+				double randomness;
 
-			return sign * scale * y;
+				if (k < n * p)
+					randomness = CumulativeDistributionFunction(k, n, p);
+				else
+					randomness = CumulativeDistributionFunction(n - k, n, 1 - p);
+
+				return randomness * 2;
+			}
 		}
 
 		public static double CumulativeDistributionFunction(double k, int n, double p)
 		{
 			var d = new MathNet.Numerics.Distributions.Binomial(p, n);
 			return d.CumulativeDistribution(k);
-
-			/*			double cdf = 0;
-						for (int i = 0; i <= k; i++)
-							cdf += d.Probability(i);
-
-						return cdf;*/
 		}
 	}
 }

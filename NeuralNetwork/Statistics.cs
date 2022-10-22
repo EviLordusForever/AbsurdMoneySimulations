@@ -75,7 +75,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = nn.Calculate(test, tester._tests[test]);
+					float prediction = nn.Calculate(test, tester._tests[test], false);
 
 					float reality = tester._answers[test];
 
@@ -143,7 +143,7 @@ namespace AbsurdMoneySimulations
 		public static void CalculateRandomnesses()
 		{
 			for (int section = 0; section < _sections.Count; section++)
-				_randomnesses[section] = Math2.CalculateRandomness(_wins[section], _tests[section], 0.5f);
+				_randomnesses[section] = Math2.CalculateRandomness(_wins[section], _tests[section]);
 		}
 
 		public static void ClearStat()

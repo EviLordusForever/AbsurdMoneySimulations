@@ -12,28 +12,25 @@ namespace AbsurdMoneySimulations
 
 		public ActivationFunction _af;
 
+		public float _dropoutProbability;
+
 		public string _type;
 
 		public abstract void FillWeightsRandomly();
 
-		public abstract void Calculate(int test, float[][] input);
+		public abstract void Calculate(int test, float[][] input, bool withDropout);
 
-		public abstract void Calculate(int test, float[] input);
+		public abstract void Calculate(int test, float[] input, bool withDropout);
 
-		public abstract LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs);
-		//You don't need to calculate whole NN if only part of it is mutated
+		public abstract void Dropout();
 
 		public abstract void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights);
 
 		public abstract void FindBPGradient(int test, float desiredValue);
 
-		public abstract void UseInertionForGradient(int test);
-
-		public abstract void Mutate(float mutagen);
+		public abstract void UseMomentumForGradient(int test);
 
 		public abstract void CorrectWeightsByBP(int test, float[][] input);
-
-		public abstract void Demutate(float mutagen);
 
 		public abstract float[][] GetValues(int test);
 

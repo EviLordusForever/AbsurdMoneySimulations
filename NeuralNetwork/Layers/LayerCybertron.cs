@@ -14,76 +14,34 @@ namespace AbsurdMoneySimulations
 				_perceptrons[i].FillWeightsRandomly();
 		}
 
-		public override void Calculate(int test, float[][] input)
+		public override void Calculate(int test, float[][] input, bool withDropout)
 		{
 			for (int sub = 0; sub < _perceptrons.Length; sub++)
-				_perceptrons[sub].Calculate(test, input[sub]);
-		}
-
-		public override void Calculate(int test, float[] input)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
-		{
-			if (lrs == LayerRecalculateStatus.OneWeightChanged)
-			{
-				_perceptrons[_lastMutatedSub].Recalculate(test, input[_lastMutatedSub], LayerRecalculateStatus.OneWeightChanged);
-				lrs._lastMutatedSub = _lastMutatedSub;
-				return LayerRecalculateStatus.OneSubChanged;
-			}
-			else if (lrs == LayerRecalculateStatus.OneSubChanged)
-			{
-				_perceptrons[_lastMutatedSub].Recalculate(test, input[_lastMutatedSub], LayerRecalculateStatus.Full);
-				lrs._lastMutatedSub = _lastMutatedSub;
-				return LayerRecalculateStatus.OneSubChanged;
-			}
-			else
-			{
-				Calculate(test, input);
-				return LayerRecalculateStatus.Full;
-			}
+				_perceptrons[sub].Calculate(test, input[sub], withDropout);
 		}
 
 		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
 		{
-			//very hard to explain without drawing
 			for (int n = 0; n < _perceptrons.Count(); n++)
 				_perceptrons[n].FindBPGradient(test, innerBPGradients, Array2.SubArray(innerWeights, n * _perceptrons[0]._nodes.Count(), _perceptrons[0]._nodes.Count()));
 		}
 
-		public override void FindBPGradient(int test, float desiredValue)
+		public override void Dropout()
 		{
-			throw new NotImplementedException();
+			for (int p = 0; p < _perceptrons.Count(); p++)
+				_perceptrons[p].Dropout();
 		}
 
-		public override void UseInertionForGradient(int test)
+		public override void UseMomentumForGradient(int test)
 		{
-			for (int n = 0; n < _perceptrons.Count(); n++)
-				_perceptrons[n].UseInertionForGradient(test);
-		}
-
-		public override void Mutate(float mutagen)
-		{
-			_lastMutatedSub = Storage.rnd.Next(_perceptrons.Count());
-			_perceptrons[_lastMutatedSub].Mutate(mutagen);
-		}
-
-		public override void Demutate(float mutagen)
-		{
-			_perceptrons[_lastMutatedSub].Demutate(mutagen);
+			for (int p = 0; p < _perceptrons.Count(); p++)
+				_perceptrons[p].UseMomentumForGradient(test);
 		}
 
 		public override void CorrectWeightsByBP(int test, float[][] input)
 		{
 			for (int sub = 0; sub < _perceptrons.Length; sub++)
 				_perceptrons[sub].CorrectWeightsByBP(test, input[sub]);
-		}
-
-		public override float GetAnswer(int test)
-		{
-			throw new NotImplementedException();
 		}
 
 		public override float[][] GetValues(int test)
@@ -135,15 +93,15 @@ namespace AbsurdMoneySimulations
 			//And this
 		}
 
-		public LayerCybertron(NN ownerNN, int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, ActivationFunction af)
+		public LayerCybertron(NN ownerNN, int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, float dropoutProbability, ActivationFunction af)
 		{
 			_type = "cybertron";
 
-			this._outNodesSummCount = outNodesSummCount;
+			_outNodesSummCount = outNodesSummCount;
 
 			_perceptrons = new LayerPerceptron[perceptronsCount];
 			for (int p = 0; p < _perceptrons.Count(); p++)
-				_perceptrons[p] = new LayerPerceptron(ownerNN, testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount, af);
+				_perceptrons[p] = new LayerPerceptron(ownerNN, testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount, dropoutProbability, af);
 
 			InitValues(testsCount);
 		}
@@ -168,6 +126,21 @@ namespace AbsurdMoneySimulations
 		{
 			for (int p = 0; p < _perceptrons.Count(); p++)
 				_perceptrons[p].InitLinksToOwnerNN(ownerNN);
+		}
+
+		public override void Calculate(int test, float[] input, bool withDropout)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override float GetAnswer(int test)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void FindBPGradient(int test, float desiredValue)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace AbsurdMoneySimulations
+﻿using Library;
+
+namespace AbsurdMoneySimulations
 {
 	public class LayerPerceptron : Layer
 	{
@@ -11,85 +13,35 @@
 				_nodes[i].FillRandomly();
 		}
 
-		public override void Calculate(int test, float[][] input)
+		public override void Calculate(int test, float[][] input, bool withDropout)
 		{
 			for (int node = 0; node < _nodes.Length; node++)
-				_values[test][0][node] = _af.f(_nodes[node].Calculate(test, input[0], 0));
+				if (withDropout)
+					if (!_nodes[node]._droppedOut)
+						_values[test][0][node] = _af.f(_nodes[node].Calculate(test, input[0], 0)) / (1 - _dropoutProbability);
+					else
+						_values[test][0][node] = 0;
+				else
+					_values[test][0][node] = _af.f(_nodes[node].Calculate(test, input[0], 0));
 		}
 
-		public override void Calculate(int test, float[] input)
+		public override void Calculate(int test, float[] input, bool withDropout)
 		{
 			for (int node = 0; node < _nodes.Length; node++)
-				_values[test][0][node] = _af.f(_nodes[node].Calculate(test, input, 0));
+				if (withDropout)
+					if (!_nodes[node]._droppedOut)
+						_values[test][0][node] = _af.f(_nodes[node].Calculate(test, input, 0)) / (1 - _dropoutProbability);
+					else
+						_values[test][0][node] = 0;
+				else
+					_values[test][0][node] = _af.f(_nodes[node].Calculate(test, input, 0));
 		}
 
-		public override LayerRecalculateStatus Recalculate(int test, float[][] input, LayerRecalculateStatus lrs)
+		public override void Dropout()
 		{
-			if (lrs == LayerRecalculateStatus.OneWeightChanged)
-				return RecalculateAfterOneWeightChanged(test, input);
-			else if (lrs == LayerRecalculateStatus.OneNodeChanged)
-				return RecalculateAfterOneNodeChanged(test, input, lrs);
-			else if (lrs == LayerRecalculateStatus.OneSubChanged)
-				return RecalculateAfterOneSubChanged(test, input, lrs);
-			else
-				return RecalculateAfterEveryNodeChanged(test, input);
-		}
-
-		public LayerRecalculateStatus Recalculate(int test, float[] input, LayerRecalculateStatus lrs)
-		{
-			if (lrs == LayerRecalculateStatus.OneWeightChanged)
-				return RecalculateAfterOneWeightChanged(test, input, lrs);
-			else
-				return RecalculateAfterEveryNodeChanged(test, input);
-		}
-	
-		private LayerRecalculateStatus RecalculateAfterOneWeightChanged(int test, float[] input, LayerRecalculateStatus lrs)
-		{
-			_values[test][0][_lastMutatedNode] = _af.f(_nodes[_lastMutatedNode].CalculateOnlyOneWeight(test, input[_lastMutatedNode], _nodes[_lastMutatedNode]._lastMutatedWeight));
-			lrs = LayerRecalculateStatus.OneNodeChanged;
-			lrs._lastMutatedNode = _lastMutatedNode;
-			return lrs;
-		}
-
-		private LayerRecalculateStatus RecalculateAfterOneWeightChanged(int test, float[][] input)
-		{
-			_values[test][0][_lastMutatedNode] = _af.f(_nodes[_lastMutatedNode].CalculateOnlyOneWeight(test, input[0][_lastMutatedNode], _nodes[_lastMutatedNode]._lastMutatedWeight));
-
-			LayerRecalculateStatus lrs = LayerRecalculateStatus.OneNodeChanged;
-			lrs._lastMutatedNode = _lastMutatedNode;
-			return lrs;
-		}
-
-		private LayerRecalculateStatus RecalculateAfterOneNodeChanged(int test, float[][] input, LayerRecalculateStatus lrs)
-		{
-			for (int n = 0; n < _nodes.Length; n++)
-				_values[test][0][n] = _af.f(_nodes[n].CalculateOnlyOneWeight(test, input[0][lrs._lastMutatedNode], lrs._lastMutatedNode));
-			return LayerRecalculateStatus.Full;
-		}
-
-		private LayerRecalculateStatus RecalculateAfterOneSubChanged(int test, float[][] input, LayerRecalculateStatus lrs)
-		{
-			for (int n = 0; n < _nodes.Length; n++)
-			{
-				for (int subnode = lrs._lastMutatedSub * lrs._subSize; subnode < lrs._lastMutatedSub * lrs._subSize + lrs._subSize; subnode++)
-					_nodes[n].CalculateOnlyOneWeight(test, input[0][subnode], subnode);
-				//test me
-
-				_values[test][0][n] = _af.f(_nodes[n]._summ[test]);
-			}
-			return LayerRecalculateStatus.Full;
-		}
-
-		private LayerRecalculateStatus RecalculateAfterEveryNodeChanged(int test, float[][] input)
-		{
-			Calculate(test, input);
-			return LayerRecalculateStatus.Full;
-		}
-
-		private LayerRecalculateStatus RecalculateAfterEveryNodeChanged(int test, float[] input)
-		{
-			Calculate(test, input);
-			return LayerRecalculateStatus.Full;
+			if (_dropoutProbability > 0)
+				for (int n = 0; n < _nodes.Count(); n++)
+					_nodes[n].Dropout(_dropoutProbability);
 		}
 
 		public override void FindBPGradient(int test, float[] innerBPGradients, float[][] innerWeights)
@@ -103,21 +55,10 @@
 			_nodes[0].FindBPGradient(test, _af, desiredValue);
 		}
 
-		public override void UseInertionForGradient(int test)
+		public override void UseMomentumForGradient(int test)
 		{
 			for (int n = 0; n < _nodes.Count(); n++)
 				_nodes[n].UseInertionForGradient(test);
-		}
-
-		public override void Mutate(float mutagen)
-		{
-			_lastMutatedNode = Storage.rnd.Next(_nodes.Count());
-			_nodes[_lastMutatedNode].Mutate(mutagen);
-		}
-
-		public override void Demutate(float mutagen)
-		{
-			_nodes[_lastMutatedNode].Demutate(mutagen);
 		}
 
 		public override void CorrectWeightsByBP(int test, float[][] input)
@@ -173,11 +114,12 @@
 			return BPGradients;
 		}
 
-		public LayerPerceptron(NN ownerNN, int testsCount, int nodesCount, int weightsCount, ActivationFunction af)
+		public LayerPerceptron(NN ownerNN, int testsCount, int nodesCount, int weightsCount, float dropoutProbability, ActivationFunction af)
 		{
 			_ownerNN = ownerNN;
 			_af = af;
 			_type = "perceptron";
+			_dropoutProbability = dropoutProbability;
 
 			_nodes = new Node[nodesCount];
 			for (int i = 0; i < _nodes.Count(); i++)

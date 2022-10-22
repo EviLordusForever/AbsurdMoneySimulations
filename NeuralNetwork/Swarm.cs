@@ -43,7 +43,7 @@ namespace AbsurdMoneySimulations
 					nn = NN.Load(files[n]);
 
 					for (int test = 0; test < tester._testsCount; test++)
-						predictions[test, n] = nn.Calculate(test, nn._testerV._tests[test]);
+						predictions[test, n] = nn.Calculate(test, nn._testerV._tests[test], false);
 				}
 			}
 

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
@@ -7,6 +8,9 @@ namespace AbsurdMoneySimulations
 		public float[] _weights;
 
 		public float _bias;
+
+		[JsonIgnore]
+		public bool _droppedOut;
 
 		[JsonIgnore]
 		public float[][] _subvalues;
@@ -30,7 +34,7 @@ namespace AbsurdMoneySimulations
 			float scale = MathF.Abs(_ownerNN._weightsInitMax - _ownerNN._weightsInitMin);
 
 			for (int i = 0; i < _weights.Count(); i++)
-				_weights[i] = Storage.rnd.NextSingle() * scale + _ownerNN._weightsInitMin;
+				_weights[i] = Math2.rnd.NextSingle() * scale + _ownerNN._weightsInitMin;
 			_bias = 0;
 		}
 
@@ -44,6 +48,21 @@ namespace AbsurdMoneySimulations
 				_subvalues[test][w] = _weights[w] * input[start + w];
 				_summ[test] += _subvalues[test][w];
 			}
+
+			return _summ[test];
+		}
+
+		public float Calculate(int test, float[] input, int start, bool[] dropoutLayer)
+		{
+			_biasvalues[test] = _bias * _ownerNN._biasInput;
+			_summ[test] = _biasvalues[test];
+
+			for (int w = 0; w < _weights.Count(); w++)
+				if (!dropoutLayer[w])
+				{
+					_subvalues[test][w] = _weights[w] * input[start + w];
+					_summ[test] += _subvalues[test][w];
+				}
 
 			return _summ[test];
 		}
@@ -68,7 +87,7 @@ namespace AbsurdMoneySimulations
 
 		public void Mutate(float mutagen)
 		{
-			_lastMutatedWeight = Storage.rnd.Next(_weights.Length + 1);
+			_lastMutatedWeight = Math2.rnd.Next(_weights.Length + 1);
 
 			if (_lastMutatedWeight == _weights.Length)
 				_bias += mutagen;
@@ -86,27 +105,29 @@ namespace AbsurdMoneySimulations
 
 		public void FindBPGradient(int test, ActivationFunction af, float desiredValue)
 		{
-			try
-			{
-				_BPgradient[test] = (af.f(_summ[test]) - desiredValue) * af.df(_summ[test]);
-			}
-			catch (VanishedGradientException ex)
-			{
-				_ownerNN._vanishedGradientsCount++;
-				_BPgradient[test] = 0;
-			}
+			_BPgradient[test] = (af.f(_summ[test]) - desiredValue) * af.df(_summ[test]);
 		}
 
 		public void FindBPGradient(int test, ActivationFunction af, float[] gradients, float[] weights)
 		{
-			float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
-			_BPgradient[test] += gwsumm * af.df(_summ[test]);
-			_BPgradient[test] = _ownerNN.CutGradient(_BPgradient[test]);
+			if (!_droppedOut)
+			{
+				float gwsumm = FindSummOfBPGradientsPerWeights(gradients, weights);
+				_BPgradient[test] += gwsumm * af.df(_summ[test]);
+				_BPgradient[test] = _ownerNN.CutGradient(_BPgradient[test]);
+			}
+			else
+				_BPgradient[test] = 0;
 		}
 
 		public void UseInertionForGradient(int test)
 		{
-			_BPgradient[test] *= _ownerNN._INERTION;
+			_BPgradient[test] *= _ownerNN._MOMENTUM;
+		}
+
+		public void Dropout(float probability)
+		{
+			_droppedOut = Math2.rnd.NextSingle() <= probability;
 		}
 
 		public static float FindSummOfBPGradientsPerWeights(float[] gradients, float[] weights)
@@ -121,12 +142,12 @@ namespace AbsurdMoneySimulations
 
 		public void CorrectWeightsByBP(int test, float[] input, int start)
 		{
-			if (float.IsNaN(_BPgradient[test]))
+			if (!_droppedOut)
 			{
+				for (int w = 0; w < _weights.Count(); w++)
+					_weights[w] -= _ownerNN._LEARNING_RATE * _BPgradient[test] * input[start + w];
+				_bias -= _ownerNN._LEARNING_RATE * _BPgradient[test] * _ownerNN._biasInput;
 			}
-			for (int w = 0; w < _weights.Count(); w++)
-				_weights[w] -= _ownerNN._LEARNING_RATE * _BPgradient[test] * input[start + w];
-			_bias -= _ownerNN._LEARNING_RATE * _BPgradient[test] * _ownerNN._biasInput;
 		}
 
 		public Node(NN nn, int testsCount, int weightsCount)

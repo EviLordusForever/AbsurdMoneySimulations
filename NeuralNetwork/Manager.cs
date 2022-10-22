@@ -13,7 +13,7 @@ namespace AbsurdMoneySimulations
 			{
 				NN nn = NN.Load();
 
-				float record = nn.FindLossSquared(nn._testerE);
+				float record = nn.FindLossSquared(nn._testerE, false);
 				Log($"record {record}");
 				var files = Directory.GetFiles(Library.Disk2._programFiles + "NN");
 
@@ -21,17 +21,17 @@ namespace AbsurdMoneySimulations
 				{
 					nn = NN.CreateBasicNN();
 
-					float er = nn.FindLossSquared(nn._testerE);
+					float er = nn.FindLossSquared(nn._testerE, false);
 					Log($"er {er}");
 
 					if (er < record)
 					{
-						Log("Эта лучше!");
+						Log("This is better!");
 						record = er;
 						NN.Save(nn);
 					}
 					else
-						Log("Эта не лучше!");
+						Log("This is not better!");
 				}
 			}
 		}
@@ -52,13 +52,6 @@ namespace AbsurdMoneySimulations
 			nn._LEARNING_RATE = 0.0002f;
 
 			nn.EvolveByBackPropagtion();
-		}
-
-		public static void EvolveByRandomMutations()
-		{
-			NN nn = NN.Load();
-
-			nn.EvolveByRandomMutations();
 		}
 	}
 }
