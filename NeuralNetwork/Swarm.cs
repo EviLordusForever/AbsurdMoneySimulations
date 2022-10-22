@@ -13,6 +13,7 @@ namespace AbsurdMoneySimulations
 		{
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 			NN nn = NN.Load(files[0]);
+			
 			Tester tester = nn._testerV;
 			float[,] predictions = new float[tester._testsCount, files.Length];
 			string csv = "";
@@ -23,6 +24,7 @@ namespace AbsurdMoneySimulations
 			{
 				WriteAnswer(test);
 				WritePredictions(test);
+				WriteAveragePrediction(test);
 				WriteResultsForPredictions(test);
 				WriteCommonResultsHard(test);
 				WriteCommonResultsSoft(test);
@@ -49,17 +51,29 @@ namespace AbsurdMoneySimulations
 
 			void WriteAnswer(int test)
 			{
+				csv += "correct answers,";
 				csv += tester._answers[test] + ",";
 			}
 
 			void WritePredictions(int test)
 			{
+				csv += "predictions,";
 				for (int n = 0; n < files.Length; n++)
 					csv += predictions[test, n] + ",";
 			}
 
+			void WriteAveragePrediction(int test)
+			{
+				csv += "average prediction,";
+				float p = 0;
+				for (int n = 0; n < files.Length; n++)
+					p += predictions[test, n];
+				csv += p + ",";
+			}
+
 			void WriteResultsForPredictions(int test)
 			{
+				csv += "results,";
 				for (int n = 0; n < files.Length; n++)
 					if (predictions[test, n] > 0 && tester._answers[test] > 0 ||
 						predictions[test, n] < 0 && tester._answers[test] < 0)
@@ -70,6 +84,8 @@ namespace AbsurdMoneySimulations
 
 			void WriteCommonResultsHard(int test)
 			{
+				csv += "does all win,";
+
 				int summ = 0;
 
 				for (int n = 0; n < files.Length; n++)
@@ -87,6 +103,7 @@ namespace AbsurdMoneySimulations
 
 			void WriteCommonResultsSoft(int test)
 			{
+				csv += "does predictions summ win,";
 				float summ = 0;
 				for (int n = 0; n < files.Length; n++)
 					summ += predictions[test, n];
@@ -95,11 +112,12 @@ namespace AbsurdMoneySimulations
 					summ < 0 && tester._answers[test] < 0)
 					csv += ",1,";
 				else
-					csv += ",0,";
+					csv += ",-1,";
 			}
 
 			void WriteCommonResultSimilar(int test)
 			{
+				csv += "results when they all agree,";
 				bool similar = true;
 				for (int n = 1; n < files.Length; n++)
 					if (predictions[test, n] > 0 && predictions[test, 0] < 0 ||
@@ -120,6 +138,7 @@ namespace AbsurdMoneySimulations
 
 			void WriteCommonResultsSimilarAndCutted(int test, float cutter)
 			{
+				csv += $"cutted by {cutter},";
 				bool isPrediction = true;
 				for (int n = 1; n < files.Length; n++)
 					if (predictions[test, n] > 0 && predictions[test, 0] < 0 ||

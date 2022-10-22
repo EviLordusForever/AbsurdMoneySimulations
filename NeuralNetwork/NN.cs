@@ -82,13 +82,13 @@ namespace AbsurdMoneySimulations
 			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
 			layers[2].FillWeightsRandomly();*/
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 15, 300, 0.6f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers[0].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 15, 0.5f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers[1].FillWeightsRandomly();
 
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, 0, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 8, 0, new SoftSign())); //40 x 15 = 600
 			nn._layers[2].FillWeightsRandomly();
 
 			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, 0f, new SoftSign())); //40 x 15 = 600
@@ -135,12 +135,13 @@ namespace AbsurdMoneySimulations
 
 			var jss = new JsonSerializerSettings();
 			jss.Converters.Add(new AbstractConverterOfLayer());
+			jss.Converters.Add(new AbstractConverterOfActivationFunction());
 
 			Log("Neural Network loaded from disk!");
 
 			NN nn = JsonConvert.DeserializeObject<NN>(json, jss);
-
 			nn._name = Text2.StringInsideLast(path, "\\", ".json");
+			nn.Init();
 			return nn;
 		}
 
@@ -255,8 +256,8 @@ namespace AbsurdMoneySimulations
 
 				void FillBatch()
 				{
-					//_testerE.FillBatchBy(100);
-					_testerE.FillFullBatch();
+					_testerE.FillBatchBy(200);
+					//testerE.FillFullBatch();
 					Log("Batch refilled");
 				}
 
