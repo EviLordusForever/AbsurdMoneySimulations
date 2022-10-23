@@ -7,16 +7,21 @@ namespace AbsurdMoneySimulations
 	{
 		public static void CalculateSwarmStatistics()
 		{
+			Log("Starting calculating swarm statistics...");
+
+			float[] predictionsSumms;
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 			NN nn = NN.Load();
 			
-			Tester tester = nn._testerV;
-			float[,] predictions = new float[tester._testsCount, files.Length];
+			Tester testerV = nn._testerV;
+			Tester testerT = nn._testerE;
+			float[,] predictions;
 			string csv = "";
 
-			CalculateAllPredictions();
+			predictions = CalculateAllPredictions(testerV);
+			predictionsSumms = FindPredictionsSumms(testerV);
 
-			for (int test = 0; test < tester._testsCount; test++)
+			for (int test = 0; test < testerV._testsCount; test++)
 			{
 				WriteAnswer(test);
 				WritePredictions(test);
@@ -29,27 +34,71 @@ namespace AbsurdMoneySimulations
 				csv += "\r\n";				
 			}
 
-			LogStatisticsForCutter(0, 0.8f, 0.01f);
-			LogStatisticsForCutter2(0, 5f, 0.001f);
+			SaveSwarmStatisticsToCsv();
 
-			Disk2.WriteToProgramFiles("Swarm Statistics", "csv", csv, false);
-			Log("\"Swarm Statistics\" saved to csv");
+			SaveBothSidesDetailedStaisticsToCsv(testerV, "VALIDATION");
+			SaveSingleSideDetailedStaisticsToCsv(testerV, "VALIDATION");
 
-			void CalculateAllPredictions()
+			predictions = CalculateAllPredictions(testerT);
+			predictionsSumms = FindPredictionsSumms(testerT);
+
+			SaveBothSidesDetailedStaisticsToCsv(testerT, "TRAINING");
+			SaveSingleSideDetailedStaisticsToCsv(testerT, "TRAINING");
+
+			Log("All done.");
+
+
+			void SaveSwarmStatisticsToCsv()
 			{
+				Disk2.WriteToProgramFiles("Swarm Statistics", "csv", csv, false);
+				Log("\"Swarm Statistics\" was saved to csv");
+			}
+
+			void SaveBothSidesDetailedStaisticsToCsv(Tester tester, string reason)
+			{
+				csv = Statistics.GetDetailedStatisticsCsv(predictionsSumms, tester, -5, 5, 0.001f, false);
+				Disk2.WriteToProgramFiles($"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Both sides)", "csv", csv, false);
+				Log($"Saved to csv \"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Both sides)\"");
+			}
+
+			void SaveSingleSideDetailedStaisticsToCsv(Tester tester, string reason)
+			{
+				csv = Statistics.GetDetailedStatisticsCsv(predictionsSumms, tester, 0, 5, 0.001f, true);
+				Disk2.WriteToProgramFiles($"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Single side)", "csv", csv, false);
+				Log($"Saved to csv \"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Single side)\"");
+			}
+
+			float[] FindPredictionsSumms(Tester tester)
+			{
+				float[] summs = new float[tester._testsCount];
+
+				for (int n = 0; n < files.Length; n++)
+					for (int test = 0; test < tester._testsCount; test++)
+						summs[test] += predictions[test, n];
+
+				return summs;
+			}
+
+			float[,] CalculateAllPredictions(Tester tester)
+			{
+				predictions = new float[tester._testsCount, files.Length];
+
 				for (int n = 0; n < files.Length; n++)
 				{
 					nn = NN.Load(files[n]);
 
 					for (int test = 0; test < tester._testsCount; test++)
-						predictions[test, n] = nn.Calculate(test, nn._testerV._tests[test], false);
+						predictions[test, n] = nn.Calculate(test, tester._tests[test], false);
 				}
+
+				Log("Predictions are calculated. Now wait...");
+				return predictions;
 			}
 
 			void WriteAnswer(int test)
 			{
 				csv += "correct answers,";
-				csv += tester._answers[test] + ",";
+				csv += testerV._answers[test] + ",";
 			}
 
 			void WritePredictions(int test)
@@ -72,8 +121,8 @@ namespace AbsurdMoneySimulations
 			{
 				csv += "results,";
 				for (int n = 0; n < files.Length; n++)
-					if (predictions[test, n] > 0 && tester._answers[test] > 0 ||
-						predictions[test, n] < 0 && tester._answers[test] < 0)
+					if (predictions[test, n] > 0 && testerV._answers[test] > 0 ||
+						predictions[test, n] < 0 && testerV._answers[test] < 0)
 						csv += "1,";
 					else
 						csv += "0,";
@@ -86,8 +135,8 @@ namespace AbsurdMoneySimulations
 				int summ = 0;
 
 				for (int n = 0; n < files.Length; n++)
-					if (predictions[test, n] > 0 && tester._answers[test] > 0 ||
-						predictions[test, n] < 0 && tester._answers[test] < 0)
+					if (predictions[test, n] > 0 && testerV._answers[test] > 0 ||
+						predictions[test, n] < 0 && testerV._answers[test] < 0)
 						summ++;
 					else
 						summ--;
@@ -105,8 +154,8 @@ namespace AbsurdMoneySimulations
 				for (int n = 0; n < files.Length; n++)
 					summ += predictions[test, n];
 
-				if (summ > 0 && tester._answers[test] > 0 ||
-					summ < 0 && tester._answers[test] < 0)
+				if (summ > 0 && testerV._answers[test] > 0 ||
+					summ < 0 && testerV._answers[test] < 0)
 					csv += ",1,";
 				else
 					csv += ",-1,";
@@ -123,8 +172,8 @@ namespace AbsurdMoneySimulations
 
 				if (similar)
 				{
-					if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
-						tester._answers[test] < 0 && predictions[test, 0] < 0)
+					if (testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+						testerV._answers[test] < 0 && predictions[test, 0] < 0)
 						csv += ",1,";
 					else
 						csv += ",-1,";
@@ -148,8 +197,8 @@ namespace AbsurdMoneySimulations
 
 				if (isPrediction)
 				{
-					if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
-						tester._answers[test] < 0 && predictions[test, 0] < 0)
+					if (testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+						testerV._answers[test] < 0 && predictions[test, 0] < 0)
 						csv += ",1,";
 					else
 						csv += ",-1,";
@@ -158,7 +207,7 @@ namespace AbsurdMoneySimulations
 					csv += ",0,";
 			}
 
-			void LogStatisticsForCutter(float start, float end, float step)
+			void LogAgreementStatisticsForCutters(float start, float end, float step)
 			{
 				string csv = "";
 				for (float cutter = start; cutter <= end; cutter += step)
@@ -166,7 +215,7 @@ namespace AbsurdMoneySimulations
 					float predictionsCount = 0;
 					float wins = 0;
 
-					for (int test = 0; test < tester._testsCount; test++)
+					for (int test = 0; test < testerV._testsCount; test++)
 					{
 						bool isPrediction = true;
 						for (int nn = 1; nn < files.Length; nn++)
@@ -182,8 +231,8 @@ namespace AbsurdMoneySimulations
 						{
 							predictionsCount++;
 
-							if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
-								tester._answers[test] < 0 && predictions[test, 0] < 0)
+							if (testerV._answers[test] > 0 && predictions[test, 0] > 0 ||
+								testerV._answers[test] < 0 && predictions[test, 0] < 0)
 								wins++;
 						}
 					}
@@ -193,37 +242,6 @@ namespace AbsurdMoneySimulations
 				}
 				Disk2.WriteToProgramFiles("Swarm Cutters Statistics 2 (agreement)", "csv", csv, false);
 				Log("\"Swarm Cutters Statistics 2 (agreement)\" saved to csv");
-			}
-
-			void LogStatisticsForCutter2(float start, float end, float step)
-			{
-				string csv = "";
-				for (float cutter = start; cutter <= end; cutter += step)
-				{
-					float predictionsCount = 0;
-					int wins = 0;
-
-					for (int test = 0; test < tester._testsCount; test++)
-					{
-						float superPrediction = 0;
-						for (int nn = 0; nn < files.Length; nn++)
-							superPrediction += predictions[test, nn];
-
-						if (Math.Abs(superPrediction) >= cutter)
-						{
-							predictionsCount++;
-
-							if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
-								tester._answers[test] < 0 && predictions[test, 0] < 0)
-								wins++;
-						}
-					}
-
-					//Logger.Log($"d{cutter}: {wins}/{predictionsCount} ({wins / predictionsCount})");
-					csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount},count,{predictionsCount / tester._testsCount},randomness,{Math2.CalculateRandomness(wins, (int)predictionsCount, 0.5f)}\n";
-				}
-				Disk2.WriteToProgramFiles("Swarm Cutters Statistics 2 (superPrediciton)", "csv", csv, false);
-				Log("\"Swarm Cutters Statistics 2 (superPrediciton)\" saved to csv");
 			}
 		}
 

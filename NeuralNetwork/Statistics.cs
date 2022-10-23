@@ -190,47 +190,47 @@ namespace AbsurdMoneySimulations
 
 		public static void FindDetailedSectionsStatistics(Tester tester, string name)
 		{
-			string csv = Method(-1, 1, 0.001f, false);
+			string csv = GetDetailedStatisticsCsv(_predictions, tester, -1, 1, 0.001f, false);
 			Disk2.WriteToProgramFiles($"Detailed Sections Statistics ({name}) (Both sides)", "csv", csv, false);
 			Log($"Detatiled sections statistics created ({name}) (Both sides)");
 
-			csv = Method(0, 1, 0.001f, true);
+			csv = GetDetailedStatisticsCsv(_predictions, tester, 0, 1, 0.001f, true);
 			Disk2.WriteToProgramFiles($"Detailed Sections Statistics ({name}) (Single Side)", "csv", csv, false);
-			Log($"Detatiled sections statistics created ({name}) (Single side)");
+			Log($"Detatiled sections statistics created ({name}) (Single side)");			
+		}
 
-			string Method(float cutterMin, float cutterMax, float step, bool SingleSide)
+		public static string GetDetailedStatisticsCsv(float[] predictions, Tester tester, float cutterMin, float cutterMax, float step, bool SingleSide)
+		{
+			float predictionsCount = 0;
+			float wins = 0;
+			string csv = "";
+			for (float cutter = cutterMin; cutter <= cutterMax; cutter += step)
 			{
-				float predictionsCount = 0;
-				float wins = 0;
-				string csv = "";
-				for (float cutter = cutterMin; cutter <= cutterMax; cutter += step)
-				{
-					predictionsCount = 0;
-					wins = 0;
+				predictionsCount = 0;
+				wins = 0;
 
-					for (int test = 0; test < tester._testsCount; test++)
-						if (!SingleSide)
-						{
-							if (cutter >= 0 && _predictions[test] >= cutter ||
-								cutter < 0 && _predictions[test] <= cutter)
-								CheckWin(test);
-						}
-						else if (MathF.Abs(_predictions[test]) >= cutter)
+				for (int test = 0; test < tester._testsCount; test++)
+					if (!SingleSide)
+					{
+						if (cutter >= 0 && predictions[test] >= cutter ||
+							cutter < 0 && predictions[test] <= cutter)
 							CheckWin(test);
+					}
+					else if (MathF.Abs(predictions[test]) >= cutter)
+						CheckWin(test);
 
-					if (predictionsCount > 0)
-						csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount},from,{predictionsCount / tester._testsCount}\n";
-				}
-				return csv;
+				if (predictionsCount > 0)
+					csv += $"cutter:,{cutter},{wins},/,{predictionsCount},=,WINRATE:,{wins / predictionsCount},count,{predictionsCount / tester._testsCount},randomness,{Math2.CalculateRandomness(wins, (int)predictionsCount, 0.5f)}\n";
+			}
+			return csv;
 
-				void CheckWin(int test)
-				{
-					predictionsCount++;
+			void CheckWin(int test)
+			{
+				predictionsCount++;
 
-					if (tester._answers[test] > 0 && _predictions[test] > 0 ||
-						tester._answers[test] < 0 && _predictions[test] < 0)
-						wins++;
-				}
+				if (tester._answers[test] > 0 && predictions[test] > 0 ||
+					tester._answers[test] < 0 && predictions[test] < 0)
+					wins++;
 			}
 		}
 	}
