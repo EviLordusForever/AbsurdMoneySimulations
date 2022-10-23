@@ -30,9 +30,10 @@ namespace AbsurdMoneySimulations
 			}
 
 			LogStatisticsForCutter(0, 0.8f, 0.01f);
+			LogStatisticsForCutter2(0, 5f, 0.001f);
 
-			Disk2.WriteToProgramFiles("Swarm test", "csv", csv, false);
-			Logger.Log("done");
+			Disk2.WriteToProgramFiles("Swarm Statistics", "csv", csv, false);
+			Log("\"Swarm Statistics\" saved to csv");
 
 			void CalculateAllPredictions()
 			{
@@ -187,10 +188,42 @@ namespace AbsurdMoneySimulations
 						}
 					}
 
-					Logger.Log($"d{cutter}: {wins}/{predictionsCount} ({wins / predictionsCount})");
+					//Logger.Log($"d{cutter}: {wins}/{predictionsCount} ({wins / predictionsCount})");
 					csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount}\n";
 				}
-				Disk2.WriteToProgramFiles("cuttersTest", "csv", csv, false); 
+				Disk2.WriteToProgramFiles("Swarm Cutters Statistics 2 (agreement)", "csv", csv, false);
+				Log("\"Swarm Cutters Statistics 2 (agreement)\" saved to csv");
+			}
+
+			void LogStatisticsForCutter2(float start, float end, float step)
+			{
+				string csv = "";
+				for (float cutter = start; cutter <= end; cutter += step)
+				{
+					float predictionsCount = 0;
+					int wins = 0;
+
+					for (int test = 0; test < tester._testsCount; test++)
+					{
+						float superPrediction = 0;
+						for (int nn = 0; nn < files.Length; nn++)
+							superPrediction += predictions[test, nn];
+
+						if (Math.Abs(superPrediction) >= cutter)
+						{
+							predictionsCount++;
+
+							if (tester._answers[test] > 0 && predictions[test, 0] > 0 ||
+								tester._answers[test] < 0 && predictions[test, 0] < 0)
+								wins++;
+						}
+					}
+
+					//Logger.Log($"d{cutter}: {wins}/{predictionsCount} ({wins / predictionsCount})");
+					csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount},count,{predictionsCount / tester._testsCount},randomness,{Math2.CalculateRandomness(wins, (int)predictionsCount, 0.5f)}\n";
+				}
+				Disk2.WriteToProgramFiles("Swarm Cutters Statistics 2 (superPrediciton)", "csv", csv, false);
+				Log("\"Swarm Cutters Statistics 2 (superPrediciton)\" saved to csv");
 			}
 		}
 

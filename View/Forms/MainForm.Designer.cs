@@ -63,7 +63,7 @@
 			// 
 			// button4
 			// 
-			this.button4.Location = new System.Drawing.Point(12, 186);
+			this.button4.Location = new System.Drawing.Point(12, 215);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(456, 23);
 			this.button4.TabIndex = 3;
@@ -97,7 +97,7 @@
 			this.button7.Name = "button7";
 			this.button7.Size = new System.Drawing.Size(456, 23);
 			this.button7.TabIndex = 6;
-			this.button7.Text = "Neural Network Evolution By Back Propagation";
+			this.button7.Text = "Neural Network Evolution";
 			this.button7.UseVisualStyleBackColor = true;
 			this.button7.Click += new System.EventHandler(this.button7_Click);
 			// 
@@ -117,7 +117,7 @@
 			this.button9.Name = "button9";
 			this.button9.Size = new System.Drawing.Size(456, 23);
 			this.button9.TabIndex = 8;
-			this.button9.Text = "Swarm";
+			this.button9.Text = "Swarm Statistics";
 			this.button9.UseVisualStyleBackColor = true;
 			this.button9.Click += new System.EventHandler(this.button9_Click);
 			// 
@@ -143,7 +143,7 @@
 			// 
 			// button11
 			// 
-			this.button11.Location = new System.Drawing.Point(12, 276);
+			this.button11.Location = new System.Drawing.Point(12, 186);
 			this.button11.Name = "button11";
 			this.button11.Size = new System.Drawing.Size(456, 23);
 			this.button11.TabIndex = 11;

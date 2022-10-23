@@ -221,7 +221,7 @@ namespace AbsurdMoneySimulations
 			{
 				_generation++;
 
-				Log($"G{_generation} ({localGeneration}) ({_generation % 20})");
+				Log($"G{_generation} ({localGeneration + 1}) ({localGeneration % 20})");
 
 				_vanishedGradientsCount = 0;
 				_cuttedGradientsCount = 0;

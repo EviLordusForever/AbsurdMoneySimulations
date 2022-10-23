@@ -209,7 +209,6 @@ namespace AbsurdMoneySimulations
 					wins = 0;
 
 					for (int test = 0; test < tester._testsCount; test++)
-					{
 						if (!SingleSide)
 						{
 							if (cutter >= 0 && _predictions[test] >= cutter ||
@@ -218,7 +217,6 @@ namespace AbsurdMoneySimulations
 						}
 						else if (MathF.Abs(_predictions[test]) >= cutter)
 							CheckWin(test);
-					}
 
 					if (predictionsCount > 0)
 						csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount},from,{predictionsCount / tester._testsCount}\n";
