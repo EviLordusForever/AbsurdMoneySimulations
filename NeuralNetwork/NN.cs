@@ -29,79 +29,12 @@ namespace AbsurdMoneySimulations
 
 		public string _name;
 
-		public int _generation;
+		private int _generation;
 
 		[JsonIgnore] public int _vanishedGradientsCount;
 		[JsonIgnore] public int _cuttedGradientsCount;
 
-		public static NN CreateBasicNN()
-		{
-			NN nn = new NN();
 
-			nn._layers = new List<Layer>();
-
-			nn._horizon = 60;
-			nn._inputWindow = 300;
-			nn._weightsInitMin = -1f;
-			nn._weightsInitMax = 1f;
-
-			nn._gradientCutter = 10f;
-
-			nn._biasInput = 0.01f;
-
-			nn._LEARNING_RATE = 0.001f; //0.05f
-			nn._MOMENTUM = 0f; //0.8f
-
-			nn._inputAF = new SoftSign();
-			nn._answersAF = new SoftSign();
-
-			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
-
-			nn._generation = 1;
-
-			/*			nn._layers.Add(new LayerMegatron(nn, nn._testerE._testsCount, 3, 271, 30, 1, new SoftSign()));   //136 x 30 x 10 = 
-						nn._layers[0].FillWeightsRandomly();
-
-						nn._layers.Add(new LayerCybertron(nn, nn._testerE._testsCount, 3, 271, 5, 15, new SoftSign())); //6 x 136 x 10 = 
-						nn._layers[1].FillWeightsRandomly();
-
-						nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 10, 15, new SoftSign())); //5 x 60 = 300
-						nn._layers[2].FillWeightsRandomly();
-
-						nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 10, new SoftSign())); //5 x 5 =  25
-						nn._layers[3].FillWeightsRandomly();
-
-						nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, new SoftSign())); //5 x 5 =  25
-						nn._layers[4].FillWeightsRandomly();*/
-
-
-			/*layers.Add(new LayerMegatron(testerE.testsCount, 2, 271, 30, 1));   //271 x 30 x 2 = 
-			layers[0].FillWeightsRandomly();
-
-			layers.Add(new LayerCybertron(testerE.testsCount, 2, 271, 5, 10)); //2 x 271 x 5 =
-			layers[1].FillWeightsRandomly();
-
-			layers.Add(new LayerPerceptron(testerE.testsCount, 1, 10)); //10 x 1 = 10
-			layers[2].FillWeightsRandomly();*/
-
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers[0].FillWeightsRandomly();
-
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers[1].FillWeightsRandomly();
-
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 8, 0, new SoftSign())); //40 x 15 = 600
-			nn._layers[2].FillWeightsRandomly();
-
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 1, 5, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers[3].FillWeightsRandomly();
-
-			nn.Init();
-
-			Log("New Neural Network created!");
-			return nn;
-		}
 
 		public static void Save(NN nn)
 		{
@@ -190,6 +123,12 @@ namespace AbsurdMoneySimulations
 				_layers[l].InitLinksToOwnerNN(this);
 
 			Log("Links to this NN were initialized");
+		}
+
+		public void FillWeightsRandomly()
+		{
+			for (int l = 0; l < _layers.Count; l++)
+				_layers[l].FillWeightsRandomly();
 		}
 
 		public void EvolveByBackPropagtion()
@@ -548,6 +487,12 @@ namespace AbsurdMoneySimulations
 			}
 			else
 				return g;
+		}
+
+		public NN()
+		{
+			_layers = new List<Layer>();
+			_generation = 1;
 		}
 	}
 }

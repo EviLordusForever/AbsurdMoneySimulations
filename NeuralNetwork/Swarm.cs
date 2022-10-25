@@ -9,13 +9,13 @@ namespace AbsurdMoneySimulations
 		{
 			Log("Starting calculating swarm statistics...");
 
-			float[] predictionsSumms;
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 			NN nn = NN.Load();
 			
 			Tester testerV = nn._testerV;
 			Tester testerT = nn._testerE;
 			float[,] predictions;
+			float[] predictionsSumms;
 			string csv = "";
 
 			predictions = CalculateAllPredictions(testerV);
@@ -237,7 +237,6 @@ namespace AbsurdMoneySimulations
 						}
 					}
 
-					//Logger.Log($"d{cutter}: {wins}/{predictionsCount} ({wins / predictionsCount})");
 					csv += $"{cutter},{wins},/,{predictionsCount},=,{wins / predictionsCount}\n";
 				}
 				Disk2.WriteToProgramFiles("Swarm Cutters Statistics 2 (agreement)", "csv", csv, false);
@@ -247,20 +246,20 @@ namespace AbsurdMoneySimulations
 
 		public static void EvolveSwarm()
 		{
-			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			string[] networks = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 
 			while (true)
-				for (int nnn = 0; nnn < files.Length; nnn++)
+				for (int n = 0; n < networks.Length; n++)
 				{
-					NN nn = NN.Load(files[nnn]);
+					NN nn = NN.Load(networks[n]);
 					nn._LEARNING_RATE = 0.002f;
 					nn.EvolveByBackPropagtion(200);
 
 					Thread.Sleep(1000);
-					File.Delete(files[nnn]);
-					string[] file0 = Directory.GetFiles(Disk2._programFiles + "\\NN");
-					File.Copy(file0[0], files[nnn]);
-					Log($"Copied swarm nn #{nnn} to swarm");
+					File.Delete(networks[n]);
+					string standartNN = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
+					File.Copy(standartNN, networks[n]);
+					Log($"Copied swarm nn #{n} to swarm");
 					Thread.Sleep(1000);
 				}
 		}

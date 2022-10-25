@@ -20,7 +20,7 @@ namespace AbsurdMoneySimulations
 
 				for (int n = 0; ; n++)
 				{
-					nn = NN.CreateBasicNN();
+					nn = Builder.CreateBasicNN();
 
 					float er = nn.FindLossSquared(nn._testerE, false);
 					Log($"er {er}");
@@ -39,11 +39,11 @@ namespace AbsurdMoneySimulations
 
 		public static void RecreateNN()
 		{
-			Library.Disk2.DeleteFileFromProgramFiles("EvolveHistory.csv");
-			Library.Disk2.DeleteFileFromProgramFiles("weights.csv");
-			Library.Disk2.ClearDirectory(Library.Disk2._programFiles + "NN\\EarlyStopping");
+			Disk2.DeleteFileFromProgramFiles("EvolveHistory.csv");
+			Disk2.DeleteFileFromProgramFiles("weights.csv");
+			Disk2.ClearDirectory(Disk2._programFiles + "NN\\EarlyStopping");
 
-			NN nn = NN.CreateBasicNN();
+			NN nn = Builder.CreateBasicNN();
 			NN.Save(nn);
 		}
 

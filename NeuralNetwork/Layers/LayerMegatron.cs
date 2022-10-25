@@ -103,7 +103,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public LayerMegatron(NN ownerNN, int testsCount, int subsCount, int outsPerSubCount, int weightsPerSubCount, int step, float dropoutProbability, ActivationFunction af)
+		public LayerMegatron(NN ownerNN, int subsCount, int outsPerSubCount, int weightsPerSubCount, int step, float dropoutProbability, ActivationFunction af)
 		{
 			_type = "megatron";
 			_ownerNN = ownerNN;
@@ -112,6 +112,8 @@ namespace AbsurdMoneySimulations
 			_outsPerSubCount = outsPerSubCount;
 			_weightsPerSubCount = weightsPerSubCount;
 			_dropoutProbability = dropoutProbability;
+
+			int testsCount = ownerNN._testerE._testsCount;
 
 			_subs = new Node[subsCount];
 			for (int sub = 0; sub < _subs.Count(); sub++)

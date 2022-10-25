@@ -114,12 +114,14 @@ namespace AbsurdMoneySimulations
 			return BPGradients;
 		}
 
-		public LayerPerceptron(NN ownerNN, int testsCount, int nodesCount, int weightsCount, float dropoutProbability, ActivationFunction af)
+		public LayerPerceptron(NN ownerNN, int nodesCount, int weightsCount, float dropoutProbability, ActivationFunction af)
 		{
+			_type = "perceptron";
 			_ownerNN = ownerNN;
 			_af = af;
-			_type = "perceptron";
 			_dropoutProbability = dropoutProbability;
+
+			int testsCount = ownerNN._testerE._testsCount;
 
 			_nodes = new Node[nodesCount];
 			for (int i = 0; i < _nodes.Count(); i++)

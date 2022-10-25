@@ -16,7 +16,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestCreateSaveLoad()
 		{
-			NN nn = NN.CreateBasicNN();
+			NN nn = Builder.CreateBasicNN();
 			NN.Save(nn);
 			nn = NN.Load();
 		}
@@ -71,7 +71,7 @@ namespace AbsurdMoneySimulations
 
 		public static void StupiedTest()
 		{
-			NN nn = NN.CreateBasicNN();
+			NN nn = Builder.CreateBasicNN();
 
 			for (int i = 0; i < 100; i++)
 				Log(nn.FindLossSquared(nn._testerE, false));
@@ -195,7 +195,7 @@ namespace AbsurdMoneySimulations
 			NN nn = NN.Load();
 
 			nn._layers = new List<Layer>();
-			nn._layers.Add(new LayerPerceptron(nn, nn._testerE._testsCount, 5, 5, 0, new Linear()));
+			nn._layers.Add(new LayerPerceptron(nn, 5, 5, 0, new Linear()));
 
 			nn._layers[0].FillWeightsRandomly();
 

@@ -93,15 +93,17 @@ namespace AbsurdMoneySimulations
 			//And this
 		}
 
-		public LayerCybertron(NN ownerNN, int testsCount, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, float dropoutProbability, ActivationFunction af)
+		public LayerCybertron(NN ownerNN, int perceptronsCount, int weightsPerNodePerceptronCount, int nodesPerPerceptronCount, int outNodesSummCount, float dropoutProbability, ActivationFunction af)
 		{
 			_type = "cybertron";
-
+			_ownerNN = ownerNN;
 			_outNodesSummCount = outNodesSummCount;
+
+			int testsCount = ownerNN._testerE._testsCount;
 
 			_perceptrons = new LayerPerceptron[perceptronsCount];
 			for (int p = 0; p < _perceptrons.Count(); p++)
-				_perceptrons[p] = new LayerPerceptron(ownerNN, testsCount, nodesPerPerceptronCount, weightsPerNodePerceptronCount, dropoutProbability, af);
+				_perceptrons[p] = new LayerPerceptron(ownerNN, nodesPerPerceptronCount, weightsPerNodePerceptronCount, dropoutProbability, af);
 
 			InitValues(testsCount);
 		}
