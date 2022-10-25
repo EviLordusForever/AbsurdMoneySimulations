@@ -62,7 +62,7 @@ namespace AbsurdMoneySimulations
 
 			DrawIndicator2(Pens.Green, -30);
 
-			DrawAverageOfIndicators2();
+			DrawAverageOfIndicators();
 
 			Disk2.SaveImageToProgramFiles(bmp, "OTC2.bmp");
 			Logger.Log("done #2");
@@ -89,7 +89,7 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-			void DrawAverageOfIndicators2()
+			void DrawAverageOfIndicators()
 			{
 				float oldY = 0;
 				for (int v = 0; v < grafic.Length; v++)

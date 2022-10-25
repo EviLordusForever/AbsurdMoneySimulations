@@ -108,6 +108,11 @@ namespace AbsurdMoneySimulations
 			InitValues(testsCount);
 		}
 
+		public LayerCybertron()
+		{
+			_type = "cybertron";
+		}
+
 		public override void InitValues(int testsCount)
 		{
 			_values = new float[testsCount][][];

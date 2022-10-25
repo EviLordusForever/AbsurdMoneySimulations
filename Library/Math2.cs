@@ -108,5 +108,7 @@ namespace Library
 			var d = new MathNet.Numerics.Distributions.Binomial(p, n);
 			return d.CumulativeDistribution(k);
 		}
+
+		public static bool CheckIfIsNumberic(string value) => int.TryParse(value, out int _);
 	}
 }

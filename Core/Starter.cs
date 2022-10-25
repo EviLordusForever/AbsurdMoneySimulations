@@ -17,7 +17,7 @@
 
 			void RecreateNNThread()
 			{
-				if (UserAsker.Ask("Are you shure? Previous neural network will be deleted."))
+				if (UserAsker.Ask("Are you shure? Previous neural network will be deleted"))
 					Manager.RecreateNN();
 			}
 		}

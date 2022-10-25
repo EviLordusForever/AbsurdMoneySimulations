@@ -5,7 +5,7 @@ namespace AbsurdMoneySimulations
 {
 	public static class BrowserManager
 	{
-		public static IWebDriver _driver = null;
+		public static IWebDriver _driver;
 
 		public static void LoadBrowser(string link)
 		{

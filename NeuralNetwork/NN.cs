@@ -109,7 +109,7 @@ namespace AbsurdMoneySimulations
 		private void InitTesters()
 		{
 			_testerV.Init(this, "Grafic//ForValidation", "VALIDATION");
-			_testerE.Init(this, "Grafic//ForEvolution", "EVOLUTION");
+			_testerE.Init(this, "Grafic//ForTraining", "TRAINING");
 			Log("Testers were initialized");
 		}
 

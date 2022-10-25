@@ -20,7 +20,7 @@ namespace AbsurdMoneySimulations
 
 				for (int n = 0; ; n++)
 				{
-					nn = Builder.CreateBasicNN();
+					nn = Builder.CreateBasicGoodPerceptron();
 
 					float er = nn.FindLossSquared(nn._testerE, false);
 					Log($"er {er}");
@@ -39,12 +39,16 @@ namespace AbsurdMoneySimulations
 
 		public static void RecreateNN()
 		{
+			ClearPreviousNNHistory();
+			NN nn = Builder.CreateBasicGoodPerceptron();
+			NN.Save(nn);
+		}
+
+		public static void ClearPreviousNNHistory()
+		{
 			Disk2.DeleteFileFromProgramFiles("EvolveHistory.csv");
 			Disk2.DeleteFileFromProgramFiles("weights.csv");
 			Disk2.ClearDirectory(Disk2._programFiles + "NN\\EarlyStopping");
-
-			NN nn = Builder.CreateBasicNN();
-			NN.Save(nn);
 		}
 
 		public static void EvolveByBackPropagation()

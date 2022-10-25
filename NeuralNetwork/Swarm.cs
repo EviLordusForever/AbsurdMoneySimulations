@@ -267,10 +267,11 @@ namespace AbsurdMoneySimulations
 		public static void RecreateSwarm()
 		{
 			Disk2.ClearDirectory(Disk2._programFiles + "NN\\Swarm");
+			Manager.ClearPreviousNNHistory();
 
 			for (int i = 0; i < 10; i++)
 			{
-				NN nn = Builder.CreateBasicNN();
+				NN nn = Builder.CreateSmallMegatron2Subs();
 				NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
 				Log($"NN {i + 1}");
 			}

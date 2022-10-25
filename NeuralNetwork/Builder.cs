@@ -6,7 +6,7 @@ namespace AbsurdMoneySimulations
 {
 	public static class Builder
 	{
-		public static NN CreateBasicNN()
+		public static NN CreateBasicGoodPerceptron()
 		{
 			NN nn = new NN();
 
@@ -25,7 +25,7 @@ namespace AbsurdMoneySimulations
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
+			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForTraining", "TRAINING", 2, 0, 0);
 			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
 
 			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
@@ -58,7 +58,7 @@ namespace AbsurdMoneySimulations
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
+			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForTraining", "TRAINING", 2, 0, 0);
 			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
 
 			nn._layers.Add(new LayerMegatron(nn, 3, 271, 30, 1, 0, new SoftSign()));   //136 x 30 x 10 = 
@@ -92,7 +92,7 @@ namespace AbsurdMoneySimulations
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForEvolution", "EVOLUTION", 2, 0, 0);
+			nn._testerE = new Tester(nn, 4000, 1, "Grafic//ForTraining", "TRAINING", 2, 0, 0);
 			nn._testerV = new Tester(nn, 2000, 1, "Grafic//ForValidation", "VALIDATION", 2, 0, 0);
 
 			nn._layers.Add(new LayerMegatron(nn, 2, 271, 30, 1, 0, new SoftSign()));   //271 x 30 x 2 = 

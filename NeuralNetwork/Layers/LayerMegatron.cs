@@ -122,6 +122,11 @@ namespace AbsurdMoneySimulations
 			InitValues(testsCount);
 		}
 
+		public LayerMegatron()
+		{
+			_type = "megatron";
+		}
+
 		public override void InitValues(int testsCount)
 		{
 			_values = new float[testsCount][][];

@@ -130,6 +130,11 @@ namespace AbsurdMoneySimulations
 			InitValues(testsCount);
 		}
 
+		public LayerPerceptron()
+		{
+			_type = "perceptron";
+		}
+
 		public override void InitValues(int testsCount)
 		{
 			_values = new float[testsCount][][];
