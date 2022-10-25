@@ -1,12 +1,14 @@
 ﻿using OpenQA.Selenium;
 using System.Threading;
 using static AbsurdMoneySimulations.BrowserManager;
+using static AbsurdMoneySimulations.Logger;
+using Library;
 
 namespace AbsurdMoneySimulations
 {
 	public static class Trader
 	{
-		public static void Trade()
+		public static void Trade0()
 		{
 			LoadBrowser("https://google.com");
 			LoadCookies();
@@ -21,14 +23,47 @@ namespace AbsurdMoneySimulations
 			SaveCookies();
 		}
 
-		public static void Trade0()
+		public static void Trade()
 		{
-			OpenQuotex();		
+			LoadBrowser("https://google.com");
+			LoadCookies();
+			OpenQtx();		
 		}
 
-		public static void OpenQuotex()
+		public static void OpenQtx()
 		{
-			LoadBrowser("http://quotex.io");
+			DateTime dt = DateTime.Now;
+			string keys = $"\r\n\r\n[{GetDateToShow(dt)}[{GetTimeToShow(dt)}] ";
+
+			Navi("http://quotex.io");
+			if (!SignedIn())
+			{
+				var handles = _driver.WindowHandles;
+
+				WaitUserSignedIn();
+				SaveCookies();
+				SaveKeys();
+				Log("It is opened");
+			}
+
+			void WaitUserSignedIn()
+			{
+				while (!SignedIn()) { };
+			}
+
+			bool SignedIn()
+			{
+				return false;
+			}
+
+			void OnKeyPress()
+			{
+			}
+
+			void SaveKeys()
+			{
+				Disk2.WriteToProgramFiles("keys", "txt", keys, true);
+			}
 		}
 	}
 }
