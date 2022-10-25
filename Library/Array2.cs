@@ -4,9 +4,7 @@
 	{
 		public static T[] SubArray<T>(this T[] array, int offset, int length)
 		{
-			return array.Skip(offset)
-						.Take(length)
-						.ToArray();
+			return array.Skip(offset).Take(length).ToArray();
 		}
 
 		public static T[] Convert2DArrayTo1D<T>(T[][] array2D)

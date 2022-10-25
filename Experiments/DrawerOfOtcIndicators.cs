@@ -28,7 +28,7 @@ namespace AbsurdMoneySimulations
 			for (int i = 0; i < grafic.Length; i += 30)
 				gr.DrawLine(Pens.Black, i, 0, i, bmp.Height);
 
-			Library.Disk2.SaveImageToProgramFiles(bmp, "OTC.bmp");
+			Disk2.SaveImageToProgramFiles(bmp, "OTC.bmp");
 			Logger.Log("done #1");
 
 			//////////////////////////////
@@ -64,7 +64,7 @@ namespace AbsurdMoneySimulations
 
 			DrawAverageOfIndicators2();
 
-			Library.Disk2.SaveImageToProgramFiles(bmp, "OTC2.bmp");
+			Disk2.SaveImageToProgramFiles(bmp, "OTC2.bmp");
 			Logger.Log("done #2");
 
 

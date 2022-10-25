@@ -19,17 +19,17 @@
 
 		private void button4_Click(object sender, EventArgs e)
 		{
-			Core.StartTrader();
+			Starter.StartTrader();
 		}
 
 		private void MainForm_Load_1(object sender, EventArgs e)
 		{
-			Core.OnAppStarting();
+			Starter.OnAppStarting();
 		}
 
 		private void button6_Click(object sender, EventArgs e)
 		{
-			Core.RecreateNN();
+			Starter.StartRecreatingNN();
 		}
 
 		private void button5_Click(object sender, EventArgs e)
@@ -45,32 +45,37 @@
 
 		private void button7_Click(object sender, EventArgs e)
 		{
-			Core.StartEvolutionByBackPropgation();
+			Starter.StartEvolutionByBackPropgation();
 		}
 
 		private void button8_Click(object sender, EventArgs e)
 		{
-			Core.StartNeuralBattle();
+			Starter.StartNeuralBattle();
 		}
 
 		private void button9_Click(object sender, EventArgs e)
 		{
-			Core.StartSwarm();
+			Starter.StartSwarm();
 		}
 
 		private void button10_Click(object sender, EventArgs e)
 		{
-			Core.StartDrawOtcIndicators();
+			Starter.StartDrawOtcIndicators();
 		}
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			Core.StartFindDetailedSectionsStatistics();
+			Starter.StartFindDetailedSectionsStatistics();
 		}
 
 		private void button11_Click(object sender, EventArgs e)
 		{
-			Core.StartSwarmEvolution();
+			Starter.StartSwarmEvolution();
+		}
+
+		private void button12_Click(object sender, EventArgs e)
+		{
+			Starter.StartRecreatingSwarm();
 		}
 	}
 }

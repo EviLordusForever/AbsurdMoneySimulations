@@ -27,3 +27,4 @@ E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\WebDriverManager.d
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\Test1.js
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\Test2.js
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\MathNet.Numerics.dll
+E:\Programmer\AbsurdMoneySimulations\obj\Debug\net6.0-windows\AbsurdMoneySimulations.Properties.Resources.resources

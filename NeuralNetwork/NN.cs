@@ -38,12 +38,16 @@ namespace AbsurdMoneySimulations
 
 		public static void Save(NN nn)
 		{
-			var files = Directory.GetFiles(Disk2._programFiles + "\\NN");
+			string path = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
+			Save(nn, path);
+		}
 
+		public static void Save(NN nn, string path)
+		{
 			JsonSerializerSettings jss = new JsonSerializerSettings();
 			jss.Formatting = Formatting.Indented;
 
-			File.WriteAllText(files[0], JsonConvert.SerializeObject(nn, jss));
+			File.WriteAllText(path, JsonConvert.SerializeObject(nn, jss));
 			Log("Neural Network saved!");
 		}
 

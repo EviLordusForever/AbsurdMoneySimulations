@@ -263,5 +263,17 @@ namespace AbsurdMoneySimulations
 					Thread.Sleep(1000);
 				}
 		}
+
+		public static void RecreateSwarm()
+		{
+			Disk2.ClearDirectory(Disk2._programFiles + "NN\\Swarm");
+
+			for (int i = 0; i < 10; i++)
+			{
+				NN nn = Builder.CreateBasicNN();
+				NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
+				Log($"NN {i + 1}");
+			}
+		}
 	}
 }

@@ -5,7 +5,7 @@ namespace AbsurdMoneySimulations
 {
 	public static class Trader
 	{
-		public static void DoIt()
+		public static void Trade()
 		{
 			LoadBrowser("https://google.com");
 			UserAsker.SayWait("So, let's we begin!");
