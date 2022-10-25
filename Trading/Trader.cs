@@ -24,7 +24,34 @@ namespace AbsurdMoneySimulations
 		{
 			LoadBrowser("https://google.com");
 			LoadCookies();
-			OpenQtx();		
+			OpenQtx();
+
+			List<float> grafic = new List<float>();
+			List<float> derivativeG = new List<float>();
+			List<float> horizonG = new List<float>();
+
+			Swarm.Load();
+
+			while (true)
+			{
+				UpdateGrafic();
+				float prediction = Swarm.Calculate(Array2.SubArray(horizonG.ToArray(), horizonG.Count - Swarm.swarm[0]._horizon - 1, Swarm.swarm[0]._horizon));
+				Thread.Sleep(999);
+			}
+
+			void UpdateGrafic()
+			{
+				grafic.Add(GetQtxGraficValue());
+				derivativeG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - 2]);
+				horizonG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - swarm[0]._horizon]);
+			}
+		}
+
+
+
+		public static float GetQtxGraficValue()
+		{
+			return 0;
 		}
 
 		public static void OpenQtx()

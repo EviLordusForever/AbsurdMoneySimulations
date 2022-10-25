@@ -34,8 +34,6 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore] public int _vanishedGradientsCount;
 		[JsonIgnore] public int _cuttedGradientsCount;
 
-
-
 		public static void Save(NN nn)
 		{
 			string path = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];

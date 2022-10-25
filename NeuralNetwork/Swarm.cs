@@ -5,6 +5,9 @@ namespace AbsurdMoneySimulations
 {
 	public static class Swarm
 	{
+		public static NN[] swarm;
+		public static string[] networks;
+
 		public static void CalculateSwarmStatistics()
 		{
 			Log("Starting calculating swarm statistics...");
@@ -246,20 +249,20 @@ namespace AbsurdMoneySimulations
 
 		public static void EvolveSwarm()
 		{
-			string[] networks = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			networks = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 
 			while (true)
 				for (int n = 0; n < networks.Length; n++)
 				{
-					NN nn = NN.Load(networks[n]);
-					nn._LEARNING_RATE = 0.002f;
-					nn.FitByBackPropagtion(200);
+					swarm[n]._LEARNING_RATE = 0.002f;
+					swarm[n].FitByBackPropagtion(200);
+
 
 					Thread.Sleep(1000);
 					File.Delete(networks[n]);
 					string standartNN = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
-					File.Copy(standartNN, networks[n]);
-					Log($"Copied swarm nn #{n} to swarm");
+					NN.Save(swarm[n], networks[n]);
+					Log($"Saved nn #{n} to swarm");
 					Thread.Sleep(1000);
 				}
 		}
@@ -275,6 +278,24 @@ namespace AbsurdMoneySimulations
 				NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
 				Log($"NN {i + 1}");
 			}
+		}
+
+		public static void Load()
+		{
+			string[] networks = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			swarm = new NN[networks.Length];
+
+			for (int n = 0; n < networks.Length; n++)
+				swarm[n] = NN.Load(networks[n]);
+		}
+
+		public static float Calculate(float[] input)
+		{
+			float prediction = 0;
+			for (int n = 0; n < swarm.Length; n++)
+				prediction += swarm[n].Calculate(0, input, false);
+
+			return prediction;
 		}
 	}
 }
