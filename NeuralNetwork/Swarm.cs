@@ -253,7 +253,7 @@ namespace AbsurdMoneySimulations
 				{
 					NN nn = NN.Load(networks[n]);
 					nn._LEARNING_RATE = 0.002f;
-					nn.EvolveByBackPropagtion(200);
+					nn.FitByBackPropagtion(200);
 
 					Thread.Sleep(1000);
 					File.Delete(networks[n]);

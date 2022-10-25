@@ -56,7 +56,7 @@ namespace AbsurdMoneySimulations
 			NN nn = NN.Load();
 			nn._LEARNING_RATE = 0.002f;
 
-			nn.EvolveByBackPropagtion();
+			nn.FitByBackPropagtion();
 		}
 
 		public static void FindDetailedSectionsStatistics()

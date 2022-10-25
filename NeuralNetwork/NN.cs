@@ -135,14 +135,16 @@ namespace AbsurdMoneySimulations
 				_layers[l].FillWeightsRandomly();
 		}
 
-		public void EvolveByBackPropagtion()
+		public void FitByBackPropagtion()
 		{
-			EvolveByBackPropagtion(1000000000);
+			FitByBackPropagtion(1000000000);
 		}
 
-		public void EvolveByBackPropagtion(int count)
+		public void FitByBackPropagtion(int count)
 		{
 			//Just very very important function
+
+			bool needDropout = DefineIfNeedDropout();
 
 			float v = 0;
 			float old_v = 0;
@@ -177,7 +179,8 @@ namespace AbsurdMoneySimulations
 				oldVLoss = vLoss;
 				vLoss = FindLoss(_testerV, false);
 
-				Dropout();
+				if (needDropout)
+					Dropout();
 
 				oldTLoss = tLoss;
 				tLoss = FindLoss(_testerE, true);
@@ -257,17 +260,28 @@ namespace AbsurdMoneySimulations
 				else
 					return 1f;
 			}
+
+			bool DefineIfNeedDropout()
+			{
+				if (_layers.Count > 1)
+				{
+					float dropoutRange = 0;
+					for (int l = 1; l < _layers.Count - 1; l++)
+						dropoutRange += _layers[l]._dropoutProbability;
+
+					return dropoutRange > 0;
+				}
+				else
+					return false;
+			}
 		}
 
 		public void Dropout()
 		{
-			if (_layers.Count > 1)
-			{
-				for (int l = 1; l < _layers.Count - 1; l++)
-					_layers[l].Dropout();
+			for (int l = 1; l < _layers.Count - 1; l++)
+				_layers[l].Dropout();
 
-				Log("Dropped out!");
-			}
+			Log("Dropped out!");
 		}
 
 		private void UseMomentumForBPGradients(Tester tester)
