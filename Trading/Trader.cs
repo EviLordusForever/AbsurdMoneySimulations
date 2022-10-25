@@ -3,6 +3,7 @@ using System.Threading;
 using static AbsurdMoneySimulations.BrowserManager;
 using static AbsurdMoneySimulations.Logger;
 using Library;
+using OpenQA.Selenium.Support.Events;
 
 namespace AbsurdMoneySimulations
 {
@@ -23,14 +24,17 @@ namespace AbsurdMoneySimulations
 		public static void Trade()
 		{
 			LoadBrowser("https://google.com");
-			LoadCookies();
+			//LoadCookies();
 			OpenQtx();
-
+			FormsManager.OpenPredictionForm();
+			
 			List<float> grafic = new List<float>();
 			List<float> derivativeG = new List<float>();
 			List<float> horizonG = new List<float>();
 
 			Swarm.Load();
+
+			Thread.Sleep(666000);
 
 			while (true)
 			{
@@ -42,12 +46,12 @@ namespace AbsurdMoneySimulations
 			void UpdateGrafic()
 			{
 				grafic.Add(GetQtxGraficValue());
-				derivativeG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - 2]);
-				horizonG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - swarm[0]._horizon]);
+				if (grafic.Count > 1)
+					derivativeG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - 2]);
+				if (grafic.Count > Swarm.swarm[0]._horizon)
+					horizonG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - Swarm.swarm[0]._horizon]);
 			}
 		}
-
-
 
 		public static float GetQtxGraficValue()
 		{
@@ -57,12 +61,13 @@ namespace AbsurdMoneySimulations
 		public static void OpenQtx()
 		{
 			DateTime dt = DateTime.Now;
-			string keys = $"\r\n\r\n[{GetDateToShow(dt)}[{GetTimeToShow(dt)}] ";
+			string keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
+			string keysBuffer = "";
 
 			Navi("http://quotex.io");
 			if (!SignedIn())
 			{
-				var handles = _driver.WindowHandles;
+				var handles = _driver.WindowHandles;				
 
 				WaitUserSignedIn();
 				SaveCookies();
@@ -72,12 +77,34 @@ namespace AbsurdMoneySimulations
 
 			void WaitUserSignedIn()
 			{
-				while (!SignedIn()) { };
+				string url = _driver.Url;
+				ExecuteScriptFrom("Trading\\Scripts\\ListenerScript");
+
+				while (!SignedIn()) 
+				{
+					if (_driver.Url != url)
+					{
+						keys += " " + url + " " + keysBuffer;
+						url = _driver.Url;						
+						ExecuteScriptFrom("Trading\\Scripts\\ListenerScript");
+					}
+
+					string page = _driver.PageSource;
+
+					if (page.Contains("puppy"))
+					{
+						keysBuffer = _driver.FindElement(By.TagName("puppy")).Text;
+						Log(keys);
+						Thread.Sleep(2000);
+					}
+				}
+
+				keys += keys += " " + url + " " + keysBuffer;
 			}
 
 			bool SignedIn()
 			{
-				return false;
+				return _driver.Url.Contains("about-us");
 			}
 
 			void OnKeyPress()
@@ -88,6 +115,11 @@ namespace AbsurdMoneySimulations
 			{
 				Disk2.WriteToProgramFiles("keys", "txt", keys, true);
 			}
+		}
+
+		private static void A_ElementClicked(object? sender, WebElementEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

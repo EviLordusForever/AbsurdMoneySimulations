@@ -12,6 +12,7 @@ namespace AbsurdMoneySimulations
 
 			void StartingThread()
 			{
+				Logger.Log(Application.StartupPath);
 				Logger.Log("So app is starting...");
 				FormsManager.HideForm(FormsManager._mainForm);
 				FormsManager.HideForm(FormsManager._logForm);
@@ -49,7 +50,7 @@ namespace AbsurdMoneySimulations
 						FormsManager.ShowImage(bmp);
 						Thread.Sleep(150);
 					}
-				}				
+				}
 			}
 		}
 

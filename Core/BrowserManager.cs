@@ -4,21 +4,28 @@ using Newtonsoft.Json;
 using Library;
 using static AbsurdMoneySimulations.Logger;
 using System.Collections.ObjectModel;
+using OpenQA.Selenium.Support.Events;
+
 
 namespace AbsurdMoneySimulations
 {
 	public static class BrowserManager
 	{
 		public static IWebDriver _driver;
+		public static ChromeDriverService _chromeDriverService;
 
 		public static void LoadBrowser(string link)
 		{
-			var DeviceDriver = ChromeDriverService.CreateDefaultService();
-			DeviceDriver.HideCommandPromptWindow = true;
+			_chromeDriverService = ChromeDriverService.CreateDefaultService();
+			_chromeDriverService.HideCommandPromptWindow = true;
 			ChromeOptions options = new ChromeOptions();
 			options.AddArguments("--disable-infobars");
-			_driver = new ChromeDriver(DeviceDriver, options);
+			_driver = new ChromeDriver(_chromeDriverService, options);
 			_driver.Manage().Window.Maximize();
+
+			//EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(_driver);
+			//eventFiringWebDriver
+
 			Navi(link);
 			_driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
 		}
@@ -35,9 +42,9 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void ExecuteScript(string scriptName)
+		public static void ExecuteScriptFrom(string scriptPath)
 		{
-			string script = File.ReadAllText($"{Disk2._currentDirectory}Scripts\\{scriptName}.js");
+			string script = File.ReadAllText($"{Disk2._currentDirectory}{scriptPath}.js");
 			_driver.Scripts().ExecuteScript(script);
 		}
 

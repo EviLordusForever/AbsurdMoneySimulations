@@ -6,6 +6,7 @@
 		public static BetsSimulatorForm _betsSimulatorForm;
 		public static ShowForm _showForm;
 		public static LogForm _logForm;
+		public static PredictionForm _predictionForm;
 
 		public static void ShowImage(Image img)
 		{
@@ -35,6 +36,22 @@
 				_betsSimulatorForm.Show();
 				_betsSimulatorForm.WindowState = FormWindowState.Normal;
 				_betsSimulatorForm.BringToFront();
+			}));
+		}
+
+		public static void OpenPredictionForm()
+		{
+			_mainForm.Invoke(new Action(() =>
+			{
+				if (_predictionForm == null || _predictionForm.IsDisposed)
+					_predictionForm = new PredictionForm();
+
+				_predictionForm.Show();
+				_predictionForm.WindowState = FormWindowState.Normal;
+				Rectangle bounds = Screen.PrimaryScreen.Bounds;
+				_predictionForm.Location = new Point((bounds.Width - _predictionForm.Width) / 2, bounds.Height - _predictionForm.Height);
+				_predictionForm.BringToFront();
+				_predictionForm.TopMost = true;
 			}));
 		}
 

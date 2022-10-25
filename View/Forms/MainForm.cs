@@ -77,5 +77,10 @@
 		{
 			Starter.StartRecreatingSwarm();
 		}
+
+		private void MainForm_KeyDown(object sender, KeyEventArgs e)
+		{
+
+		}
 	}
 }

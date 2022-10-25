@@ -61,7 +61,7 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
-      "Selenium.WebDriver/4.4.0": {
+      "Selenium.WebDriver/4.5.1": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "13.0.1"
@@ -314,10 +314,10 @@
         "packageIcon.png"
       ]
     },
-    "Selenium.WebDriver/4.4.0": {
-      "sha512": "gg/fFUW+SQEdOMaZvkKSau6m4xbMG2qBW6cCW6nGW1CtO0coA8OLYpHcQLpsKcc6q68i/Uq1wjtiVfiNXykJUQ==",
+    "Selenium.WebDriver/4.5.1": {
+      "sha512": "ztu9Qv2n5/NkqPs0MQ3nojMJuW2PVHrAKDukmT77HbYAGhZI370Hp0EJNqyucJuud937Lr/qvXsoOtLZ18VFnw==",
       "type": "package",
-      "path": "selenium.webdriver/4.4.0",
+      "path": "selenium.webdriver/4.5.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -329,7 +329,7 @@
         "lib/net5.0/WebDriver.dll",
         "lib/netstandard2.0/WebDriver.dll",
         "lib/netstandard2.1/WebDriver.dll",
-        "selenium.webdriver.4.4.0.nupkg.sha512",
+        "selenium.webdriver.4.5.1.nupkg.sha512",
         "selenium.webdriver.nuspec"
       ]
     },
@@ -590,7 +590,7 @@
     "net6.0-windows7.0": [
       "MathNet.Numerics >= 5.0.0",
       "Newtonsoft.Json >= 13.0.1",
-      "Selenium.WebDriver >= 4.4.0",
+      "Selenium.WebDriver >= 4.5.1",
       "Selenium.WebDriver.ChromeDriver >= 106.0.5249.6100",
       "WebDriverManager >= 2.16.0"
     ]
@@ -644,7 +644,7 @@
           },
           "Selenium.WebDriver": {
             "target": "Package",
-            "version": "[4.4.0, )"
+            "version": "[4.5.1, )"
           },
           "Selenium.WebDriver.ChromeDriver": {
             "target": "Package",

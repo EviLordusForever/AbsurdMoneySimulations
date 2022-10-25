@@ -50,7 +50,7 @@
             },
             "Selenium.WebDriver": {
               "target": "Package",
-              "version": "[4.4.0, )"
+              "version": "[4.5.1, )"
             },
             "Selenium.WebDriver.ChromeDriver": {
               "target": "Package",

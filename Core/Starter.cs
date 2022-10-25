@@ -43,6 +43,7 @@
 		public static void StartTrader()
 		{
 			Thread myThread = new Thread(StartTraderThread);
+			myThread.Name = "Trader Thread";
 			myThread.Start();
 
 			void StartTraderThread()

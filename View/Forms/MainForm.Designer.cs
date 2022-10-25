@@ -41,8 +41,8 @@
 			this.button11 = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.panel2 = new System.Windows.Forms.Panel();
-			this.panel3 = new System.Windows.Forms.Panel();
 			this.button12 = new System.Windows.Forms.Button();
+			this.panel3 = new System.Windows.Forms.Panel();
 			this.panel4 = new System.Windows.Forms.Panel();
 			this.panel5 = new System.Windows.Forms.Panel();
 			this.panel1.SuspendLayout();
@@ -183,6 +183,16 @@
 			this.panel2.Size = new System.Drawing.Size(464, 89);
 			this.panel2.TabIndex = 13;
 			// 
+			// button12
+			// 
+			this.button12.Location = new System.Drawing.Point(3, 3);
+			this.button12.Name = "button12";
+			this.button12.Size = new System.Drawing.Size(456, 23);
+			this.button12.TabIndex = 12;
+			this.button12.Text = "Recreate Swarm";
+			this.button12.UseVisualStyleBackColor = true;
+			this.button12.Click += new System.EventHandler(this.button12_Click);
+			// 
 			// panel3
 			// 
 			this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -194,16 +204,6 @@
 			this.panel3.Name = "panel3";
 			this.panel3.Size = new System.Drawing.Size(464, 118);
 			this.panel3.TabIndex = 14;
-			// 
-			// button12
-			// 
-			this.button12.Location = new System.Drawing.Point(3, 3);
-			this.button12.Name = "button12";
-			this.button12.Size = new System.Drawing.Size(456, 23);
-			this.button12.TabIndex = 12;
-			this.button12.Text = "Recreate Swarm";
-			this.button12.UseVisualStyleBackColor = true;
-			this.button12.Click += new System.EventHandler(this.button12_Click);
 			// 
 			// panel4
 			// 
@@ -239,6 +239,7 @@
 			this.Text = "So,";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load_1);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.panel1.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);
 			this.panel3.ResumeLayout(false);
