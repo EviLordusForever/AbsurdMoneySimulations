@@ -85,10 +85,10 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void ClearCookies()
+		public static void DeleteCookies()
 		{
-			Disk2.DeleteFileFromProgramFiles("Cookies\\Cookies.json");
 			_driver.Manage().Cookies.DeleteAllCookies();
+			Disk2.DeleteFileFromProgramFiles("Cookies\\Cookies.json");
 		}
 	}
 }

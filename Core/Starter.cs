@@ -2,13 +2,6 @@
 {
 	public static class Starter
 	{
-		public static void OnAppStarting()
-		{
-			Logger.Log("I am starting...");
-			FormsManager._mainForm.BringToFront();
-			Logger.Log("Hello my dear!");
-		}
-
 		public static void StartRecreatingNN()
 		{
 			Thread myThread = new Thread(RecreateNNThread);

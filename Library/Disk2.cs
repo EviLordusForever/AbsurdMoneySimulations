@@ -143,5 +143,10 @@ namespace Library
 		{
 			File.Delete($"{_programFiles}\\{path}");
 		}
+
+		public static string[] GetFilesFromProgramFiles(string directory)
+		{
+			return Directory.GetFiles($"{_programFiles}{directory}");
+		}
 	}
 }

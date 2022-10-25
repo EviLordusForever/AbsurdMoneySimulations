@@ -8,7 +8,7 @@ namespace AbsurdMoneySimulations
 {
 	public static class Trader
 	{
-		public static void Trade0()
+		public static void Test()
 		{
 			LoadBrowser("https://google.com");
 			LoadCookies();
@@ -17,9 +17,6 @@ namespace AbsurdMoneySimulations
 			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
 			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");
 			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
-
-			Navi("vk.com");
-			Thread.Sleep(15000);
 			SaveCookies();
 		}
 
