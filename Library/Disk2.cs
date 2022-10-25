@@ -10,8 +10,8 @@ namespace Library
 
 		static Disk2()
 		{
-			_currentDirectory = Environment.CurrentDirectory;
-			_programFiles = _currentDirectory + "\\ProgramFiles\\";
+			_currentDirectory = $"{Environment.CurrentDirectory}\\";
+			_programFiles = $"{_currentDirectory}ProgramFiles\\";
 
 			if (!Directory.Exists(_programFiles))
 			{
