@@ -54,18 +54,19 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void GetGraficOneSecond()
+		public static void GetGraphLive(int delaySeconds)
 		{
 			LoadBrowser("https://google.com");
 			LoadCookies();
+			CloseChromeMessage();
 			OpenQtx();
 			CopyOldGraph();
 
 			string grafic = "";
 
-			Thread myThread = new Thread(GraphSaverThread);
-			myThread.Name = "Graph Saver Thread";
-			myThread.Start();
+			DoMaxScale();
+
+			StartSavingGraph();
 
 			for (int i = 0; ; i++)
 			{
@@ -74,6 +75,13 @@ namespace AbsurdMoneySimulations
 
 				if (i % 7200 == 7199)
 					CopyOldGraph();
+			}
+
+			void StartSavingGraph()
+			{
+				Thread myThread = new Thread(GraphSaverThread);
+				myThread.Name = "Graph Saver Thread";
+				myThread.Start();
 			}
 
 			void GraphSaverThread()
@@ -95,17 +103,6 @@ namespace AbsurdMoneySimulations
 		public static float GetQtxGraficValue()
 		{
 			return 0;
-		}
-
-		public static void DoMaxScale()
-		{
-			Cursor.Position = new Point(625, 687);
-			for (int i = 0; i < 45; i++)
-			{
-				Mouse2.LeftDown();
-				Thread.Sleep(60);
-				Mouse2.LeftUp();
-			}
 		}
 
 		public static void OpenQtx()
@@ -163,6 +160,37 @@ namespace AbsurdMoneySimulations
 				Disk2.WriteToProgramFiles("keys", "txt", keys, true);
 				keys = $"\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
 			}
+		}
+
+		public static void DoMaxScale()
+		{
+			Cursor.Position = new Point(625, 687);
+			for (int i = 0; i < 45; i++)
+			{
+				Mouse2.LeftDown();
+				Thread.Sleep(60);
+				Mouse2.LeftUp();
+			}
+		}
+
+		public static void CloseChromeMessage()
+		{
+			Mouse2.Click(1343, 94, 30);
+		}
+
+		public static string CutNumber(Bitmap bmp, int y)
+		{
+			Bitmap bmpCut = new Bitmap(31, 8);
+			Graphics grCut = Graphics.FromImage(bmpCut);
+			grCut.DrawImage(bmp, 0, 0, new Rectangle(1101, y + 7, 31, 8), GraphicsUnit.Pixel);
+
+			string number = "";
+			Bitmap so = new Bitmap(6, 8);
+			Graphics sogr = Graphics.FromImage(so);
+
+			sogr.DrawImage(bmpCut, 0, 0, new Rectangle(0 * 6, 0, 6, 8), GraphicsUnit.Pixel);
+
+			return number;
 		}
 	}
 }

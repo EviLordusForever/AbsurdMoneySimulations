@@ -45,6 +45,7 @@
 			this.panel3 = new System.Windows.Forms.Panel();
 			this.panel4 = new System.Windows.Forms.Panel();
 			this.panel5 = new System.Windows.Forms.Panel();
+			this.button13 = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel3.SuspendLayout();
@@ -74,7 +75,7 @@
 			// 
 			// button4
 			// 
-			this.button4.Location = new System.Drawing.Point(3, 3);
+			this.button4.Location = new System.Drawing.Point(3, 32);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(456, 23);
 			this.button4.TabIndex = 3;
@@ -208,10 +209,11 @@
 			// panel4
 			// 
 			this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel4.Controls.Add(this.button13);
 			this.panel4.Controls.Add(this.button4);
 			this.panel4.Location = new System.Drawing.Point(12, 297);
 			this.panel4.Name = "panel4";
-			this.panel4.Size = new System.Drawing.Size(464, 31);
+			this.panel4.Size = new System.Drawing.Size(464, 60);
 			this.panel4.TabIndex = 14;
 			// 
 			// panel5
@@ -219,16 +221,26 @@
 			this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.panel5.Controls.Add(this.button10);
 			this.panel5.Controls.Add(this.button5);
-			this.panel5.Location = new System.Drawing.Point(12, 334);
+			this.panel5.Location = new System.Drawing.Point(12, 363);
 			this.panel5.Name = "panel5";
 			this.panel5.Size = new System.Drawing.Size(464, 60);
 			this.panel5.TabIndex = 15;
+			// 
+			// button13
+			// 
+			this.button13.Location = new System.Drawing.Point(3, 3);
+			this.button13.Name = "button13";
+			this.button13.Size = new System.Drawing.Size(456, 23);
+			this.button13.TabIndex = 4;
+			this.button13.Text = "Live Graph Getting";
+			this.button13.UseVisualStyleBackColor = true;
+			this.button13.Click += new System.EventHandler(this.button13_Click);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(488, 406);
+			this.ClientSize = new System.Drawing.Size(488, 436);
 			this.Controls.Add(this.panel5);
 			this.Controls.Add(this.panel4);
 			this.Controls.Add(this.panel3);
@@ -268,5 +280,6 @@
 		private Panel panel3;
 		private Panel panel4;
 		private Panel panel5;
+		private Button button13;
 	}
 }

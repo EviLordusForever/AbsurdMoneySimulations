@@ -116,5 +116,17 @@
 					Swarm.RecreateSwarm();
 			}
 		}
+
+		public static void StartLiveGraphGetting()
+		{
+			Thread myThread = new Thread(LiveGraphGettingThread);
+			myThread.Name = "Live Graph Getting Thread";
+			myThread.Start();
+
+			void LiveGraphGettingThread()
+			{
+				Trader.GetGraphLive(1);
+			}
+		}
 	}
 }

@@ -80,7 +80,12 @@
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
+			
+		}
 
+		private void button13_Click(object sender, EventArgs e)
+		{
+			Starter.StartLiveGraphGetting();
 		}
 	}
 }

@@ -10,31 +10,20 @@ namespace Library
 		[DllImport("user32.dll")]
 		private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, IntPtr dwExtraInfo);
 
-
-		private const int MouseEventRightDown = 0x0008;
-		private const int MouseEventRightUp = 0x0010;
-
-		private const int MouseEventLeftDown = 0x0002;
-		private const int MouseEventLeftUp = 0x0004;
-
-		private const int MouseEventWheel = 0x0800;
-
-		private const int MouseEventMove = 0x0001;
-
-		public const int MOUSEEVENTF_MOVE = 0x0001; /* mouse move */
-		public const int MOUSEEVENTF_LEFTDOWN = 0x0002; /* left button down */
-		public const int MOUSEEVENTF_LEFTUP = 0x0004; /* left button up */
-		public const int MOUSEEVENTF_RIGHTDOWN = 0x0008; /* right button down */
-		public const int MOUSEEVENTF_RIGHTUP = 0x0010; /* right button up */
-		public const int MOUSEEVENTF_MIDDLEDOWN = 0x0020; /* middle button down */
-		public const int MOUSEEVENTF_MIDDLEUP = 0x0040; /* middle button up */
-		public const int MOUSEEVENTF_XDOWN = 0x0080; /* x button down */
-		public const int MOUSEEVENTF_XUP = 0x0100; /* x button down */
-		public const int MOUSEEVENTF_WHEEL = 0x0800; /* wheel button rolled */
-		public const int MOUSEEVENTF_HWHEEL = 0x01000; /* hwheel button rolled */
-		public const int MOUSEEVENTF_MOVE_NOCOALESCE = 0x2000; /* do not coalesce mouse moves */
-		public const int MOUSEEVENTF_VIRTUALDESK = 0x4000; /* map to entire virtual desktop */
-		public const int MOUSEEVENTF_ABSOLUTE = 0x8000; /* absolute move */
+		private const int MOUSEEVENTF_MOVE = 0x0001; /* mouse move */
+		private const int MOUSEEVENTF_LEFTDOWN = 0x0002; /* left button down */
+		private const int MOUSEEVENTF_LEFTUP = 0x0004; /* left button up */
+		private const int MOUSEEVENTF_RIGHTDOWN = 0x0008; /* right button down */
+		private const int MOUSEEVENTF_RIGHTUP = 0x0010; /* right button up */
+		private const int MOUSEEVENTF_MIDDLEDOWN = 0x0020; /* middle button down */
+		private const int MOUSEEVENTF_MIDDLEUP = 0x0040; /* middle button up */
+		private const int MOUSEEVENTF_XDOWN = 0x0080; /* x button down */
+		private const int MOUSEEVENTF_XUP = 0x0100; /* x button down */
+		private const int MOUSEEVENTF_WHEEL = 0x0800; /* wheel button rolled */
+		private const int MOUSEEVENTF_HWHEEL = 0x01000; /* hwheel button rolled */
+		private const int MOUSEEVENTF_MOVE_NOCOALESCE = 0x2000; /* do not coalesce mouse moves */
+		private const int MOUSEEVENTF_VIRTUALDESK = 0x4000; /* map to entire virtual desktop */
+		private const int MOUSEEVENTF_ABSOLUTE = 0x8000; /* absolute move */
 
 		public const int INPUT_MOUSE = 0;
 		public const int INPUT_KEYBOARD = 1;
@@ -107,8 +96,8 @@ namespace Library
 
 		public static void SendLeftClick(int posX, int posY)
 		{
-			mouse_event(MouseEventLeftDown, posX, posY, 0, new IntPtr());
-			mouse_event(MouseEventLeftUp, posX, posY, 0, new IntPtr());
+			mouse_event(MOUSEEVENTF_LEFTDOWN, posX, posY, 0, new IntPtr());
+			mouse_event(MOUSEEVENTF_LEFTUP, posX, posY, 0, new IntPtr());
 		}
 
 		public static void Wheel(UInt32 amount)
@@ -116,7 +105,7 @@ namespace Library
 			uint posX = Convert.ToUInt32(Cursor.Position.X);
 			uint posY = Convert.ToUInt32(Cursor.Position.Y);
 
-			mouse_event(MouseEventWheel, posX, posY, amount, new IntPtr());
+			mouse_event(MOUSEEVENTF_WHEEL, posX, posY, amount, new IntPtr());
 		}
 
 		public static void Click(int x, int y, int timeDown)
@@ -142,7 +131,7 @@ namespace Library
 
 		public static void Move(int dx, int dy)
 		{
-			mouse_event(MouseEventMove, dx, dy, 0, new IntPtr());
+			mouse_event(MOUSEEVENTF_MOVE, dx, dy, 0, new IntPtr());
 		}
 
 		public static void LeftDown()
@@ -150,7 +139,7 @@ namespace Library
 			int posX = Cursor.Position.X;
 			int posY = Cursor.Position.Y;
 
-			mouse_event(MouseEventLeftDown, posX, posY, 0, new IntPtr());
+			mouse_event(MOUSEEVENTF_LEFTDOWN, posX, posY, 0, new IntPtr());
 		}
 
 		public static void LeftUp()
@@ -158,7 +147,7 @@ namespace Library
 			int posX = Cursor.Position.X;
 			int posY = Cursor.Position.Y;
 
-			mouse_event(MouseEventLeftUp, posX, posY, 0, new IntPtr());
+			mouse_event(MOUSEEVENTF_LEFTUP, posX, posY, 0, new IntPtr());
 		}
 	}
 }
