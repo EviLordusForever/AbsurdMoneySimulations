@@ -81,6 +81,23 @@ namespace Library
 			}
 		}
 
+		public static Bitmap MaximizeContrastAndNegate(Bitmap bmp)
+		{
+			for (int x = 0; x < bmp.Width; x++)
+				for (int y = 0; y < bmp.Height; y++)
+					bmp.SetPixel(x, y, TBW(bmp.GetPixel(x, y)));
+			return bmp;
+
+			Color TBW(Color c)
+			{
+				float br = 255 - c.GetBrightness() * 255;
+				if (br < 113)
+					return Color.Black;
+				else
+					return Color.White;
+			}
+		}
+
 		public static Bitmap Negative(Bitmap bmp)
 		{
 			for (int x = 0; x < bmp.Width; x++)

@@ -100,23 +100,33 @@ namespace AbsurdMoneySimulations
 
 		public static float GetQtxGraficValue()
 		{
-			Bitmap screenshot = TakeScreen();
+			Bitmap screenshot = TakeScreen2();
 
 			Bitmap blueLabel = CutBlueLabel(screenshot);
-			FormsManager.ShowImage(blueLabel);
-			Thread.Sleep(10000);
+			//FormsManager.ShowImage(blueLabel);
+			//Thread.Sleep(4000);
 
 			blueLabel = Graphics2.ToBlackWhite(blueLabel);
-			FormsManager.ShowImage(blueLabel);			
-			Thread.Sleep(10000);
+			//FormsManager.ShowImage(blueLabel);			
+			//Thread.Sleep(4000);
 
-			blueLabel = Graphics2.Negative(blueLabel);
-			FormsManager.ShowImage(blueLabel);			
-			Thread.Sleep(10000);
+			blueLabel = Graphics2.RescaleBitmap(blueLabel, blueLabel.Width * 2, blueLabel.Height * 2);
+			//FormsManager.ShowImage(blueLabel);
+			//Thread.Sleep(4000);
+
+			blueLabel = Graphics2.MaximizeContrastAndNegate(blueLabel);
+			//FormsManager.ShowImage(blueLabel);
+			//Thread.Sleep(4000);
+
+/*			blueLabel = Graphics2.Negative(blueLabel);
+			FormsManager.ShowImage(blueLabel);
+			Thread.Sleep(4000);*/
 
 			string text = Recognize(blueLabel);
 			Log(text);
-			Thread.Sleep(666000);
+			Mouse2.Move(-10, 0);
+
+			//Thread.Sleep(999999);
 			return Convert.ToSingle(text);
 		}
 
@@ -126,11 +136,11 @@ namespace AbsurdMoneySimulations
 			string keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
 			string keysBuffer = "";
 
-			Navi("http://quotex.io");
+			Navi("http://qxbroker.com/en/sign-in");
+			LoadCookies();
+			Navi("http://qxbroker.com/en/sign-in");
 			if (!SignedIn())
 			{
-				var handles = _driver.WindowHandles;
-
 				WaitUserSignedIn();
 				SaveCookies();
 				SaveKeys();
@@ -217,10 +227,10 @@ namespace AbsurdMoneySimulations
 		public static Bitmap CutBlueLabel(Bitmap screenshot)
 		{
 			int up = FindBlueLabelY(screenshot);
-			int left = FindBlueLabelLeftX(screenshot, up);
-			int right = FindBlueLabelRightX(screenshot, up);
+			int left = FindBlueLabelLeftX(screenshot, up) + 5;
+			int right = FindBlueLabelRightX(screenshot, up) - 5;
 			int width = right - left;
-			int height = 10;
+			int height = 11;
 
 			Bitmap bmpCut = new Bitmap(width, height);
 			Graphics grCut = Graphics.FromImage(bmpCut);
@@ -236,10 +246,22 @@ namespace AbsurdMoneySimulations
 			{
 				// Input.Deskew();  // use if image not straight
 				// Input.DeNoise(); // use if image contains digital noise
+				Ocr.Language = OcrLanguage.Financial;
+				Ocr.Configuration.PageSegmentationMode = TesseractPageSegmentationMode.SingleLine;
+				Ocr.Configuration.WhiteListCharacters = "0123456789.";
 				var Result = Ocr.Read(Input);
-				Log(Result.Text);
 				return Result.Text;
 			}
+		}
+
+		public static Bitmap TakeScreen2()
+		{
+			int w = Screen.PrimaryScreen.Bounds.Width;
+			int h = Screen.PrimaryScreen.Bounds.Height;
+			Bitmap bmp = new Bitmap(w, h);
+			Graphics gr = Graphics.FromImage(bmp);
+			gr.CopyFromScreen(0, 0, 0, 0, new Size(w, h));
+			return bmp;
 		}
 
 		public static Bitmap TakeScreen()
@@ -252,7 +274,7 @@ namespace AbsurdMoneySimulations
 				{
 					while (!Clipboard.ContainsImage()) 
 					{
-						Thread.Sleep(100);
+						Thread.Sleep(10);
 						SendKeys.SendWait("%{PRTSC}");
 					}
 					try
@@ -262,7 +284,6 @@ namespace AbsurdMoneySimulations
 					}
 					catch (Exception ex)
 					{
-						SendKeys.SendWait("%{PRTSC}");
 						continue;
 					}
 				}

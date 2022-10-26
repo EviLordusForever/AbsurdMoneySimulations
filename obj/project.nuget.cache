@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "k91VwsW4hgMXc9uYeHwyYlmrhz5x445wwGEqjfo+7v87wmZ1/nF642TrskcHvRKvQFdPi2FUjMnZAW2xV+I/IQ==",
+  "dgSpecHash": "r8OSe/fbh3RLtiW9cy67B2hoNSiG4Zie8zCipHpbsuncS7ibsVaMe20+HNo9TgDAIUTS5pEDPlbtG53BwSv0xQ==",
   "success": true,
   "projectFilePath": "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\anglesharp\\0.17.1\\anglesharp.0.17.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\ironocr\\2022.11.10109\\ironocr.2022.11.10109.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\ironocr.languages.financial\\2020.11.2\\ironocr.languages.financial.2020.11.2.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",

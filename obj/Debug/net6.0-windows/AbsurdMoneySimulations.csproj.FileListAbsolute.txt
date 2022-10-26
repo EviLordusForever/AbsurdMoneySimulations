@@ -62,3 +62,4 @@ E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\tessdata\pdf.ttf
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\tessdata\pdf.ttx
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\IronOcr.dll
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Patagames.Ocr.dll
+E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\OcrData\Financial.ocrdata

@@ -4,5 +4,6 @@
     <Import Project="$(NuGetPackageRoot)tesseract.net.sdk\4.5.411\build\Tesseract.Net.SDK.targets" Condition="Exists('$(NuGetPackageRoot)tesseract.net.sdk\4.5.411\build\Tesseract.Net.SDK.targets')" />
     <Import Project="$(NuGetPackageRoot)selenium.webdriver.chromedriver\106.0.5249.6100\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('$(NuGetPackageRoot)selenium.webdriver.chromedriver\106.0.5249.6100\build\Selenium.WebDriver.ChromeDriver.targets')" />
     <Import Project="$(NuGetPackageRoot)ironocr\2022.11.10109\build\IronOcr.targets" Condition="Exists('$(NuGetPackageRoot)ironocr\2022.11.10109\build\IronOcr.targets')" />
+    <Import Project="$(NuGetPackageRoot)ironocr.languages.financial\2020.11.2\build\IronOcr.Languages.Financial.targets" Condition="Exists('$(NuGetPackageRoot)ironocr.languages.financial\2020.11.2\build\IronOcr.Languages.Financial.targets')" />
   </ImportGroup>
 </Project>

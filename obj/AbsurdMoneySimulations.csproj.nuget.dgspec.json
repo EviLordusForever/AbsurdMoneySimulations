@@ -44,6 +44,10 @@
               "target": "Package",
               "version": "[2022.11.10109, )"
             },
+            "IronOcr.Languages.Financial": {
+              "target": "Package",
+              "version": "[2020.11.2, )"
+            },
             "MathNet.Numerics": {
               "target": "Package",
               "version": "[5.0.0, )"

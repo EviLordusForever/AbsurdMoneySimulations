@@ -9,6 +9,7 @@
       "AbsurdMoneySimulations/1.0.0": {
         "dependencies": {
           "IronOcr": "2022.11.10109",
+          "IronOcr.Languages.Financial": "2020.11.2",
           "MathNet.Numerics": "5.0.0",
           "Newtonsoft.Json": "13.0.1",
           "Selenium.WebDriver": "4.5.1",
@@ -165,6 +166,11 @@
           }
         }
       },
+      "IronOcr.Languages.Financial/2020.11.2": {
+        "dependencies": {
+          "IronOcr": "2022.11.10109"
+        }
+      },
       "MathNet.Numerics/5.0.0": {
         "runtime": {
           "lib/net6.0/MathNet.Numerics.dll": {
@@ -277,6 +283,13 @@
       "sha512": "sha512-y6UM3NdgdxjkQF3i4S+40mQuZ/+cT1Uwc2YjA+Km8RwdZeE+En3Js2buo0WsJcQTp2QQ7gJV4WfH9ZjP7MIGeQ==",
       "path": "ironocr/2022.11.10109",
       "hashPath": "ironocr.2022.11.10109.nupkg.sha512"
+    },
+    "IronOcr.Languages.Financial/2020.11.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MJ9ltrsOtanNiPFLShM5v5TPjyhA8q8WLmMimCh07/Q1l1ZqTeXUzBkiaKYGjmRDDrI2F0ndAwaPSxrqISHmDg==",
+      "path": "ironocr.languages.financial/2020.11.2",
+      "hashPath": "ironocr.languages.financial.2020.11.2.nupkg.sha512"
     },
     "MathNet.Numerics/5.0.0": {
       "type": "package",
