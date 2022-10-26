@@ -66,5 +66,32 @@ namespace Library
 				}
 			}
 		}
+
+		public static Bitmap ToBlackWhite(Bitmap bmp)
+		{
+			for (int x = 0; x < bmp.Width; x++)
+				for (int y = 0; y < bmp.Height; y++)
+					bmp.SetPixel(x, y, TBW(bmp.GetPixel(x, y)));
+			return bmp;
+
+			Color TBW(Color c)
+			{
+				byte min = Math.Min(Math.Min(c.R, c.G), c.B);
+				return Color.FromArgb(min, min, min);
+			}
+		}
+
+		public static Bitmap Negative(Bitmap bmp)
+		{
+			for (int x = 0; x < bmp.Width; x++)
+				for (int y = 0; y < bmp.Height; y++)
+					bmp.SetPixel(x, y, Negate(bmp.GetPixel(x, y)));
+			return bmp;
+
+			Color Negate(Color c)
+			{
+				return Color.FromArgb(255 - c.R, 255 - c.G, 255 - c.B);
+			}
+		}
 	}
 }

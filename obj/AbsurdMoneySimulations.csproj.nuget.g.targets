@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)tesseract.net.sdk\4.5.411\build\Tesseract.Net.SDK.targets" Condition="Exists('$(NuGetPackageRoot)tesseract.net.sdk\4.5.411\build\Tesseract.Net.SDK.targets')" />
     <Import Project="$(NuGetPackageRoot)selenium.webdriver.chromedriver\106.0.5249.6100\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('$(NuGetPackageRoot)selenium.webdriver.chromedriver\106.0.5249.6100\build\Selenium.WebDriver.ChromeDriver.targets')" />
+    <Import Project="$(NuGetPackageRoot)ironocr\2022.11.10109\build\IronOcr.targets" Condition="Exists('$(NuGetPackageRoot)ironocr\2022.11.10109\build\IronOcr.targets')" />
   </ImportGroup>
 </Project>

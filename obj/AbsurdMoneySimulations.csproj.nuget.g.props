@@ -12,4 +12,7 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\User\.nuget\packages\" />
   </ItemGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgTesseract_Net_SDK Condition=" '$(PkgTesseract_Net_SDK)' == '' ">C:\Users\User\.nuget\packages\tesseract.net.sdk\4.5.411</PkgTesseract_Net_SDK>
+  </PropertyGroup>
 </Project>

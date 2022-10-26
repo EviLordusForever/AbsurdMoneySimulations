@@ -15,6 +15,119 @@
           "lib/netstandard2.0/AngleSharp.dll": {}
         }
       },
+      "IronOcr/2022.11.10109": {
+        "type": "package",
+        "dependencies": {
+          "System.Drawing.Common": "5.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/IronOcr.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/IronOcr.dll": {}
+        },
+        "build": {
+          "build/IronOcr.targets": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win-x64/native/Tesseract.Native.deployment.json": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/liblept-5.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/libtesseract-5.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/pdfium.vanilla.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/eng.user-patterns": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/eng.user-words": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/osd.traineddata": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/pdf.ttf": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/pdf.ttx": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/tessdata/eng.base.traineddata": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/tessdata_best/eng.best.traineddata": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/tessdata/tessdata_fast/eng.fast.traineddata": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/Tesseract.Native.deployment.json": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/liblept-5.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/libtesseract-5.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/pdfium.vanilla.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/eng.user-patterns": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/eng.user-words": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/osd.traineddata": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/pdf.ttf": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/pdf.ttx": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/tessdata/eng.base.traineddata": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/tessdata_best/eng.best.traineddata": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/tessdata/tessdata_fast/eng.fast.traineddata": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
+        }
+      },
       "MathNet.Numerics/5.0.0": {
         "type": "package",
         "compile": {
@@ -47,6 +160,24 @@
         },
         "runtimeTargets": {
           "runtimes/win/lib/netstandard2.0/Microsoft.Win32.Registry.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
+      "Microsoft.Win32.SystemEvents/5.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "5.0.0"
+        },
+        "compile": {
+          "ref/netstandard2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll": {
             "assetType": "runtime",
             "rid": "win"
           }
@@ -95,6 +226,28 @@
         },
         "runtime": {
           "lib/netcoreapp2.0/_._": {}
+        }
+      },
+      "System.Drawing.Common/5.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "5.0.0"
+        },
+        "compile": {
+          "ref/netcoreapp3.0/System.Drawing.Common.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/System.Drawing.Common.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll": {
+            "assetType": "runtime",
+            "rid": "unix"
+          },
+          "runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
         }
       },
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {
@@ -168,6 +321,21 @@
           }
         }
       },
+      "Tesseract.Net.SDK/4.5.411": {
+        "type": "package",
+        "dependencies": {
+          "System.Drawing.Common": "5.0.0"
+        },
+        "compile": {
+          "lib/net5.0/Patagames.Ocr.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Patagames.Ocr.dll": {}
+        },
+        "build": {
+          "build/Tesseract.Net.SDK.targets": {}
+        }
+      },
       "WebDriverManager/2.16.0": {
         "type": "package",
         "dependencies": {
@@ -201,6 +369,51 @@
         "lib/netstandard2.0/AngleSharp.dll",
         "lib/netstandard2.0/AngleSharp.xml",
         "logo.png"
+      ]
+    },
+    "IronOcr/2022.11.10109": {
+      "sha512": "y6UM3NdgdxjkQF3i4S+40mQuZ/+cT1Uwc2YjA+Km8RwdZeE+En3Js2buo0WsJcQTp2QQ7gJV4WfH9ZjP7MIGeQ==",
+      "type": "package",
+      "path": "ironocr/2022.11.10109",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "EULA.txt",
+        "README.txt",
+        "build/IronOcr.targets",
+        "docs/README.md",
+        "images/iron-logo-128.png",
+        "ironocr.2022.11.10109.nupkg.sha512",
+        "ironocr.nuspec",
+        "lib/net/_._",
+        "lib/net40/IronOcr.dll",
+        "lib/net40/IronOcr.xml",
+        "lib/netstandard2.0/IronOcr.dll",
+        "lib/netstandard2.0/IronOcr.xml",
+        "runtimes/win-x64/native/Tesseract.Native.deployment.json",
+        "runtimes/win-x64/native/liblept-5.dll",
+        "runtimes/win-x64/native/libtesseract-5.dll",
+        "runtimes/win-x64/native/pdfium.vanilla.dll",
+        "runtimes/win-x64/native/tessdata/eng.user-patterns",
+        "runtimes/win-x64/native/tessdata/eng.user-words",
+        "runtimes/win-x64/native/tessdata/osd.traineddata",
+        "runtimes/win-x64/native/tessdata/pdf.ttf",
+        "runtimes/win-x64/native/tessdata/pdf.ttx",
+        "runtimes/win-x64/native/tessdata/tessdata/eng.base.traineddata",
+        "runtimes/win-x64/native/tessdata/tessdata_best/eng.best.traineddata",
+        "runtimes/win-x64/native/tessdata/tessdata_fast/eng.fast.traineddata",
+        "runtimes/win-x86/native/Tesseract.Native.deployment.json",
+        "runtimes/win-x86/native/liblept-5.dll",
+        "runtimes/win-x86/native/libtesseract-5.dll",
+        "runtimes/win-x86/native/pdfium.vanilla.dll",
+        "runtimes/win-x86/native/tessdata/eng.user-patterns",
+        "runtimes/win-x86/native/tessdata/eng.user-words",
+        "runtimes/win-x86/native/tessdata/osd.traineddata",
+        "runtimes/win-x86/native/tessdata/pdf.ttf",
+        "runtimes/win-x86/native/tessdata/pdf.ttx",
+        "runtimes/win-x86/native/tessdata/tessdata/eng.base.traineddata",
+        "runtimes/win-x86/native/tessdata/tessdata_best/eng.best.traineddata",
+        "runtimes/win-x86/native/tessdata/tessdata_fast/eng.fast.traineddata"
       ]
     },
     "MathNet.Numerics/5.0.0": {
@@ -283,6 +496,34 @@
         "runtimes/win/lib/netstandard1.3/Microsoft.Win32.Registry.dll",
         "runtimes/win/lib/netstandard2.0/Microsoft.Win32.Registry.dll",
         "runtimes/win/lib/netstandard2.0/Microsoft.Win32.Registry.xml",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Microsoft.Win32.SystemEvents/5.0.0": {
+      "sha512": "Bh6blKG8VAKvXiLe2L+sEsn62nc1Ij34MrNxepD2OCrS5cpCwQa9MeLyhVQPQ/R4Wlzwuy6wMK8hLb11QPDRsQ==",
+      "type": "package",
+      "path": "microsoft.win32.systemevents/5.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Win32.SystemEvents.dll",
+        "lib/net461/Microsoft.Win32.SystemEvents.xml",
+        "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll",
+        "lib/netstandard2.0/Microsoft.Win32.SystemEvents.xml",
+        "microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+        "microsoft.win32.systemevents.nuspec",
+        "ref/net461/Microsoft.Win32.SystemEvents.dll",
+        "ref/net461/Microsoft.Win32.SystemEvents.xml",
+        "ref/netstandard2.0/Microsoft.Win32.SystemEvents.dll",
+        "ref/netstandard2.0/Microsoft.Win32.SystemEvents.xml",
+        "runtimes/win/lib/netcoreapp2.0/Microsoft.Win32.SystemEvents.dll",
+        "runtimes/win/lib/netcoreapp2.0/Microsoft.Win32.SystemEvents.xml",
+        "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll",
+        "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.xml",
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
@@ -400,6 +641,48 @@
         "ref/uap10.0.16299/_._",
         "system.buffers.4.5.1.nupkg.sha512",
         "system.buffers.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Drawing.Common/5.0.2": {
+      "sha512": "rvr/M1WPf24ljpvvrVd74+NdjRUJu1bBkspkZcnzSZnmAUQWSvanlQ0k/hVHk+cHufZbZfu7vOh/vYc0q5Uu/A==",
+      "type": "package",
+      "path": "system.drawing.common/5.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net461/System.Drawing.Common.dll",
+        "lib/netcoreapp3.0/System.Drawing.Common.dll",
+        "lib/netcoreapp3.0/System.Drawing.Common.xml",
+        "lib/netstandard2.0/System.Drawing.Common.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net461/System.Drawing.Common.dll",
+        "ref/netcoreapp3.0/System.Drawing.Common.dll",
+        "ref/netcoreapp3.0/System.Drawing.Common.xml",
+        "ref/netstandard2.0/System.Drawing.Common.dll",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/unix/lib/netcoreapp2.0/System.Drawing.Common.dll",
+        "runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll",
+        "runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.xml",
+        "runtimes/win/lib/netcoreapp2.0/System.Drawing.Common.dll",
+        "runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll",
+        "runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.xml",
+        "system.drawing.common.5.0.2.nupkg.sha512",
+        "system.drawing.common.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
@@ -570,6 +853,65 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "Tesseract.Net.SDK/4.5.411": {
+      "sha512": "xLAMfXMnegWGSiFtMo3QRoT6EdVfpOxlPh/WFwqIwblWDEnbxoxdhJO+Xyo/Q8pctgzERT1CAyg3jB+2PazEqQ==",
+      "type": "package",
+      "path": "tesseract.net.sdk/4.5.411",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/Tesseract.Net.SDK.targets",
+        "build/x64/tesseract.dll",
+        "build/x86/Tesseract.dll",
+        "content/tessdata/configs/config.cfg",
+        "content/tessdata/eng.traineddata",
+        "content/tessdata/equ.traineddata",
+        "content/tessdata/osd.traineddata",
+        "content/tessdata/pdf.ttf",
+        "content/tessdata/pdf.ttx",
+        "lib/net20/Patagames.Ocr.dll",
+        "lib/net20/Patagames.Ocr.xml",
+        "lib/net30/Patagames.Ocr.XML",
+        "lib/net30/Patagames.Ocr.dll",
+        "lib/net35/Patagames.Ocr.XML",
+        "lib/net35/Patagames.Ocr.dll",
+        "lib/net40/Patagames.Ocr.XML",
+        "lib/net40/Patagames.Ocr.dll",
+        "lib/net45/Patagames.Ocr.XML",
+        "lib/net45/Patagames.Ocr.dll",
+        "lib/net451/Patagames.Ocr.XML",
+        "lib/net451/Patagames.Ocr.dll",
+        "lib/net452/Patagames.Ocr.XML",
+        "lib/net452/Patagames.Ocr.dll",
+        "lib/net46/Patagames.Ocr.XML",
+        "lib/net46/Patagames.Ocr.dll",
+        "lib/net461/Patagames.Ocr.XML",
+        "lib/net461/Patagames.Ocr.dll",
+        "lib/net462/Patagames.Ocr.XML",
+        "lib/net462/Patagames.Ocr.dll",
+        "lib/net47/Patagames.Ocr.XML",
+        "lib/net47/Patagames.Ocr.dll",
+        "lib/net471/Patagames.Ocr.XML",
+        "lib/net471/Patagames.Ocr.dll",
+        "lib/net472/Patagames.Ocr.XML",
+        "lib/net472/Patagames.Ocr.dll",
+        "lib/net48/Patagames.Ocr.XML",
+        "lib/net48/Patagames.Ocr.dll",
+        "lib/net5.0/Patagames.Ocr.deps.json",
+        "lib/net5.0/Patagames.Ocr.dll",
+        "lib/net5.0/Patagames.Ocr.xml",
+        "lib/netstandard2.0/Patagames.Ocr.deps.json",
+        "lib/netstandard2.0/Patagames.Ocr.dll",
+        "lib/netstandard2.0/Patagames.Ocr.xml",
+        "lib/netstandard2.1/Patagames.Ocr.deps.json",
+        "lib/netstandard2.1/Patagames.Ocr.dll",
+        "lib/netstandard2.1/Patagames.Ocr.xml",
+        "tesseract.net.sdk.4.5.411.nupkg.sha512",
+        "tesseract.net.sdk.nuspec",
+        "tools/install.ps1"
+      ]
+    },
     "WebDriverManager/2.16.0": {
       "sha512": "UPbTiGzz2lr/dik85GFcEsI8Hacn+j5f3779Kb3AhNovpEtKyTTMk/6dZcjG4jLHRPbrkAXTf8TL/+38LQUMeg==",
       "type": "package",
@@ -588,10 +930,12 @@
   },
   "projectFileDependencyGroups": {
     "net6.0-windows7.0": [
+      "IronOcr >= 2022.11.10109",
       "MathNet.Numerics >= 5.0.0",
       "Newtonsoft.Json >= 13.0.1",
       "Selenium.WebDriver >= 4.5.1",
       "Selenium.WebDriver.ChromeDriver >= 106.0.5249.6100",
+      "Tesseract.Net.SDK >= 4.5.411",
       "WebDriverManager >= 2.16.0"
     ]
   },
@@ -634,6 +978,10 @@
       "net6.0-windows7.0": {
         "targetAlias": "net6.0-windows",
         "dependencies": {
+          "IronOcr": {
+            "target": "Package",
+            "version": "[2022.11.10109, )"
+          },
           "MathNet.Numerics": {
             "target": "Package",
             "version": "[5.0.0, )"
@@ -649,6 +997,10 @@
           "Selenium.WebDriver.ChromeDriver": {
             "target": "Package",
             "version": "[106.0.5249.6100, )"
+          },
+          "Tesseract.Net.SDK": {
+            "target": "Package",
+            "version": "[4.5.411, )"
           },
           "WebDriverManager": {
             "target": "Package",

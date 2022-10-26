@@ -40,6 +40,10 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "dependencies": {
+            "IronOcr": {
+              "target": "Package",
+              "version": "[2022.11.10109, )"
+            },
             "MathNet.Numerics": {
               "target": "Package",
               "version": "[5.0.0, )"
@@ -55,6 +59,10 @@
             "Selenium.WebDriver.ChromeDriver": {
               "target": "Package",
               "version": "[106.0.5249.6100, )"
+            },
+            "Tesseract.Net.SDK": {
+              "target": "Package",
+              "version": "[4.5.411, )"
             },
             "WebDriverManager": {
               "target": "Package",

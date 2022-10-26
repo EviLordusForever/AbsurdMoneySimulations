@@ -8,10 +8,12 @@
     ".NETCoreApp,Version=v6.0": {
       "AbsurdMoneySimulations/1.0.0": {
         "dependencies": {
+          "IronOcr": "2022.11.10109",
           "MathNet.Numerics": "5.0.0",
           "Newtonsoft.Json": "13.0.1",
           "Selenium.WebDriver": "4.5.1",
           "Selenium.WebDriver.ChromeDriver": "106.0.5249.6100",
+          "Tesseract.Net.SDK": "4.5.411",
           "WebDriverManager": "2.16.0"
         },
         "runtime": {
@@ -30,6 +32,139 @@
           }
         }
       },
+      "IronOcr/2022.11.10109": {
+        "dependencies": {
+          "System.Drawing.Common": "5.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/IronOcr.dll": {
+            "assemblyVersion": "2022.11.0.10109",
+            "fileVersion": "2.8.8.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win-x64/native/Tesseract.Native.deployment.json": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/liblept-5.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/libtesseract-5.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/pdfium.vanilla.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/eng.user-patterns": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/eng.user-words": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/osd.traineddata": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/pdf.ttf": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/pdf.ttx": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/tessdata/eng.base.traineddata": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/tessdata_best/eng.best.traineddata": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/tessdata/tessdata_fast/eng.fast.traineddata": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/Tesseract.Native.deployment.json": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/liblept-5.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/libtesseract-5.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/pdfium.vanilla.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/eng.user-patterns": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/eng.user-words": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/osd.traineddata": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/pdf.ttf": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/pdf.ttx": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/tessdata/eng.base.traineddata": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/tessdata_best/eng.best.traineddata": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/tessdata/tessdata_fast/eng.fast.traineddata": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
       "MathNet.Numerics/5.0.0": {
         "runtime": {
           "lib/net6.0/MathNet.Numerics.dll": {
@@ -43,6 +178,11 @@
         "dependencies": {
           "System.Security.AccessControl": "5.0.0",
           "System.Security.Principal.Windows": "5.0.0"
+        }
+      },
+      "Microsoft.Win32.SystemEvents/5.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "5.0.0"
         }
       },
       "Newtonsoft.Json/13.0.1": {
@@ -74,6 +214,11 @@
         }
       },
       "System.Buffers/4.5.1": {},
+      "System.Drawing.Common/5.0.2": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "5.0.0"
+        }
+      },
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
       "System.Security.AccessControl/5.0.0": {
         "dependencies": {
@@ -85,6 +230,17 @@
       "System.Text.Encoding.CodePages/6.0.0": {
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        }
+      },
+      "Tesseract.Net.SDK/4.5.411": {
+        "dependencies": {
+          "System.Drawing.Common": "5.0.2"
+        },
+        "runtime": {
+          "lib/net5.0/Patagames.Ocr.dll": {
+            "assemblyVersion": "4.5.2.50",
+            "fileVersion": "4.5.2.50"
+          }
         }
       },
       "WebDriverManager/2.16.0": {
@@ -115,6 +271,13 @@
       "path": "anglesharp/0.17.1",
       "hashPath": "anglesharp.0.17.1.nupkg.sha512"
     },
+    "IronOcr/2022.11.10109": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-y6UM3NdgdxjkQF3i4S+40mQuZ/+cT1Uwc2YjA+Km8RwdZeE+En3Js2buo0WsJcQTp2QQ7gJV4WfH9ZjP7MIGeQ==",
+      "path": "ironocr/2022.11.10109",
+      "hashPath": "ironocr.2022.11.10109.nupkg.sha512"
+    },
     "MathNet.Numerics/5.0.0": {
       "type": "package",
       "serviceable": true,
@@ -135,6 +298,13 @@
       "sha512": "sha512-dDoKi0PnDz31yAyETfRntsLArTlVAVzUzCIvvEDsDsucrl33Dl8pIJG06ePTJTI3tGpeyHS9Cq7Foc/s4EeKcg==",
       "path": "microsoft.win32.registry/5.0.0",
       "hashPath": "microsoft.win32.registry.5.0.0.nupkg.sha512"
+    },
+    "Microsoft.Win32.SystemEvents/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Bh6blKG8VAKvXiLe2L+sEsn62nc1Ij34MrNxepD2OCrS5cpCwQa9MeLyhVQPQ/R4Wlzwuy6wMK8hLb11QPDRsQ==",
+      "path": "microsoft.win32.systemevents/5.0.0",
+      "hashPath": "microsoft.win32.systemevents.5.0.0.nupkg.sha512"
     },
     "Newtonsoft.Json/13.0.1": {
       "type": "package",
@@ -171,6 +341,13 @@
       "path": "system.buffers/4.5.1",
       "hashPath": "system.buffers.4.5.1.nupkg.sha512"
     },
+    "System.Drawing.Common/5.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rvr/M1WPf24ljpvvrVd74+NdjRUJu1bBkspkZcnzSZnmAUQWSvanlQ0k/hVHk+cHufZbZfu7vOh/vYc0q5Uu/A==",
+      "path": "system.drawing.common/5.0.2",
+      "hashPath": "system.drawing.common.5.0.2.nupkg.sha512"
+    },
     "System.Runtime.CompilerServices.Unsafe/6.0.0": {
       "type": "package",
       "serviceable": true,
@@ -198,6 +375,13 @@
       "sha512": "sha512-ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
       "path": "system.text.encoding.codepages/6.0.0",
       "hashPath": "system.text.encoding.codepages.6.0.0.nupkg.sha512"
+    },
+    "Tesseract.Net.SDK/4.5.411": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xLAMfXMnegWGSiFtMo3QRoT6EdVfpOxlPh/WFwqIwblWDEnbxoxdhJO+Xyo/Q8pctgzERT1CAyg3jB+2PazEqQ==",
+      "path": "tesseract.net.sdk/4.5.411",
+      "hashPath": "tesseract.net.sdk.4.5.411.nupkg.sha512"
     },
     "WebDriverManager/2.16.0": {
       "type": "package",

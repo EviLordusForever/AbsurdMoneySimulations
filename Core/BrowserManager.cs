@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using Library;
 using static AbsurdMoneySimulations.Logger;
 using System.Collections.ObjectModel;
-using OpenQA.Selenium.Support.Events;
 
 namespace AbsurdMoneySimulations
 {

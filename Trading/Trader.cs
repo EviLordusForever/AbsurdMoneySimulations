@@ -3,7 +3,7 @@ using System.Threading;
 using static AbsurdMoneySimulations.BrowserManager;
 using static AbsurdMoneySimulations.Logger;
 using Library;
-using OpenQA.Selenium.Support.Events;
+using IronOcr;
 
 
 namespace AbsurdMoneySimulations
@@ -101,7 +101,23 @@ namespace AbsurdMoneySimulations
 		public static float GetQtxGraficValue()
 		{
 			Bitmap screenshot = TakeScreen();
-			return Convert.ToSingle(CutNumber(screenshot));
+
+			Bitmap blueLabel = CutBlueLabel(screenshot);
+			FormsManager.ShowImage(blueLabel);
+			Thread.Sleep(10000);
+
+			blueLabel = Graphics2.ToBlackWhite(blueLabel);
+			FormsManager.ShowImage(blueLabel);			
+			Thread.Sleep(10000);
+
+			blueLabel = Graphics2.Negative(blueLabel);
+			FormsManager.ShowImage(blueLabel);			
+			Thread.Sleep(10000);
+
+			string text = Recognize(blueLabel);
+			Log(text);
+			Thread.Sleep(666000);
+			return Convert.ToSingle(text);
 		}
 
 		public static void OpenQtx()
@@ -198,7 +214,7 @@ namespace AbsurdMoneySimulations
 			Mouse2.Click(1343, 94, 30);
 		}
 
-		public static string CutNumber(Bitmap screenshot)
+		public static Bitmap CutBlueLabel(Bitmap screenshot)
 		{
 			int up = FindBlueLabelY(screenshot);
 			int left = FindBlueLabelLeftX(screenshot, up);
@@ -210,16 +226,20 @@ namespace AbsurdMoneySimulations
 			Graphics grCut = Graphics.FromImage(bmpCut);
 			grCut.DrawImage(screenshot, 0, 0, new Rectangle(left, up + 6, width, height), GraphicsUnit.Pixel);
 
-			FormsManager.ShowImage(bmpCut);
-			Thread.Sleep(30000);
+			return bmpCut;
+		}
 
-			string number = "";
-
-			//Bitmap so = new Bitmap(6, 8);
-			//Graphics sogr = Graphics.FromImage(so);
-			//sogr.DrawImage(bmpCut, 0, 0, new Rectangle(0 * 6, 0, 6, 8), GraphicsUnit.Pixel);
-
-			return number;
+		public static string Recognize(Bitmap input)
+		{
+			var Ocr = new IronTesseract();
+			using (var Input = new OcrInput(input))
+			{
+				// Input.Deskew();  // use if image not straight
+				// Input.DeNoise(); // use if image contains digital noise
+				var Result = Ocr.Read(Input);
+				Log(Result.Text);
+				return Result.Text;
+			}
 		}
 
 		public static Bitmap TakeScreen()
@@ -230,7 +250,11 @@ namespace AbsurdMoneySimulations
 			{
 				while (true)
 				{
-					while (!Clipboard.ContainsImage()) { };
+					while (!Clipboard.ContainsImage()) 
+					{
+						Thread.Sleep(100);
+						SendKeys.SendWait("%{PRTSC}");
+					}
 					try
 					{
 						bmp = new Bitmap(Clipboard.GetImage());
