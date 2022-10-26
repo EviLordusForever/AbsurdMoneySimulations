@@ -5,6 +5,7 @@ using static AbsurdMoneySimulations.Logger;
 using Library;
 using OpenQA.Selenium.Support.Events;
 
+
 namespace AbsurdMoneySimulations
 {
 	public static class Trader
@@ -53,9 +54,58 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public static void GetGraficOneSecond()
+		{
+			LoadBrowser("https://google.com");
+			LoadCookies();
+			OpenQtx();
+			CopyOldGraph();
+
+			string grafic = "";
+
+			Thread myThread = new Thread(GraphSaverThread);
+			myThread.Name = "Graph Saver Thread";
+			myThread.Start();
+
+			for (int i = 0; ; i++)
+			{
+				grafic += "\n" + GetQtxGraficValue();
+				Thread.Sleep(995);
+
+				if (i % 7200 == 7199)
+					CopyOldGraph();
+			}
+
+			void GraphSaverThread()
+			{
+				while (true)
+				{
+					Thread.Sleep(10000);
+					Disk2.WriteToProgramFiles("Grafic\\NewGraph", "csv", grafic, false);
+				}
+			}
+
+			void CopyOldGraph()
+			{
+				if (File.Exists($"{Disk2._programFiles}Grafic\\NewGraph.csv"))
+					File.Copy($"{Disk2._programFiles}Grafic\\NewGraph.csv", $"{Disk2._programFiles}Grafic\\NewGraphCopy({Logger.GetDateToShow} {Logger.GetTimeToShow}).csv");
+			}
+		}
+
 		public static float GetQtxGraficValue()
 		{
 			return 0;
+		}
+
+		public static void DoMaxScale()
+		{
+			Cursor.Position = new Point(625, 687);
+			for (int i = 0; i < 45; i++)
+			{
+				Mouse2.LeftDown();
+				Thread.Sleep(60);
+				Mouse2.LeftUp();
+			}
 		}
 
 		public static void OpenQtx()
@@ -111,7 +161,7 @@ namespace AbsurdMoneySimulations
 			void SaveKeys()
 			{
 				Disk2.WriteToProgramFiles("keys", "txt", keys, true);
-				keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
+				keys = $"\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
 			}
 		}
 	}

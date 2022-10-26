@@ -63,10 +63,10 @@ namespace AbsurdMoneySimulations
 		{
 			ReadOnlyCollection<Cookie> cookies = _driver.Manage().Cookies.AllCookies;
 
-			if (cookies.Count > 0)
-			{
-				String domain = (String)_driver.Scripts().ExecuteScript("return document.domain");
+			string domain = (string)_driver.Scripts().ExecuteScript("return document.domain");
 
+			if (cookies.Count > 0)
+			{			
 				JsonSerializerSettings jss = new JsonSerializerSettings();
 				jss.Formatting = Formatting.Indented;
 
@@ -75,12 +75,12 @@ namespace AbsurdMoneySimulations
 				Log($"Cookies were saved! {domain}");
 			}
 			else
-				Log($"No cookies to save");
+				Log($"No cookies to save. {domain}");
 		}
 
 		public static void LoadCookies()
 		{
-			String domain = (String)_driver.Scripts().ExecuteScript("return document.domain");
+			string domain = (string)_driver.Scripts().ExecuteScript("return document.domain");
 
 			if (File.Exists($"{Disk2._programFiles}Cookies\\{domain}.json"))
 			{
