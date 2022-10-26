@@ -15,8 +15,8 @@
 
 		public static void ShowImage(Bitmap bmp)
 		{
-			if (_showForm.IsDisposed)
-				OpenShowForm(_showForm.Text);
+			if (_showForm == null || _showForm.IsDisposed)
+				OpenShowForm("aboba");
 
 			Bitmap bmp0 = Library.Graphics2.RescaleBitmap(bmp, _showForm.ClientSize.Width, _showForm.ClientSize.Height);
 

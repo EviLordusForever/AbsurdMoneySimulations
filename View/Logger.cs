@@ -178,6 +178,11 @@
 			}
 		}
 
+		public static string GetTimeToShow()
+		{
+			return GetTimeToShow(DateTime.Now);
+		}
+
 		public static string GetTimeToShow(DateTime dateTime)
 		{
 			string h = dateTime.Hour.ToString();
@@ -192,6 +197,11 @@
 				s = "0" + s;
 
 			return $"{h}:{m}:{s}";
+		}
+
+		public static string GetDateToShow()
+		{
+			return GetDateToShow(DateTime.Now);
 		}
 
 		public static string GetDateToShow(DateTime dateTime)
