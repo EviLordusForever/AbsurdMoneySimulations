@@ -2,7 +2,7 @@
 {
 	public static class Logger
 	{
-		public static int _logSize = 15000;
+		public static int _logSize = 25000;
 		public static string _logText;
 		public static StreamWriter _writer;
 		public static bool _updated;

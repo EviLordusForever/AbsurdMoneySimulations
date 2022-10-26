@@ -1,7 +1,5 @@
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\ListenerScript.js
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AbsurdMoneySimulations.exe
-E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\Test1.js
-E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\Trading\Scripts\Test2.js
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AbsurdMoneySimulations.deps.json
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AbsurdMoneySimulations.runtimeconfig.json
 E:\Programmer\AbsurdMoneySimulations\bin\Debug\net6.0-windows\AbsurdMoneySimulations.dll

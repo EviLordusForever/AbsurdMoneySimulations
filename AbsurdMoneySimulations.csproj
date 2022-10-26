@@ -28,15 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Trading\Scripts\Test1.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Trading\Scripts\Test2.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Images\" />
   </ItemGroup>
 

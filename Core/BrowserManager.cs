@@ -6,7 +6,6 @@ using static AbsurdMoneySimulations.Logger;
 using System.Collections.ObjectModel;
 using OpenQA.Selenium.Support.Events;
 
-
 namespace AbsurdMoneySimulations
 {
 	public static class BrowserManager
@@ -22,11 +21,8 @@ namespace AbsurdMoneySimulations
 			options.AddArguments("--disable-infobars");
 			_driver = new ChromeDriver(_chromeDriverService, options);
 			_driver.Manage().Window.Maximize();
-
-			//EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(_driver);
-			//eventFiringWebDriver
-
 			Navi(link);
+			StartCookiesThread();
 			_driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
 		}
 
@@ -34,6 +30,7 @@ namespace AbsurdMoneySimulations
 		{
 			try
 			{
+				SaveCookies();
 				_driver.Navigate().GoToUrl(link);
 			}
 			catch (WebDriverException ex)
@@ -42,9 +39,9 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void ExecuteScriptFrom(string scriptPath)
+		public static void ExecuteScriptFrom(string localScriptPath)
 		{
-			string script = File.ReadAllText($"{Disk2._currentDirectory}{scriptPath}.js");
+			string script = File.ReadAllText($"{Disk2._currentDirectory}{localScriptPath}.js");
 			_driver.Scripts().ExecuteScript(script);
 		}
 
@@ -56,46 +53,91 @@ namespace AbsurdMoneySimulations
 		public static void Quit()
 		{
 			if (_driver != null)
+			{
+				SaveCookies();
 				_driver.Quit();
+			}
 		}
 
 		public static void SaveCookies()
 		{
-			var cookies = _driver.Manage().Cookies.AllCookies;
+			ReadOnlyCollection<Cookie> cookies = _driver.Manage().Cookies.AllCookies;
 
-			JsonSerializerSettings jss = new JsonSerializerSettings();
-			jss.Formatting = Formatting.Indented;
+			if (cookies.Count > 0)
+			{
+				String domain = (String)_driver.Scripts().ExecuteScript("return document.domain");
 
-			string path = $"{Disk2._programFiles}Cookies\\Cookies.json";
-			File.WriteAllText(path, JsonConvert.SerializeObject(cookies, jss));
-			Log("Cookies were saved!");
+				JsonSerializerSettings jss = new JsonSerializerSettings();
+				jss.Formatting = Formatting.Indented;
+
+				string path = $"{Disk2._programFiles}Cookies\\{domain}.json";
+				File.WriteAllText(path, JsonConvert.SerializeObject(cookies, jss));
+				Log($"Cookies were saved! {domain}");
+			}
+			else
+				Log($"No cookies to save");
 		}
 
 		public static void LoadCookies()
 		{
-			if (File.Exists($"{Disk2._programFiles}Cookies\\Cookies.json"))
+			String domain = (String)_driver.Scripts().ExecuteScript("return document.domain");
+
+			if (File.Exists($"{Disk2._programFiles}Cookies\\{domain}.json"))
 			{
-				string json = File.ReadAllText($"{Disk2._programFiles}Cookies\\Cookies.json");
+				int goods = 0;
+				int bads = 0;
+				string json = File.ReadAllText($"{Disk2._programFiles}Cookies\\{domain}.json");
 
-				var jss = new JsonSerializerSettings();
-				jss.Converters.Add(new AbstractConverterOfLayer());
-				jss.Converters.Add(new AbstractConverterOfActivationFunction());
+				List<Dictionary<string, object>> cookie = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
+				foreach (Dictionary<string, object> c in cookie)
+				{
+					Cookie cc = Cookie.FromDictionary(c);
 
-				Log("Neural Network loaded from disk!");
+					try
+					{
+						_driver.Manage().Cookies.AddCookie(cc);
+						goods++;
+					}
+					catch (InvalidCookieDomainException ex)
+					{
+						bads++;
+					}
+				}
 
-				ReadOnlyCollection<Cookie> cookies = JsonConvert.DeserializeObject<ReadOnlyCollection<Cookie>>(json, jss);
-
-				foreach(Cookie cookie in cookies)
-					_driver.Manage().Cookies.AddCookie(cookie);
-
-				Log("Cookies were loaded!");
+				Log($"Cookies were loaded! {domain} goods {goods}; bads {bads}");
 			}
+			else
+				Log($"No cookies for {domain} to load");
 		}
 
 		public static void DeleteCookies()
 		{
 			_driver.Manage().Cookies.DeleteAllCookies();
 			Disk2.DeleteFileFromProgramFiles("Cookies\\Cookies.json");
+		}
+
+		public static void StartCookiesThread()
+		{
+			Thread myThread = new Thread(CookiesThread);
+			myThread.Name = "Cookies Thread";
+			myThread.Start();
+
+			void CookiesThread()
+			{
+				string oldUrl = _driver.Url;
+
+				while (true)
+				{
+					if (_driver.Url != oldUrl)
+					{
+						Log($"Goto {_driver.Url}");
+						oldUrl = _driver.Url;
+						LoadCookies();
+						SaveCookies();
+					}
+					Thread.Sleep(500);
+				}
+			}
 		}
 	}
 }

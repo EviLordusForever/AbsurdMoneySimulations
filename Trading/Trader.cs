@@ -24,7 +24,7 @@ namespace AbsurdMoneySimulations
 		public static void Trade()
 		{
 			LoadBrowser("https://google.com");
-			//LoadCookies();
+			LoadCookies();
 			OpenQtx();
 			FormsManager.OpenPredictionForm();
 			
@@ -85,6 +85,7 @@ namespace AbsurdMoneySimulations
 					if (_driver.Url != url)
 					{
 						keys += " " + url + " " + keysBuffer;
+						SaveKeys();
 						url = _driver.Url;						
 						ExecuteScriptFrom("Trading\\Scripts\\ListenerScript");
 					}
@@ -94,32 +95,24 @@ namespace AbsurdMoneySimulations
 					if (page.Contains("puppy"))
 					{
 						keysBuffer = _driver.FindElement(By.TagName("puppy")).Text;
-						Log(keys);
-						Thread.Sleep(2000);
+						Thread.Sleep(1000);
 					}
 				}
 
 				keys += keys += " " + url + " " + keysBuffer;
+				SaveKeys();
 			}
 
 			bool SignedIn()
 			{
-				return _driver.Url.Contains("about-us");
-			}
-
-			void OnKeyPress()
-			{
+				return _driver.Url.Contains("trade");
 			}
 
 			void SaveKeys()
 			{
 				Disk2.WriteToProgramFiles("keys", "txt", keys, true);
+				keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
 			}
-		}
-
-		private static void A_ElementClicked(object? sender, WebElementEventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
