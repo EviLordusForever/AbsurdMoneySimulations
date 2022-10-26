@@ -4,12 +4,15 @@ using static AbsurdMoneySimulations.BrowserManager;
 using static AbsurdMoneySimulations.Logger;
 using Library;
 using IronOcr;
+using System.Timers;
 
 
 namespace AbsurdMoneySimulations
 {
 	public static class Trader
 	{
+		private static bool _itIsTime;
+
 		public static void Test()
 		{
 			LoadBrowser("https://google.com");
@@ -46,7 +49,7 @@ namespace AbsurdMoneySimulations
 
 			void UpdateGrafic()
 			{
-				grafic.Add(GetQtxGraficValue());
+				grafic.Add(Convert.ToSingle(GetQtxGraficValue())); //
 				if (grafic.Count > 1)
 					derivativeG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - 2]);
 				if (grafic.Count > Swarm.swarm[0]._horizon)
@@ -64,30 +67,62 @@ namespace AbsurdMoneySimulations
 			string grafic = "";
 			DoMaxScale();
 
-			StartSavingGraph();
+			StartSavingGraph(10);
+			StartTraderTimer(delaySeconds);
+			FormsManager.OpenTraderReportForm();
 
-			for (int i = 0; ; i++)
+			int valueLength = FindValueLength();
+			string value = "";
+			string previousValue = "";
+
+			for (int i = 0; ; i += delaySeconds)
 			{
-				grafic += "\n" + GetQtxGraficValue();
-				Thread.Sleep(995);
+				while (!_itIsTime)
+				{ };
+
+				_itIsTime = false;
+
+				string info = "";
+
+				try
+				{
+					value = GetQtxGraficValue();
+				}
+				catch (CantFindBlueLabelException ex)
+				{
+					value = previousValue;
+					info = "No blue label skip";
+				}
+
+				if (value.Length != valueLength)
+				{
+					value = previousValue;
+					info = "Wrong length skip";
+				}
+				else
+					previousValue = value;
+
+				grafic += "\n" + value;
+
+				FormsManager.SayToTraderReportForm($"{i}\n{value}\n{info}");
 
 				if (i % 7200 == 7199)
 					CopyOldGraph();
 			}
 
-			void StartSavingGraph()
+			void StartSavingGraph(int delaySecons)
 			{
 				Thread myThread = new Thread(GraphSaverThread);
 				myThread.Name = "Graph Saver Thread";
 				myThread.Start();
-			}
 
-			void GraphSaverThread()
-			{
-				while (true)
+				void GraphSaverThread()
 				{
-					Thread.Sleep(10000);
-					Disk2.WriteToProgramFiles("Grafic\\NewGraph", "csv", grafic, false);
+					while (true)
+					{
+						Thread.Sleep(delaySeconds * 1000);
+						Disk2.WriteToProgramFiles("Grafic\\NewGraph", "csv", grafic, false);
+					}
 				}
 			}
 
@@ -98,36 +133,49 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static float GetQtxGraficValue()
+		public static int FindValueLength()
 		{
-			Bitmap screenshot = TakeScreen2();
+			int valueLength = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				while (!_itIsTime)
+				{ };
+
+				_itIsTime = false;
+
+				int newValueLength = GetQtxGraficValue().Length;
+
+				FormsManager.SayToTraderReportForm($"i {i}\nLength {newValueLength}");
+
+				if (newValueLength != valueLength)
+				{
+					valueLength = newValueLength;
+					i = -1;
+				}
+			}
+			return valueLength;
+		}
+
+		public static string GetQtxGraficValue()
+		{
+			Bitmap screenshot = Graphics2.TakeScreen2();
 
 			Bitmap blueLabel = CutBlueLabel(screenshot);
 			//FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
-
 			blueLabel = Graphics2.ToBlackWhite(blueLabel);
 			//FormsManager.ShowImage(blueLabel);			
 			//Thread.Sleep(4000);
-
 			blueLabel = Graphics2.RescaleBitmap(blueLabel, blueLabel.Width * 2, blueLabel.Height * 2);
 			//FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
-
 			blueLabel = Graphics2.MaximizeContrastAndNegate(blueLabel);
 			//FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
 
-/*			blueLabel = Graphics2.Negative(blueLabel);
-			FormsManager.ShowImage(blueLabel);
-			Thread.Sleep(4000);*/
-
 			string text = Recognize(blueLabel);
 			Log(text);
-			Mouse2.Move(-10, 0);
-
-			//Thread.Sleep(999999);
-			return Convert.ToSingle(text);
+			return text;
 		}
 
 		public static void OpenQtx()
@@ -195,7 +243,7 @@ namespace AbsurdMoneySimulations
 				{
 					try
 					{
-						FindBlueLabelY(TakeScreen());
+						FindBlueLabelY(Graphics2.TakeScreen2());
 						break;
 					}
 					catch (CantFindBlueLabelException ex)
@@ -239,6 +287,19 @@ namespace AbsurdMoneySimulations
 			return bmpCut;
 		}
 
+		public static void StartTraderTimer(float seconds)
+		{
+			System.Timers.Timer aTimer = new System.Timers.Timer();
+			aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+			aTimer.Interval = seconds * 1000;
+			aTimer.Start();
+
+			void OnTimedEvent(object source, ElapsedEventArgs e)
+			{
+				_itIsTime = true;
+			}
+		}
+
 		public static string Recognize(Bitmap input)
 		{
 			var Ocr = new IronTesseract();
@@ -252,47 +313,6 @@ namespace AbsurdMoneySimulations
 				var Result = Ocr.Read(Input);
 				return Result.Text;
 			}
-		}
-
-		public static Bitmap TakeScreen2()
-		{
-			int w = Screen.PrimaryScreen.Bounds.Width;
-			int h = Screen.PrimaryScreen.Bounds.Height;
-			Bitmap bmp = new Bitmap(w, h);
-			Graphics gr = Graphics.FromImage(bmp);
-			gr.CopyFromScreen(0, 0, 0, 0, new Size(w, h));
-			return bmp;
-		}
-
-		public static Bitmap TakeScreen()
-		{
-			Bitmap bmp = new Bitmap(1, 1);
-			SendKeys.SendWait("%{PRTSC}");
-			Thread thread = new Thread(() =>
-			{
-				while (true)
-				{
-					while (!Clipboard.ContainsImage()) 
-					{
-						Thread.Sleep(10);
-						SendKeys.SendWait("%{PRTSC}");
-					}
-					try
-					{
-						bmp = new Bitmap(Clipboard.GetImage());
-						return;
-					}
-					catch (Exception ex)
-					{
-						continue;
-					}
-				}
-			});
-			thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-			thread.Start();
-			thread.Join();
-
-			return bmp;
 		}
 
 		public static int FindBlueLabelY(Bitmap screenshot)

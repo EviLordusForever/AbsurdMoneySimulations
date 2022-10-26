@@ -125,7 +125,7 @@
 
 			void LiveGraphGettingThread()
 			{
-				Trader.GetGraphLive(1);
+				Trader.GetGraphLive(2);
 			}
 		}
 	}

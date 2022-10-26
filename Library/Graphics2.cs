@@ -98,7 +98,7 @@ namespace Library
 			}
 		}
 
-		public static Bitmap Negative(Bitmap bmp)
+		public static Bitmap Negate(Bitmap bmp)
 		{
 			for (int x = 0; x < bmp.Width; x++)
 				for (int y = 0; y < bmp.Height; y++)
@@ -110,5 +110,47 @@ namespace Library
 				return Color.FromArgb(255 - c.R, 255 - c.G, 255 - c.B);
 			}
 		}
+
+		public static Bitmap TakeScreen2()
+		{
+			int w = Screen.PrimaryScreen.Bounds.Width;
+			int h = Screen.PrimaryScreen.Bounds.Height;
+			Bitmap bmp = new Bitmap(w, h);
+			Graphics gr = Graphics.FromImage(bmp);
+			gr.CopyFromScreen(0, 0, 0, 0, new Size(w, h));
+			return bmp;
+		}
+
+		public static Bitmap TakeScreen()
+		{
+			Bitmap bmp = new Bitmap(1, 1);
+			SendKeys.SendWait("%{PRTSC}");
+			Thread thread = new Thread(() =>
+			{
+				while (true)
+				{
+					while (!Clipboard.ContainsImage())
+					{
+						Thread.Sleep(10);
+						SendKeys.SendWait("%{PRTSC}");
+					}
+					try
+					{
+						bmp = new Bitmap(Clipboard.GetImage());
+						return;
+					}
+					catch (Exception ex)
+					{
+						continue;
+					}
+				}
+			});
+			thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+			thread.Start();
+			thread.Join();
+
+			return bmp;
+		}
+
 	}
 }

@@ -7,6 +7,7 @@
 		public static ShowForm _showForm;
 		public static LogForm _logForm;
 		public static PredictionForm _predictionForm;
+		public static TraderReportForm _traderReportForm;
 
 		public static void ShowImage(Image img)
 		{
@@ -55,6 +56,21 @@
 			}));
 		}
 
+		public static void OpenTraderReportForm()
+		{
+			_mainForm.Invoke(new Action(() =>
+			{
+				if (_traderReportForm == null || _traderReportForm.IsDisposed)
+					_traderReportForm = new TraderReportForm();
+
+				_traderReportForm.Show();
+				_traderReportForm.WindowState = FormWindowState.Normal;
+				_traderReportForm.BringToFront();
+				_traderReportForm.TopMost = true;
+				_traderReportForm.Location = new Point(0, 0);
+			}));
+		}
+
 		public static void OpenShowForm(string text)
 		{
 			_mainForm.Invoke(new Action(() =>
@@ -97,6 +113,14 @@
 					_logForm.Location = new Point(-7, 0);
 					_logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
 				}
+			}));
+		}
+
+		public static void SayToTraderReportForm(string text)
+		{
+			_mainForm.Invoke(new Action(() =>
+			{
+				_traderReportForm.rtb.Text = text;
 			}));
 		}
 
