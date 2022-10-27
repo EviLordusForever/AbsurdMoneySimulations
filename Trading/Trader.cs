@@ -155,6 +155,12 @@ namespace AbsurdMoneySimulations
 					info = "Not float skip";
 				}
 
+				if (MathF.Abs(1 - (float)value.Length / valueLength) > 0.01f)
+				{
+					value = previousValue;
+					info = "Big jump skip";
+				}
+
 				if (value.Length != valueLength)
 				{
 					value = previousValue;
@@ -169,7 +175,7 @@ namespace AbsurdMoneySimulations
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
 				_graphUpdated = true;
-				FormsManager.SayToTraderReport1($"{i}\n{value}\n{info}");
+				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\n{info}");
 
 				MakeGraphBackupEvery(i, 3600);
 			}
@@ -232,13 +238,13 @@ namespace AbsurdMoneySimulations
 
 			Pen darkPen = new Pen(Color.FromArgb(30, 30, 30), 1);
 
-			gr.DrawLine(Pens.Gray, 0, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
-			gr.DrawLine(darkPen, 0, bmp.Height * 2 / 10f, bmp.Width - 1, bmp.Height * 2 / 10f);
-			gr.DrawLine(darkPen, 0, bmp.Height * 8 / 10f, bmp.Width - 1, bmp.Height * 8 / 10f);
-			gr.DrawLine(darkPen, 0, bmp.Height * 1 / 10f, bmp.Width - 1, bmp.Height * 1 / 10f);
-			gr.DrawLine(darkPen, 0, bmp.Height * 9 / 10f, bmp.Width - 1, bmp.Height * 9 / 10f);
+			gr.DrawLine(Pens.Orange, bmp.Width - d, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
+			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 2 / 10f, bmp.Width - 1, bmp.Height * 2 / 10f);
+			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 8 / 10f, bmp.Width - 1, bmp.Height * 8 / 10f);
+			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 1 / 10f, bmp.Width - 1, bmp.Height * 1 / 10f);
+			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 9 / 10f, bmp.Width - 1, bmp.Height * 9 / 10f);
 
-			if (input.Length > 0)
+			if (input.Length > 2)
 			{
 				int old1 = Rescale(-input[input.Length - 2]);
 				int now1 = Rescale(-input[input.Length - 1]);
@@ -263,6 +269,8 @@ namespace AbsurdMoneySimulations
 			bmp = new Bitmap(FormsManager._predictionForm.Size.Width, 100);
 			gr = Graphics.FromImage(bmp);
 			gr.Clear(Color.Black);
+			gr.DrawLine(Pens.Orange, 0, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
+
 			FormsManager.ShowImageToPredictionForm(bmp);
 		}
 
