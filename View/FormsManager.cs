@@ -116,11 +116,25 @@
 			}));
 		}
 
-		public static void SayToTraderReportForm(string text)
+		public static void SayToTraderReport1(string text)
 		{
+			if (_traderReportForm == null || _traderReportForm.IsDisposed)
+				OpenTraderReportForm();
+
 			_mainForm.Invoke(new Action(() =>
 			{
-				_traderReportForm.rtb.Text = text;
+				_traderReportForm.rtb1.Text = text;
+			}));
+		}
+
+		public static void SayToTraderReport2(string text)
+		{
+			if (_traderReportForm == null || _traderReportForm.IsDisposed)
+				OpenTraderReportForm();
+
+			_mainForm.Invoke(new Action(() =>
+			{
+				_traderReportForm.rtb2.Text = text;
 			}));
 		}
 

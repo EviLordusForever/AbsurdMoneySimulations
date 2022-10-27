@@ -12,6 +12,11 @@ namespace AbsurdMoneySimulations
 	public static class Trader
 	{
 		private static bool _itIsTime;
+		private static bool _graphUpdated;
+
+		private static List<float> _graphLive = new List<float>();
+		private static List<float> _derivativeLive = new List<float>();
+		private static List<float> _horizonLive = new List<float>();
 
 		public static void Test()
 		{
@@ -25,35 +30,63 @@ namespace AbsurdMoneySimulations
 			SaveCookies();
 		}
 
-		public static void Trade()
+		public static void TradeBySwarm()
 		{
-			LoadBrowser("https://google.com");
-			LoadCookies();
-			OpenQtx();
+			Swarm.Load();
+			int horizon = Swarm.swarm[0]._horizon;
+			ActivationFunction inputAF = Swarm.swarm[0]._inputAF;
+			float prediction;
+			string traderReport = "";
+			int i = 0;
+
 			FormsManager.OpenPredictionForm();
 
-			List<float> grafic = new List<float>();
-			List<float> derivativeG = new List<float>();
-			List<float> horizonG = new List<float>();
-
-			Swarm.Load();
-
-			Thread.Sleep(666000);
-
 			while (true)
-			{
-				UpdateGrafic();
-				float prediction = Swarm.Calculate(Array2.SubArray(horizonG.ToArray(), horizonG.Count - Swarm.swarm[0]._horizon - 1, Swarm.swarm[0]._horizon));
-				Thread.Sleep(999);
+			{				
+				WaitGraphUpdated();
+				traderReport = "";
+
+				AddToDerivativeLive();
+				AddToHorizonLive();
+
+				if (_horizonLive.Count > horizon)
+				{
+					float[] input = _horizonLive.GetRange(_horizonLive.Count - 1 - horizon, horizon).ToArray();
+					float standartDeviation = Math2.FindStandartDeviation(input);
+					input = Tester.Normalize(input, standartDeviation, inputAF, 0);
+					prediction = Swarm.Calculate(input);
+
+					traderReport += $"{i}\n";
+					traderReport += $"h: {_horizonLive[_horizonLive.Count - 1]}\n";
+					traderReport += $"predction: {prediction}";
+					i++;
+				}
+				else
+					traderReport += $"Waiting for {horizon - _horizonLive.Count} more points to start predicting\n";
+
+				FormsManager.SayToTraderReport2(traderReport);
 			}
 
-			void UpdateGrafic()
+
+
+			void AddToDerivativeLive()
 			{
-				grafic.Add(Convert.ToSingle(GetQtxGraficValue())); //
-				if (grafic.Count > 1)
-					derivativeG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - 2]);
-				if (grafic.Count > Swarm.swarm[0]._horizon)
-					horizonG.Add(grafic[grafic.Count - 1] - grafic[grafic.Count - Swarm.swarm[0]._horizon]);
+				if (_graphLive.Count > 1)
+					_derivativeLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 2]);
+			}
+
+			void AddToHorizonLive()
+			{
+				if (_graphLive.Count > horizon)
+					_horizonLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 1 - horizon]);
+				else
+					traderReport += $"Waiting for {horizon - _graphLive.Count} more points to start finding Horizon\n";
+			}
+
+			void WaitGraphUpdated()
+			{
+				while (!_graphUpdated) { }
+				_graphUpdated = false;
 			}
 		}
 
@@ -63,9 +96,9 @@ namespace AbsurdMoneySimulations
 			LoadCookies();
 			CloseChromeMessage();
 			OpenQtx();
-			CopyOldGraph();
-			string grafic = "";
-			DoMaxScale();
+			MakeGraphBackup();
+			//DoMaxScale();
+			string graphCSV = "";
 
 			StartSavingGraph(10);
 			StartTraderTimer(delaySeconds);
@@ -74,15 +107,13 @@ namespace AbsurdMoneySimulations
 			int valueLength = FindValueLength();
 			string value = "";
 			string previousValue = "";
+			string info = "";
 
 			for (int i = 0; ; i += delaySeconds)
 			{
-				while (!_itIsTime)
-				{ };
+				WaitYourTime();
 
-				_itIsTime = false;
-
-				string info = "";
+				info = "";
 
 				try
 				{
@@ -91,7 +122,17 @@ namespace AbsurdMoneySimulations
 				catch (CantFindBlueLabelException ex)
 				{
 					value = previousValue;
-					info = "No blue label skip";
+					info = "Can't find blue label skip";
+				}
+
+				try
+				{
+					float valuef = Convert.ToSingle(value);
+				}
+				catch
+				{
+					value = previousValue;
+					info = "Not float skip";
 				}
 
 				if (value.Length != valueLength)
@@ -102,12 +143,33 @@ namespace AbsurdMoneySimulations
 				else
 					previousValue = value;
 
-				grafic += "\n" + value;
+				_graphLive.Add(Convert.ToSingle(value));
+				graphCSV += $"{value}\n";
+				_graphUpdated = true;
+				FormsManager.SayToTraderReport1($"{i}\n{value}\n{info}");
 
-				FormsManager.SayToTraderReportForm($"{i}\n{value}\n{info}");
+				MakeGraphBackupEvery(i, 3600);
+			}
 
-				if (i % 7200 == 7199)
-					CopyOldGraph();
+			void MakeGraphBackupEvery(int seconds, int everyS)
+			{
+				if (seconds % everyS == everyS - (everyS % delaySeconds) - delaySeconds)
+				{
+					Thread myThread = new Thread(GraphBackupThread);
+					myThread.Name = "Graph Backup Thread";
+					myThread.Start();
+
+					void GraphBackupThread()
+					{
+						MakeGraphBackup();
+					}
+				}
+			}
+
+			void WaitYourTime()
+			{
+				while (!_itIsTime) { };
+				_itIsTime = false;
 			}
 
 			void StartSavingGraph(int delaySecons)
@@ -121,12 +183,12 @@ namespace AbsurdMoneySimulations
 					while (true)
 					{
 						Thread.Sleep(delaySeconds * 1000);
-						Disk2.WriteToProgramFiles("Grafic\\NewGraph", "csv", grafic, false);
+						Disk2.WriteToProgramFiles("Grafic\\NewGraph", "csv", graphCSV, false);
 					}
 				}
 			}
 
-			void CopyOldGraph()
+			void MakeGraphBackup()
 			{
 				if (File.Exists($"{Disk2._programFiles}Grafic\\NewGraph.csv"))
 					File.Copy($"{Disk2._programFiles}Grafic\\NewGraph.csv", $"{Disk2._programFiles}Grafic\\NewGraphCopy({GetDateToShow()} {GetTimeToShow().Replace(':', '.')}).csv");
@@ -145,7 +207,7 @@ namespace AbsurdMoneySimulations
 
 				int newValueLength = GetQtxGraficValue().Length;
 
-				FormsManager.SayToTraderReportForm($"i {i}\nLength {newValueLength}");
+				FormsManager.SayToTraderReport1($"i {i}\nLength {newValueLength}");
 
 				if (newValueLength != valueLength)
 				{

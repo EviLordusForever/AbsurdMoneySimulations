@@ -183,8 +183,6 @@ namespace AbsurdMoneySimulations
 
 		public void FillTestsFromHorizonGrafic()
 		{
-			float standartDeviation = 0;
-
 			int maximalDelta = _availableGraficPointsForHorizon.Count();
 			float delta_delta = 0.990f * maximalDelta / _testsCount;
 
@@ -197,8 +195,8 @@ namespace AbsurdMoneySimulations
 				int offset = _availableGraficPointsForHorizon[Convert.ToInt32(delta)];
 
 				_tests[test] = Array2.SubArray(_horizonGrafic, offset, _ownerNN._inputWindow);
-				FindStandartDeviation();
-				Normalize();
+				float standartDeviation = Math2.FindStandartDeviation(_tests[test]);
+				_tests[test] = Normalize(_tests[test], standartDeviation, _ownerNN._inputAF, _moveInputsOverZero);
 
 				_answers[test] = _horizonGrafic[offset + _ownerNN._inputWindow + _ownerNN._horizon];
 				_answers[test] = _ownerNN._answersAF.f(_answers[test] / standartDeviation) + _moveAnswersOverZero;
@@ -207,21 +205,14 @@ namespace AbsurdMoneySimulations
 			}
 
 			Log($"Tests and answers for NN are filled from NORMALIZED HORIZON(!!!) grafic. ({_tests.Length})");
+		}
 
-			void FindStandartDeviation()
-			{
-				standartDeviation = 0;
-				for (int i = 0; i < _tests[test].Length; i++)
-					standartDeviation += MathF.Pow(_tests[test][i], 2);
-				standartDeviation /= _tests[test].Length;
-				standartDeviation = MathF.Sqrt(standartDeviation);
-			}
+		public static float[] Normalize(float[] input, float standartDeviation, ActivationFunction af, float move)
+		{
+			for (int i = 0; i < input.Length; i++)
+				input[i] = af.f(input[i] / standartDeviation) + move;
 
-			void Normalize()
-			{
-				for (int i = 0; i < _tests[test].Length; i++)
-					_tests[test][i] = _ownerNN._inputAF.f(_tests[test][i] / standartDeviation) + _moveInputsOverZero;
-			}
+			return input;
 		}
 
 		public void FillBatch()

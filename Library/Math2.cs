@@ -69,6 +69,18 @@ namespace Library
 			return min;
 		}
 
+		public static float FindStandartDeviation(float[] input)
+		{
+			float standartDeviation = 0;
+			for (int i = 0; i < input.Length; i++)
+				standartDeviation += MathF.Pow(input[i], 2);
+			standartDeviation /= input.Length;
+			standartDeviation = MathF.Sqrt(standartDeviation);
+			return standartDeviation;
+		}
+
+
+
 		public static double CalculateRandomness(double k, int n)
 		{
 			if (k == n / 2.0)

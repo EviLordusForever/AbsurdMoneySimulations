@@ -28,28 +28,43 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.rtb = new System.Windows.Forms.RichTextBox();
+			this.rtb1 = new System.Windows.Forms.RichTextBox();
+			this.rtb2 = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			// 
 			// rtb
 			// 
-			this.rtb.BackColor = System.Drawing.SystemColors.InfoText;
-			this.rtb.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.rtb.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.rtb.ForeColor = System.Drawing.Color.Lime;
-			this.rtb.Location = new System.Drawing.Point(0, 0);
-			this.rtb.Name = "rtb";
-			this.rtb.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-			this.rtb.Size = new System.Drawing.Size(119, 568);
-			this.rtb.TabIndex = 0;
-			this.rtb.Text = "";
+			this.rtb1.BackColor = System.Drawing.SystemColors.InfoText;
+			this.rtb1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.rtb1.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.rtb1.ForeColor = System.Drawing.Color.Lime;
+			this.rtb1.Location = new System.Drawing.Point(0, 0);
+			this.rtb1.Name = "rtb";
+			this.rtb1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+			this.rtb1.Size = new System.Drawing.Size(119, 117);
+			this.rtb1.TabIndex = 0;
+			this.rtb1.Text = "";
+			// 
+			// rtb2
+			// 
+			this.rtb2.BackColor = System.Drawing.SystemColors.InfoText;
+			this.rtb2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.rtb2.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.rtb2.ForeColor = System.Drawing.Color.Lime;
+			this.rtb2.Location = new System.Drawing.Point(0, 123);
+			this.rtb2.Name = "rtb2";
+			this.rtb2.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+			this.rtb2.Size = new System.Drawing.Size(119, 117);
+			this.rtb2.TabIndex = 1;
+			this.rtb2.Text = "";
 			// 
 			// TraderReportForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(119, 568);
-			this.Controls.Add(this.rtb);
+			this.ClientSize = new System.Drawing.Size(119, 239);
+			this.Controls.Add(this.rtb2);
+			this.Controls.Add(this.rtb1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "TraderReportForm";
 			this.Text = "TraderReportForm";
@@ -61,6 +76,7 @@
 
 		#endregion
 
-		public RichTextBox rtb;
+		public RichTextBox rtb1;
+		public RichTextBox rtb2;
 	}
 }

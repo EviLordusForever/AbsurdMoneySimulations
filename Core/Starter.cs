@@ -42,13 +42,15 @@
 
 		public static void StartTrader()
 		{
+			StartLiveGraphGetting();
+
 			Thread myThread = new Thread(StartTraderThread);
 			myThread.Name = "Trader Thread";
 			myThread.Start();
 
 			void StartTraderThread()
 			{
-				Trader.Trade();
+				Trader.TradeBySwarm();
 			}
 		}
 
