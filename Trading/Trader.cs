@@ -155,7 +155,7 @@ namespace AbsurdMoneySimulations
 					info = "Not float skip";
 				}
 
-				if (MathF.Abs(1 - (float)value.Length / valueLength) > 0.01f)
+				if (i > 2 && MathF.Abs(1 - Convert.ToSingle(value) / Convert.ToSingle(previousValue)) > 0.005f)
 				{
 					value = previousValue;
 					info = "Big jump skip";
@@ -166,8 +166,8 @@ namespace AbsurdMoneySimulations
 					value = previousValue;
 					info = "Wrong length skip";
 				}
-				else
-					previousValue = value;
+
+				previousValue = value;
 
 				//if (i == 10)
 				//	FakeFill();
