@@ -19,8 +19,10 @@ namespace Library
 		private const int MOUSEEVENTF_MIDDLEUP = 0x0040; /* middle button up */
 		private const int MOUSEEVENTF_XDOWN = 0x0080; /* x button down */
 		private const int MOUSEEVENTF_XUP = 0x0100; /* x button down */
+
 		private const int MOUSEEVENTF_WHEEL = 0x0800; /* wheel button rolled */
 		private const int MOUSEEVENTF_HWHEEL = 0x01000; /* hwheel button rolled */
+
 		private const int MOUSEEVENTF_MOVE_NOCOALESCE = 0x2000; /* do not coalesce mouse moves */
 		private const int MOUSEEVENTF_VIRTUALDESK = 0x4000; /* map to entire virtual desktop */
 		private const int MOUSEEVENTF_ABSOLUTE = 0x8000; /* absolute move */

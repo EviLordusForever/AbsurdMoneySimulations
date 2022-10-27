@@ -111,8 +111,10 @@ namespace AbsurdMoneySimulations
 
 		public static void DeleteCookies()
 		{
+			string domain = (string)_driver.Scripts().ExecuteScript("return document.domain");
 			_driver.Manage().Cookies.DeleteAllCookies();
-			Disk2.DeleteFileFromProgramFiles("Cookies\\Cookies.json");
+			Disk2.DeleteFileFromProgramFiles($"Cookies\\{domain}.json");
+			Log($"Cookies were deleted! {domain}");
 		}
 
 		public static void StartCookiesThread()

@@ -30,15 +30,16 @@
 		{
 			this.SuspendLayout();
 			// 
-			// PredictionForm2
+			// PredictionForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 85);
+			this.ClientSize = new System.Drawing.Size(1025, 84);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.Name = "PredictionForm2";
+			this.Name = "PredictionForm";
 			this.Text = "PredictionForm2";
 			this.Load += new System.EventHandler(this.PredictionForm2_Load);
+			this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PredictionForm_MouseDoubleClick);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PredictionForm2_MouseDown);
 			this.ResumeLayout(false);
 

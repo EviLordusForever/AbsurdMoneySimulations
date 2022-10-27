@@ -44,7 +44,7 @@
 			this.rtb1.Size = new System.Drawing.Size(119, 117);
 			this.rtb1.TabIndex = 0;
 			this.rtb1.Text = "";
-			this.rtb1.TextChanged += new System.EventHandler(this.rtb1_TextChanged);
+			this.rtb1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.rtb1_MouseDoubleClick);
 			this.rtb1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rtb1_MouseDown);
 			// 
 			// rtb2
@@ -59,6 +59,7 @@
 			this.rtb2.Size = new System.Drawing.Size(119, 117);
 			this.rtb2.TabIndex = 1;
 			this.rtb2.Text = "";
+			this.rtb2.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.rtb2_MouseDoubleClick);
 			this.rtb2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rtb2_MouseDown);
 			// 
 			// TraderReportForm
@@ -72,6 +73,8 @@
 			this.Name = "TraderReportForm";
 			this.Text = "TraderReportForm";
 			this.Load += new System.EventHandler(this.TraderReportForm_Load);
+			this.DoubleClick += new System.EventHandler(this.TraderReportForm_DoubleClick);
+			this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TraderReportForm_MouseDoubleClick);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TraderReportForm_MouseDown);
 			this.ResumeLayout(false);
 

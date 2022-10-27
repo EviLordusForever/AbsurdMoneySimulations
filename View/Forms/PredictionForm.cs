@@ -12,6 +12,7 @@ namespace AbsurdMoneySimulations
 {
 	public partial class PredictionForm : Form
 	{
+		private Point _startLocation;
 		public const int WM_NCLBUTTONDOWN = 0xA1;
 		public const int HT_CAPTION = 0x2;
 
@@ -27,7 +28,8 @@ namespace AbsurdMoneySimulations
 
 		private void PredictionForm2_Load(object sender, EventArgs e)
 		{
-
+			Rectangle bounds = Screen.PrimaryScreen.Bounds;
+			_startLocation = new Point((bounds.Width - Width) / 2, 0);
 		}
 
 		private void PredictionForm2_MouseDown(object sender, MouseEventArgs e)
@@ -37,6 +39,11 @@ namespace AbsurdMoneySimulations
 				ReleaseCapture();
 				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
 			}
+		}
+
+		private void PredictionForm_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			Location = _startLocation;
 		}
 	}
 }

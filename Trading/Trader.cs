@@ -58,11 +58,10 @@ namespace AbsurdMoneySimulations
 				AddToDerivativeLive();
 				AddToHorizonLive();
 
+				CutInput();
+
 				if (_horizonLive.Count > inputWindow)
 				{
-					input = _horizonLive.GetRange(_horizonLive.Count - 1 - inputWindow, inputWindow).ToArray();
-					float standartDeviation = Math2.FindStandartDeviation(input);
-					input = Tester.Normalize(input, standartDeviation, inputAF, moveInput);
 					_previousPrediction = _prediction;
 					_prediction = Swarm.Calculate(input);
 
@@ -75,7 +74,18 @@ namespace AbsurdMoneySimulations
 					traderReport += $"Waiting for {inputWindow - _horizonLive.Count} more points to start predicting\n";
 
 				FormsManager.SayToTraderReport2(traderReport);
-				DrawPrediction();
+				DrawPrediction(horizon);
+			}
+
+			void CutInput()
+			{
+				if (_horizonLive.Count > 1)
+				{
+					int cuttedWindow = Math.Min(inputWindow, _horizonLive.Count - 1);
+					input = _horizonLive.GetRange(_horizonLive.Count - 1 - cuttedWindow, cuttedWindow).ToArray();
+					float standartDeviation = Math2.FindStandartDeviation(input);
+					input = Tester.Normalize(input, standartDeviation, inputAF, moveInput);
+				}
 			}
 
 			void AddToDerivativeLive()
@@ -105,6 +115,7 @@ namespace AbsurdMoneySimulations
 			LoadCookies();
 			CloseChromeMessage();
 			OpenQtx();
+			StaySignedIn();
 			MakeGraphBackupCopy();
 			//DoMaxScale();
 			string graphCSV = "";
@@ -152,8 +163,8 @@ namespace AbsurdMoneySimulations
 				else
 					previousValue = value;
 
-				if (i == 10)
-					FakeFill();
+				//if (i == 10)
+				//	FakeFill();
 
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
@@ -168,8 +179,8 @@ namespace AbsurdMoneySimulations
 				for (int j = 0; j < 360; j++)
 					_graphLive.Add(Convert.ToSingle(value));
 
-				for (int j = 0; j < 360; j++)
-					_horizonLive.Add(Math2.rnd.NextSingle() * 2 - 1);
+				for (int j = 0; j < 290; j++)
+					_horizonLive.Add(Math2.rnd.NextSingle() * 0.2f - 0.1f);
 
 				Log("Filled graph by fake numbers");
 			}
@@ -212,24 +223,30 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void DrawPrediction()
+		public static void DrawPrediction(int horizon)
 		{
-			int d = 5;
+			int d = 4;
 
 			gr.DrawImage(bmp, -d, 0);
 			gr.FillRectangle(Brushes.Black, bmp.Width - d, 0, bmp.Width - 1, bmp.Height);
 
+			Pen darkPen = new Pen(Color.FromArgb(30, 30, 30), 1);
+
 			gr.DrawLine(Pens.Gray, 0, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
+			gr.DrawLine(darkPen, 0, bmp.Height * 2 / 10f, bmp.Width - 1, bmp.Height * 2 / 10f);
+			gr.DrawLine(darkPen, 0, bmp.Height * 8 / 10f, bmp.Width - 1, bmp.Height * 8 / 10f);
+			gr.DrawLine(darkPen, 0, bmp.Height * 1 / 10f, bmp.Width - 1, bmp.Height * 1 / 10f);
+			gr.DrawLine(darkPen, 0, bmp.Height * 9 / 10f, bmp.Width - 1, bmp.Height * 9 / 10f);
 
 			if (input.Length > 0)
 			{
-				int old = Rescale(-input[input.Length - 1 - d]);
-				int now = Rescale(-input[input.Length - 1]);
-				gr.DrawLine(Pens.Red, bmp.Width - 2, old, bmp.Width - 1, now);
+				int old1 = Rescale(-input[input.Length - 2]);
+				int now1 = Rescale(-input[input.Length - 1]);
+				gr.DrawLine(Pens.Red, bmp.Width - 1 - d - d * horizon, old1, bmp.Width - 1 - d * horizon, now1);
 			}
 
-			int old2 = Rescale(_previousPrediction / 5);
-			int now2 = Rescale(_prediction / 5);
+			int old2 = Rescale(-_previousPrediction / 5);
+			int now2 = Rescale(-_prediction / 5);
 			gr.DrawLine(Pens.Cyan, bmp.Width - 1 - d, old2, bmp.Width - 1, now2);
 
 			FormsManager.ShowImageToPredictionForm(bmp);
@@ -379,6 +396,26 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		private static void StaySignedIn()
+		{
+			Thread myThread = new Thread(StaySignedInThread);
+			myThread.Name = "Stay signed in";
+			myThread.Start();
+
+			void StaySignedInThread()
+			{
+				while (true)
+				{
+					if (!_driver.Url.Contains("trade") && _driver.Url.Contains("sign-in"))
+					{
+						Log("QTX UNSIGNED US!");
+						DeleteCookies();
+						OpenQtx();
+					}
+				}
+			}
+		}
+
 		private static void DoMaxScale()
 		{
 			Cursor.Position = new Point(625, 687);
@@ -440,7 +477,7 @@ namespace AbsurdMoneySimulations
 			int y;
 			try
 			{
-				y = 80;
+				y = 100;
 				while (!ItIsBlue(screenshot, x, y))
 					y++;
 			}
