@@ -34,7 +34,10 @@ namespace AbsurdMoneySimulations
 		{
 			Swarm.Load();
 			int horizon = Swarm.swarm[0]._horizon;
+			int inputWindow = Swarm.swarm[0]._inputWindow;
 			ActivationFunction inputAF = Swarm.swarm[0]._inputAF;
+			int moveInput = Swarm.swarm[0]._testerE._moveInputsOverZero;
+
 			float prediction;
 			string traderReport = "";
 			int i = 0;
@@ -49,11 +52,11 @@ namespace AbsurdMoneySimulations
 				AddToDerivativeLive();
 				AddToHorizonLive();
 
-				if (_horizonLive.Count > horizon)
+				if (_horizonLive.Count > inputWindow)
 				{
-					float[] input = _horizonLive.GetRange(_horizonLive.Count - 1 - horizon, horizon).ToArray();
+					float[] input = _horizonLive.GetRange(_horizonLive.Count - 1 - inputWindow, inputWindow).ToArray();
 					float standartDeviation = Math2.FindStandartDeviation(input);
-					input = Tester.Normalize(input, standartDeviation, inputAF, 0);
+					input = Tester.Normalize(input, standartDeviation, inputAF, moveInput);
 					prediction = Swarm.Calculate(input);
 
 					traderReport += $"{i}\n";
@@ -62,12 +65,10 @@ namespace AbsurdMoneySimulations
 					i++;
 				}
 				else
-					traderReport += $"Waiting for {horizon - _horizonLive.Count} more points to start predicting\n";
+					traderReport += $"Waiting for {inputWindow - _horizonLive.Count} more points to start predicting\n";
 
 				FormsManager.SayToTraderReport2(traderReport);
 			}
-
-
 
 			void AddToDerivativeLive()
 			{
@@ -96,7 +97,7 @@ namespace AbsurdMoneySimulations
 			LoadCookies();
 			CloseChromeMessage();
 			OpenQtx();
-			MakeGraphBackup();
+			MakeGraphBackupCopy();
 			//DoMaxScale();
 			string graphCSV = "";
 
@@ -161,7 +162,7 @@ namespace AbsurdMoneySimulations
 
 					void GraphBackupThread()
 					{
-						MakeGraphBackup();
+						MakeGraphBackupCopy();
 					}
 				}
 			}
@@ -187,15 +188,16 @@ namespace AbsurdMoneySimulations
 					}
 				}
 			}
-
-			void MakeGraphBackup()
-			{
-				if (File.Exists($"{Disk2._programFiles}Grafic\\NewGraph.csv"))
-					File.Copy($"{Disk2._programFiles}Grafic\\NewGraph.csv", $"{Disk2._programFiles}Grafic\\NewGraphCopy({GetDateToShow()} {GetTimeToShow().Replace(':', '.')}).csv");
-			}
 		}
 
-		public static int FindValueLength()
+		private static void MakeGraphBackupCopy() 
+		{
+			if (File.Exists($"{Disk2._programFiles}Grafic\\NewGraph.csv"))
+				File.Copy($"{Disk2._programFiles}Grafic\\NewGraph.csv", $"{Disk2._programFiles}Grafic\\NewGraphCopy({GetDateToShow()} {GetTimeToShow().Replace(':', '.')}).csv");
+			Log("Created graph backup copy");
+		}
+
+		private static int FindValueLength()
 		{
 			int valueLength = 0;
 			for (int i = 0; i < 5; i++)
@@ -218,7 +220,7 @@ namespace AbsurdMoneySimulations
 			return valueLength;
 		}
 
-		public static string GetQtxGraficValue()
+		private static string GetQtxGraficValue()
 		{
 			Bitmap screenshot = Graphics2.TakeScreen2();
 
@@ -235,12 +237,12 @@ namespace AbsurdMoneySimulations
 			//FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
 
-			string text = Recognize(blueLabel);
-			Log(text);
+			string text = RecognizeFromBlueLabel(blueLabel);
+			//Log(text);
 			return text;
 		}
 
-		public static void OpenQtx()
+		private static void OpenQtx()
 		{
 			DateTime dt = DateTime.Now;
 			string keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
@@ -318,23 +320,19 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void DoMaxScale()
+		private static void DoMaxScale()
 		{
 			Cursor.Position = new Point(625, 687);
 			for (int i = 0; i < 45; i++)
-			{
-				Mouse2.LeftDown();
-				Thread.Sleep(60);
-				Mouse2.LeftUp();
-			}
+				Mouse2.Click(625, 687, 60);
 		}
 
-		public static void CloseChromeMessage()
+		private static void CloseChromeMessage()
 		{
 			Mouse2.Click(1343, 94, 30);
 		}
 
-		public static Bitmap CutBlueLabel(Bitmap screenshot)
+		private static Bitmap CutBlueLabel(Bitmap screenshot)
 		{
 			int up = FindBlueLabelY(screenshot);
 			int left = FindBlueLabelLeftX(screenshot, up) + 5;
@@ -349,7 +347,7 @@ namespace AbsurdMoneySimulations
 			return bmpCut;
 		}
 
-		public static void StartTraderTimer(float seconds)
+		private static void StartTraderTimer(float seconds)
 		{
 			System.Timers.Timer aTimer = new System.Timers.Timer();
 			aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
@@ -362,7 +360,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static string Recognize(Bitmap input)
+		private static string RecognizeFromBlueLabel(Bitmap input)
 		{
 			var Ocr = new IronTesseract();
 			using (var Input = new OcrInput(input))
@@ -377,7 +375,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static int FindBlueLabelY(Bitmap screenshot)
+		private static int FindBlueLabelY(Bitmap screenshot)
 		{
 			int x = 1111;
 			int y;
@@ -394,7 +392,7 @@ namespace AbsurdMoneySimulations
 			return y;
 		}
 
-		public static int FindBlueLabelRightX(Bitmap screenshot, int upY)
+		private static int FindBlueLabelRightX(Bitmap screenshot, int upY)
 		{
 			int x = 1150;
 			upY += 6 + 5;
@@ -411,7 +409,7 @@ namespace AbsurdMoneySimulations
 			return x;
 		}
 
-		public static int FindBlueLabelLeftX(Bitmap screenshot, int upY)
+		private static int FindBlueLabelLeftX(Bitmap screenshot, int upY)
 		{
 			int x = 1080;
 			upY += 6 + 5;
@@ -428,13 +426,13 @@ namespace AbsurdMoneySimulations
 			return x;
 		}
 
-		public static bool ItIsBlue(Bitmap screenshot, int x, int y)
+		private static bool ItIsBlue(Bitmap screenshot, int x, int y)
 		{
 			Color c = screenshot.GetPixel(x, y);
 			return c.R < 60 && c.B > 100;
 		}
 
-		public static int FindWhiteLabelY(Bitmap screenshot)
+		private static int FindWhiteLabelY(Bitmap screenshot)
 		{
 			int y;
 			try

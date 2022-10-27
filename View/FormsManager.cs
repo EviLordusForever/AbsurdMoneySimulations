@@ -50,7 +50,7 @@
 				_predictionForm.Show();
 				_predictionForm.WindowState = FormWindowState.Normal;
 				Rectangle bounds = Screen.PrimaryScreen.Bounds;
-				_predictionForm.Location = new Point((bounds.Width - _predictionForm.Width) / 2, bounds.Height - _predictionForm.Height);
+				_predictionForm.Location = new Point((bounds.Width - _predictionForm.Width) / 2, 0);
 				_predictionForm.BringToFront();
 				_predictionForm.TopMost = true;
 			}));
