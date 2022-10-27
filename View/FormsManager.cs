@@ -27,6 +27,19 @@
 			}));
 		}
 
+		public static void ShowImageToPredictionForm(Bitmap bmp)
+		{
+			if (_showForm == null || _showForm.IsDisposed)
+				OpenShowForm("aboba");
+
+			Bitmap bmp0 = Library.Graphics2.RescaleBitmap(bmp, _predictionForm.ClientSize.Width, _predictionForm.ClientSize.Height);
+
+			_mainForm.Invoke(new Action(() =>
+			{
+				_predictionForm.BackgroundImage = bmp0;
+			}));
+		}
+
 		public static void OpenBetsSimulatorForm()
 		{
 			_mainForm.Invoke(new Action(() =>

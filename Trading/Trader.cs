@@ -13,10 +13,16 @@ namespace AbsurdMoneySimulations
 	{
 		private static bool _itIsTime;
 		private static bool _graphUpdated;
+		private static Bitmap bmp;
+		private static Graphics gr;
 
 		private static List<float> _graphLive = new List<float>();
 		private static List<float> _derivativeLive = new List<float>();
 		private static List<float> _horizonLive = new List<float>();
+		private static float[] input;
+
+		private static float _prediction;
+		private static float _previousPrediction;
 
 		public static void Test()
 		{
@@ -38,11 +44,11 @@ namespace AbsurdMoneySimulations
 			ActivationFunction inputAF = Swarm.swarm[0]._inputAF;
 			int moveInput = Swarm.swarm[0]._testerE._moveInputsOverZero;
 
-			float prediction;
+			InititializePredictionForm();
+
+			input = new float[inputWindow];
 			string traderReport = "";
 			int i = 0;
-
-			FormsManager.OpenPredictionForm();
 
 			while (true)
 			{				
@@ -54,20 +60,22 @@ namespace AbsurdMoneySimulations
 
 				if (_horizonLive.Count > inputWindow)
 				{
-					float[] input = _horizonLive.GetRange(_horizonLive.Count - 1 - inputWindow, inputWindow).ToArray();
+					input = _horizonLive.GetRange(_horizonLive.Count - 1 - inputWindow, inputWindow).ToArray();
 					float standartDeviation = Math2.FindStandartDeviation(input);
 					input = Tester.Normalize(input, standartDeviation, inputAF, moveInput);
-					prediction = Swarm.Calculate(input);
+					_previousPrediction = _prediction;
+					_prediction = Swarm.Calculate(input);
 
 					traderReport += $"{i}\n";
 					traderReport += $"h: {_horizonLive[_horizonLive.Count - 1]}\n";
-					traderReport += $"predction: {prediction}";
+					traderReport += $"predction: {_prediction}";
 					i++;
 				}
 				else
 					traderReport += $"Waiting for {inputWindow - _horizonLive.Count} more points to start predicting\n";
 
 				FormsManager.SayToTraderReport2(traderReport);
+				DrawPrediction();
 			}
 
 			void AddToDerivativeLive()
@@ -144,12 +152,26 @@ namespace AbsurdMoneySimulations
 				else
 					previousValue = value;
 
+				if (i == 10)
+					FakeFill();
+
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
 				_graphUpdated = true;
 				FormsManager.SayToTraderReport1($"{i}\n{value}\n{info}");
 
 				MakeGraphBackupEvery(i, 3600);
+			}
+
+			void FakeFill()
+			{
+				for (int j = 0; j < 360; j++)
+					_graphLive.Add(Convert.ToSingle(value));
+
+				for (int j = 0; j < 360; j++)
+					_horizonLive.Add(Math2.rnd.NextSingle() * 2 - 1);
+
+				Log("Filled graph by fake numbers");
 			}
 
 			void MakeGraphBackupEvery(int seconds, int everyS)
@@ -188,6 +210,43 @@ namespace AbsurdMoneySimulations
 					}
 				}
 			}
+		}
+
+		public static void DrawPrediction()
+		{
+			int d = 5;
+
+			gr.DrawImage(bmp, -d, 0);
+			gr.FillRectangle(Brushes.Black, bmp.Width - d, 0, bmp.Width - 1, bmp.Height);
+
+			gr.DrawLine(Pens.Gray, 0, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
+
+			if (input.Length > 0)
+			{
+				int old = Rescale(-input[input.Length - 1 - d]);
+				int now = Rescale(-input[input.Length - 1]);
+				gr.DrawLine(Pens.Red, bmp.Width - 2, old, bmp.Width - 1, now);
+			}
+
+			int old2 = Rescale(_previousPrediction / 5);
+			int now2 = Rescale(_prediction / 5);
+			gr.DrawLine(Pens.Cyan, bmp.Width - 1 - d, old2, bmp.Width - 1, now2);
+
+			FormsManager.ShowImageToPredictionForm(bmp);
+
+			int Rescale(float v)
+			{
+				return Convert.ToInt32((v + 1) * bmp.Height / 2f);
+			}
+		}
+
+		private static void InititializePredictionForm()
+		{
+			FormsManager.OpenPredictionForm();
+			bmp = new Bitmap(FormsManager._predictionForm.Size.Width, 100);
+			gr = Graphics.FromImage(bmp);
+			gr.Clear(Color.Black);
+			FormsManager.ShowImageToPredictionForm(bmp);
 		}
 
 		private static void MakeGraphBackupCopy() 

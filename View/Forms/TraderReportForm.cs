@@ -28,5 +28,28 @@
 				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
 			}
 		}
+
+		private void rtb1_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void rtb1_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ReleaseCapture();
+				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+			}
+		}
+
+		private void rtb2_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				ReleaseCapture();
+				SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+			}
+		}
 	}
 }

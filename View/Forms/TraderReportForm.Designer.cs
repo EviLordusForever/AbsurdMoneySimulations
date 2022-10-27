@@ -32,18 +32,20 @@
 			this.rtb2 = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			// 
-			// rtb
+			// rtb1
 			// 
 			this.rtb1.BackColor = System.Drawing.SystemColors.InfoText;
 			this.rtb1.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.rtb1.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.rtb1.ForeColor = System.Drawing.Color.Lime;
 			this.rtb1.Location = new System.Drawing.Point(0, 0);
-			this.rtb1.Name = "rtb";
+			this.rtb1.Name = "rtb1";
 			this.rtb1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.rtb1.Size = new System.Drawing.Size(119, 117);
 			this.rtb1.TabIndex = 0;
 			this.rtb1.Text = "";
+			this.rtb1.TextChanged += new System.EventHandler(this.rtb1_TextChanged);
+			this.rtb1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rtb1_MouseDown);
 			// 
 			// rtb2
 			// 
@@ -57,6 +59,7 @@
 			this.rtb2.Size = new System.Drawing.Size(119, 117);
 			this.rtb2.TabIndex = 1;
 			this.rtb2.Text = "";
+			this.rtb2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rtb2_MouseDown);
 			// 
 			// TraderReportForm
 			// 

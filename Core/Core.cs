@@ -27,7 +27,7 @@ namespace AbsurdMoneySimulations
 				{
 					FormsManager.OpenShowForm("U ARE CRINGE SO U ARE BANNED");
 					FormsManager.SetShowFormSize(600, 600);
-					FormsManager.MoveFormToCenter(FormsManager._showForm);					
+					FormsManager.MoveFormToCenter(FormsManager._showForm);
 
 					Thread showImagesThread = new Thread(ShowImagesThread);
 					showImagesThread.Start();
