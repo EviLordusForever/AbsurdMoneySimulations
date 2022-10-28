@@ -325,6 +325,9 @@ namespace AbsurdMoneySimulations
 
 		public static void OpenQtx()
 		{
+			if (SignedIn())
+				return;
+
 			DateTime dt = DateTime.Now;
 			string keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
 			string keysBuffer = "";
@@ -334,6 +337,7 @@ namespace AbsurdMoneySimulations
 			Navi("http://qxbroker.com/en/sign-in");
 			if (!SignedIn())
 			{
+				AutoSignIn();
 				WaitUserSignedIn();
 				SaveCookies();
 				SaveKeys();
@@ -398,6 +402,28 @@ namespace AbsurdMoneySimulations
 				}
 
 				Log("Blue label has appeared!");
+			}
+
+			void AutoSignIn()
+			{
+				string login = API.GetQtxLogin();
+				string password = API.GetQtxPassword();
+
+				if (login.Length > 0 && password.Length > 0)
+				{
+					var loginField = _driver.FindElement(By.CssSelector("[class='modal-sign__input-value'][placeholder='Email']"));
+					loginField.Click();
+					loginField.SendKeys(login);
+					Thread.Sleep(500);
+
+					var passwordField = _driver.FindElement(By.CssSelector("[class='modal-sign__input-value'][placeholder='Password']"));
+					passwordField.Click();
+					passwordField.SendKeys(password);
+					Thread.Sleep(500);
+
+					var button = _driver.FindElement(By.CssSelector("[class='modal-sign__block-button']"));
+					button.Click();
+				}
 			}
 		}
 

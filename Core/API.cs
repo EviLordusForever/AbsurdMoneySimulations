@@ -1,4 +1,6 @@
-﻿namespace AbsurdMoneySimulations
+﻿using Library;
+
+namespace AbsurdMoneySimulations
 {
 	public static class API
 	{
@@ -110,6 +112,22 @@
 			{
 				Swarm.RecreateSwarm();
 			}
+		}
+
+		public static void SetQtxLoginPassword(string login, string password)
+		{
+			Disk2.WriteToProgramFiles("qtxLogin", "txt", login, false);
+			Disk2.WriteToProgramFiles("qtxLogin", "password", login, false);
+		}
+
+		public static string GetQtxLogin()
+		{
+			return Disk2.ReadFromProgramFilesTxt("qtxLogin");
+		}
+
+		public static string GetQtxPassword()
+		{
+			return Disk2.ReadFromProgramFilesTxt("qtxPassword");
 		}
 
 		public static void LiveGraphGetting()

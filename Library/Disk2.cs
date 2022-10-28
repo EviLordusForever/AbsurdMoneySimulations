@@ -66,7 +66,7 @@ namespace Library
 			return File.ReadAllText(path, Encoding.UTF8);
 		}
 
-		public static string ReadFromProgramFiles(string path)
+		public static string ReadFromProgramFilesTxt(string path)
 		{
 			string fileName = path;
 			path = _programFiles;
@@ -76,17 +76,17 @@ namespace Library
 
 		public static int ReadFromProgramFilesInt(string path)
 		{
-			return Convert.ToInt32(ReadFromProgramFiles(path));
+			return Convert.ToInt32(ReadFromProgramFilesTxt(path));
 		}
 
 		public static double ReadFromProgramFilesDouble(string path)
 		{
-			return Convert.ToDouble(ReadFromProgramFiles(path));
+			return Convert.ToDouble(ReadFromProgramFilesTxt(path));
 		}
 
 		public static bool ReadFromProgramFilesBool(string path)
 		{
-			return Convert.ToBoolean(ReadFromProgramFiles(path));
+			return Convert.ToBoolean(ReadFromProgramFilesTxt(path));
 		}
 
 		public static void RenameTxtFileInProgramFiles(string from, string to)
