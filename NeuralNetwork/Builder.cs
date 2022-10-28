@@ -10,7 +10,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = new NN();
 
-			nn._horizon = 60;
+			nn._horizon = 30;
 			nn._inputWindow = 300;
 			nn._weightsInitMin = -1f;
 			nn._weightsInitMax = 1f;

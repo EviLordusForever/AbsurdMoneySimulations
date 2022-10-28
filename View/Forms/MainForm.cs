@@ -19,7 +19,7 @@
 
 		private void button4_Click(object sender, EventArgs e)
 		{
-			Starter.StartTrader();
+			API.TraderTrade();
 		}
 
 		private void MainForm_Load_1(object sender, EventArgs e)
@@ -29,7 +29,7 @@
 
 		private void button6_Click(object sender, EventArgs e)
 		{
-			Starter.StartRecreatingNN();
+			API.RecreateNN();
 		}
 
 		private void button5_Click(object sender, EventArgs e)
@@ -45,37 +45,37 @@
 
 		private void button7_Click(object sender, EventArgs e)
 		{
-			Starter.StartEvolutionByBackPropgation();
+			API.FitByBackPropgation();
 		}
 
 		private void button8_Click(object sender, EventArgs e)
 		{
-			Starter.StartNeuralBattle();
+			API.NeuralBattle();
 		}
 
 		private void button9_Click(object sender, EventArgs e)
 		{
-			Starter.StartSwarm();
+			API.FindSwarmStatistics();
 		}
 
 		private void button10_Click(object sender, EventArgs e)
 		{
-			Starter.StartDrawOtcIndicators();
+			API.DrawOtcIndicators();
 		}
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			Starter.StartFindDetailedSectionsStatistics();
+			API.FindDetailedSectionsStatistics();
 		}
 
 		private void button11_Click(object sender, EventArgs e)
 		{
-			Starter.StartSwarmEvolution();
+			API.FitSwarm();
 		}
 
 		private void button12_Click(object sender, EventArgs e)
 		{
-			Starter.StartRecreatingSwarm();
+			API.RecreateSwarm();
 		}
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -85,7 +85,17 @@
 
 		private void button13_Click(object sender, EventArgs e)
 		{
-			Starter.StartLiveGraphGetting();
+			API.LiveGraphGetting();
+		}
+
+		private void button14_Click(object sender, EventArgs e)
+		{
+			API.OpenQtxOnly();
+		}
+
+		private void button15_Click(object sender, EventArgs e)
+		{
+			API.DeleteCookies();
 		}
 	}
 }

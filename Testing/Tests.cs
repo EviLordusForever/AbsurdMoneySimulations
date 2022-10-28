@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestDetailedStat);
+			Thread myThread = new Thread(TestTests);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
@@ -49,13 +49,13 @@ namespace AbsurdMoneySimulations
 			NN nn = NN.Load();
 
 			string csv = "";
-			string[] subcsv = new string[nn._testerE.OriginalGrafic.Length];
+			string[] subcsv = new string[nn._testerE.OriginalGraph.Length];
 
-			for (int i = 0; i < nn._testerE.OriginalGrafic.Length; i++)
-				subcsv[i] = nn._testerE.OriginalGrafic[i] + ",0\r\n";
+			for (int i = 0; i < nn._testerE.OriginalGraph.Length; i++)
+				subcsv[i] = nn._testerE.OriginalGraph[i] + ",0\r\n";
 
-			for (int i = 0; i < nn._testerE._availableGraficPoints.Count; i++)
-				subcsv[nn._testerE._availableGraficPoints[i]] = nn._testerE.OriginalGrafic[nn._testerE._availableGraficPoints[i]] + ",1\r\n";
+			for (int i = 0; i < nn._testerE._availableGraphPoints.Count; i++)
+				subcsv[nn._testerE._availableGraphPoints[i]] = nn._testerE.OriginalGraph[nn._testerE._availableGraphPoints[i]] + ",1\r\n";
 
 			csv = string.Concat(subcsv);
 
@@ -98,6 +98,18 @@ namespace AbsurdMoneySimulations
 			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
 		}
 
+		public static void TestTrader()
+		{
+			LoadBrowser("https://google.com");
+			LoadCookies();
+			UserAsker.SayWait("So, let's we begin!");
+			Thread.Sleep(100);
+			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
+			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");
+			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
+			SaveCookies();
+		}
+
 		public static void TestCoresCountSpeed()
 		{
 			NN nn = NN.Load();
@@ -123,7 +135,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = NN.Load();
 
-			nn._testerE.FillTestsFromNormilizedDerivativeGrafic();
+			nn._testerE.FillTestsFromNormilizedDerivativeGraph();
 
 			int test = Math2.rnd.Next(nn._testerE._testsCount);
 			string[] strings = new string[nn._inputWindow];
@@ -131,7 +143,7 @@ namespace AbsurdMoneySimulations
 			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
 				strings[i] += nn._testerE._tests[test][i].ToString();
 
-			nn._testerE.FillTestsFromOriginalGrafic();
+			nn._testerE.FillTestsFromOriginalGraph();
 
 			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
 				strings[i] += "," + nn._testerE._tests[test][i].ToString();

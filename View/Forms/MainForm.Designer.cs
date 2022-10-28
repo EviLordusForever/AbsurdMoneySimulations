@@ -44,8 +44,10 @@
 			this.button12 = new System.Windows.Forms.Button();
 			this.panel3 = new System.Windows.Forms.Panel();
 			this.panel4 = new System.Windows.Forms.Panel();
-			this.panel5 = new System.Windows.Forms.Panel();
+			this.button14 = new System.Windows.Forms.Button();
+			this.button15 = new System.Windows.Forms.Button();
 			this.button13 = new System.Windows.Forms.Button();
+			this.panel5 = new System.Windows.Forms.Panel();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel3.SuspendLayout();
@@ -209,22 +211,34 @@
 			// panel4
 			// 
 			this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel4.Controls.Add(this.button14);
+			this.panel4.Controls.Add(this.button15);
 			this.panel4.Controls.Add(this.button13);
 			this.panel4.Controls.Add(this.button4);
 			this.panel4.Location = new System.Drawing.Point(12, 297);
 			this.panel4.Name = "panel4";
-			this.panel4.Size = new System.Drawing.Size(464, 60);
+			this.panel4.Size = new System.Drawing.Size(464, 118);
 			this.panel4.TabIndex = 14;
 			// 
-			// panel5
+			// button14
 			// 
-			this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panel5.Controls.Add(this.button10);
-			this.panel5.Controls.Add(this.button5);
-			this.panel5.Location = new System.Drawing.Point(12, 363);
-			this.panel5.Name = "panel5";
-			this.panel5.Size = new System.Drawing.Size(464, 60);
-			this.panel5.TabIndex = 15;
+			this.button14.Location = new System.Drawing.Point(3, 61);
+			this.button14.Name = "button14";
+			this.button14.Size = new System.Drawing.Size(456, 23);
+			this.button14.TabIndex = 6;
+			this.button14.Text = "Open q*x only";
+			this.button14.UseVisualStyleBackColor = true;
+			this.button14.Click += new System.EventHandler(this.button14_Click);
+			// 
+			// button15
+			// 
+			this.button15.Location = new System.Drawing.Point(3, 90);
+			this.button15.Name = "button15";
+			this.button15.Size = new System.Drawing.Size(456, 23);
+			this.button15.TabIndex = 5;
+			this.button15.Text = "Delete cookies";
+			this.button15.UseVisualStyleBackColor = true;
+			this.button15.Click += new System.EventHandler(this.button15_Click);
 			// 
 			// button13
 			// 
@@ -236,11 +250,21 @@
 			this.button13.UseVisualStyleBackColor = true;
 			this.button13.Click += new System.EventHandler(this.button13_Click);
 			// 
+			// panel5
+			// 
+			this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel5.Controls.Add(this.button10);
+			this.panel5.Controls.Add(this.button5);
+			this.panel5.Location = new System.Drawing.Point(12, 421);
+			this.panel5.Name = "panel5";
+			this.panel5.Size = new System.Drawing.Size(464, 60);
+			this.panel5.TabIndex = 15;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(488, 436);
+			this.ClientSize = new System.Drawing.Size(488, 494);
 			this.Controls.Add(this.panel5);
 			this.Controls.Add(this.panel4);
 			this.Controls.Add(this.panel3);
@@ -281,5 +305,7 @@
 		private Panel panel4;
 		private Panel panel5;
 		private Button button13;
+		private Button button14;
+		private Button button15;
 	}
 }

@@ -100,7 +100,6 @@
 				_showForm.Location = new Point(0, 0);
 				_showForm.BackgroundImageLayout = ImageLayout.Stretch;
 
-				_showForm.BackgroundImage = Storage._bmp;
 				_showForm.Text = text;
 			}));
 		}

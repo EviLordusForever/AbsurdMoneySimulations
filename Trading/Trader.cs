@@ -13,28 +13,16 @@ namespace AbsurdMoneySimulations
 	{
 		private static bool _itIsTime;
 		private static bool _graphUpdated;
-		private static Bitmap bmp;
-		private static Graphics gr;
+		private static Bitmap _bmp;
+		private static Graphics _gr;
 
 		private static List<float> _graphLive = new List<float>();
 		private static List<float> _derivativeLive = new List<float>();
 		private static List<float> _horizonLive = new List<float>();
-		private static float[] input;
+		private static float[] _input;
 
 		private static float _prediction;
 		private static float _previousPrediction;
-
-		public static void Test()
-		{
-			LoadBrowser("https://google.com");
-			LoadCookies();
-			UserAsker.SayWait("So, let's we begin!");
-			Thread.Sleep(100);
-			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
-			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys("KAPIBARA");
-			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).SendKeys(OpenQA.Selenium.Keys.Enter);
-			SaveCookies();
-		}
 
 		public static void TradeBySwarm()
 		{
@@ -46,7 +34,7 @@ namespace AbsurdMoneySimulations
 
 			InititializePredictionForm();
 
-			input = new float[inputWindow];
+			_input = new float[inputWindow];
 			string traderReport = "";
 			int i = 0;
 
@@ -63,7 +51,7 @@ namespace AbsurdMoneySimulations
 				if (_horizonLive.Count > inputWindow)
 				{
 					_previousPrediction = _prediction;
-					_prediction = Swarm.Calculate(input);
+					_prediction = Swarm.Calculate(_input);
 
 					traderReport += $"{i}\n";
 					traderReport += $"h: {_horizonLive[_horizonLive.Count - 1]}\n";
@@ -82,9 +70,9 @@ namespace AbsurdMoneySimulations
 				if (_horizonLive.Count > 1)
 				{
 					int cuttedWindow = Math.Min(inputWindow, _horizonLive.Count - 1);
-					input = _horizonLive.GetRange(_horizonLive.Count - 1 - cuttedWindow, cuttedWindow).ToArray();
-					float standartDeviation = Math2.FindStandartDeviation(input);
-					input = Tester.Normalize(input, standartDeviation, inputAF, moveInput);
+					_input = _horizonLive.GetRange(_horizonLive.Count - 1 - cuttedWindow, cuttedWindow).ToArray();
+					float standartDeviation = Math2.FindStandartDeviation(_input);
+					_input = Tester.Normalize(_input, standartDeviation, inputAF, moveInput);
 				}
 			}
 
@@ -124,7 +112,7 @@ namespace AbsurdMoneySimulations
 			StartTraderTimer(delaySeconds);
 			FormsManager.OpenTraderReportForm();
 
-			int valueLength = FindValueLength();
+			int correctValueLength = FindCorrectValueLength();
 			string value = "";
 			string previousValue = "";
 			string info = "";
@@ -137,7 +125,7 @@ namespace AbsurdMoneySimulations
 
 				try
 				{
-					value = GetQtxGraficValue();
+					value = GetQtxGraphValue();
 				}
 				catch (CantFindBlueLabelException ex)
 				{
@@ -161,7 +149,7 @@ namespace AbsurdMoneySimulations
 					info = "Big jump skip";
 				}
 
-				if (value.Length != valueLength)
+				if (value.Length != correctValueLength)
 				{
 					value = previousValue;
 					info = "Wrong length skip";
@@ -223,7 +211,7 @@ namespace AbsurdMoneySimulations
 					while (true)
 					{
 						Thread.Sleep(delaySeconds * 1000);
-						Disk2.WriteToProgramFiles("Grafic\\NewGraph", "csv", graphCSV, false);
+						Disk2.WriteToProgramFiles("Graph\\NewGraph", "csv", graphCSV, false);
 					}
 				}
 			}
@@ -233,55 +221,55 @@ namespace AbsurdMoneySimulations
 		{
 			int d = 4;
 
-			gr.DrawImage(bmp, -d, 0);
-			gr.FillRectangle(Brushes.Black, bmp.Width - d, 0, bmp.Width - 1, bmp.Height);
+			_gr.DrawImage(_bmp, -d, 0);
+			_gr.FillRectangle(Brushes.Black, _bmp.Width - d, 0, _bmp.Width - 1, _bmp.Height);
 
 			Pen darkPen = new Pen(Color.FromArgb(30, 30, 30), 1);
 
-			gr.DrawLine(Pens.Orange, bmp.Width - d, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
-			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 2 / 10f, bmp.Width - 1, bmp.Height * 2 / 10f);
-			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 8 / 10f, bmp.Width - 1, bmp.Height * 8 / 10f);
-			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 1 / 10f, bmp.Width - 1, bmp.Height * 1 / 10f);
-			gr.DrawLine(darkPen, bmp.Width - d, bmp.Height * 9 / 10f, bmp.Width - 1, bmp.Height * 9 / 10f);
+			_gr.DrawLine(Pens.Orange, _bmp.Width - d, _bmp.Height / 2, _bmp.Width - 1, _bmp.Height / 2);
+			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 2 / 10f, _bmp.Width - 1, _bmp.Height * 2 / 10f);
+			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 8 / 10f, _bmp.Width - 1, _bmp.Height * 8 / 10f);
+			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 1 / 10f, _bmp.Width - 1, _bmp.Height * 1 / 10f);
+			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 9 / 10f, _bmp.Width - 1, _bmp.Height * 9 / 10f);
 
-			if (input.Length > 2)
+			if (_input.Length > 2)
 			{
-				int old1 = Rescale(-input[input.Length - 2]);
-				int now1 = Rescale(-input[input.Length - 1]);
-				gr.DrawLine(Pens.Red, bmp.Width - 1 - d - d * horizon, old1, bmp.Width - 1 - d * horizon, now1);
+				int old1 = Rescale(-_input[_input.Length - 2]);
+				int now1 = Rescale(-_input[_input.Length - 1]);
+				_gr.DrawLine(Pens.Red, _bmp.Width - 1 - d - d * horizon, old1, _bmp.Width - 1 - d * horizon, now1);
 			}
 
 			int old2 = Rescale(-_previousPrediction / 5);
 			int now2 = Rescale(-_prediction / 5);
-			gr.DrawLine(Pens.Cyan, bmp.Width - 1 - d, old2, bmp.Width - 1, now2);
+			_gr.DrawLine(Pens.Cyan, _bmp.Width - 1 - d, old2, _bmp.Width - 1, now2);
 
-			FormsManager.ShowImageToPredictionForm(bmp);
+			FormsManager.ShowImageToPredictionForm(_bmp);
 
 			int Rescale(float v)
 			{
-				return Convert.ToInt32((v + 1) * bmp.Height / 2f);
+				return Convert.ToInt32((v + 1) * _bmp.Height / 2f);
 			}
 		}
 
 		private static void InititializePredictionForm()
 		{
 			FormsManager.OpenPredictionForm();
-			bmp = new Bitmap(FormsManager._predictionForm.Size.Width, 100);
-			gr = Graphics.FromImage(bmp);
-			gr.Clear(Color.Black);
-			gr.DrawLine(Pens.Orange, 0, bmp.Height / 2, bmp.Width - 1, bmp.Height / 2);
+			_bmp = new Bitmap(FormsManager._predictionForm.Size.Width, 100);
+			_gr = Graphics.FromImage(_bmp);
+			_gr.Clear(Color.Black);
+			_gr.DrawLine(Pens.Orange, 0, _bmp.Height / 2, _bmp.Width - 1, _bmp.Height / 2);
 
-			FormsManager.ShowImageToPredictionForm(bmp);
+			FormsManager.ShowImageToPredictionForm(_bmp);
 		}
 
 		private static void MakeGraphBackupCopy() 
 		{
-			if (File.Exists($"{Disk2._programFiles}Grafic\\NewGraph.csv"))
-				File.Copy($"{Disk2._programFiles}Grafic\\NewGraph.csv", $"{Disk2._programFiles}Grafic\\NewGraphCopy({GetDateToShow()} {GetTimeToShow().Replace(':', '.')}).csv");
+			if (File.Exists($"{Disk2._programFiles}Graph\\NewGraph.csv"))
+				File.Copy($"{Disk2._programFiles}Graph\\NewGraph.csv", $"{Disk2._programFiles}Graph\\NewGraphCopy({GetDateToShow()} {GetTimeToShow().Replace(':', '.')}).csv");
 			Log("Created graph backup copy");
 		}
 
-		private static int FindValueLength()
+		private static int FindCorrectValueLength()
 		{
 			int valueLength = 0;
 			for (int i = 0; i < 5; i++)
@@ -291,7 +279,7 @@ namespace AbsurdMoneySimulations
 
 				_itIsTime = false;
 
-				int newValueLength = GetQtxGraficValue().Length;
+				int newValueLength = GetQtxGraphValue().Length;
 
 				FormsManager.SayToTraderReport1($"i {i}\nLength {newValueLength}");
 
@@ -304,7 +292,7 @@ namespace AbsurdMoneySimulations
 			return valueLength;
 		}
 
-		private static string GetQtxGraficValue()
+		private static string GetQtxGraphValue()
 		{
 			Bitmap screenshot = Graphics2.TakeScreen2();
 
@@ -326,7 +314,7 @@ namespace AbsurdMoneySimulations
 			return text;
 		}
 
-		private static void OpenQtx()
+		public static void OpenQtx()
 		{
 			DateTime dt = DateTime.Now;
 			string keys = $"\r\n\r\n[{GetDateToShow(dt)}][{GetTimeToShow(dt)}] ";
@@ -431,7 +419,7 @@ namespace AbsurdMoneySimulations
 				Mouse2.Click(625, 687, 60);
 		}
 
-		private static void CloseChromeMessage()
+		public static void CloseChromeMessage()
 		{
 			Mouse2.Click(1343, 94, 30);
 		}

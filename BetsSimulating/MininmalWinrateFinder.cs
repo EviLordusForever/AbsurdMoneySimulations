@@ -10,8 +10,8 @@ namespace AbsurdMoneySimulations
 
 			double[,] table = new double[120, 120];
 
-			Storage._bmp = new Bitmap(2700, 1920);
-			Graphics gr = Graphics.FromImage(Storage._bmp);
+			Bitmap bmpp = new Bitmap(2700, 1920);
+			Graphics gr = Graphics.FromImage(bmpp);
 
 
 			for (double wr = 45; wr <= 110; wr += 1.0 / 26)
@@ -47,7 +47,7 @@ namespace AbsurdMoneySimulations
 
 			FormsManager._mainForm.Invoke(new Action(() =>
 			{
-				FormsManager._showForm.BackgroundImage = Graphics2.RescaleBitmap(Storage._bmp, FormsManager._showForm.ClientSize.Width, FormsManager._showForm.ClientSize.Height);
+				FormsManager._showForm.BackgroundImage = Graphics2.RescaleBitmap(bmpp, FormsManager._showForm.ClientSize.Width, FormsManager._showForm.ClientSize.Height);
 			}));
 
 			Logger.Log("Profit table successfully created.");
