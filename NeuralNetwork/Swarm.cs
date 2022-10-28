@@ -6,7 +6,7 @@ namespace AbsurdMoneySimulations
 	public static class Swarm
 	{
 		public static NN[] swarm;
-		public static string[] networks;
+		public static string[] files;
 
 		public static void CalculateSwarmStatistics()
 		{
@@ -249,19 +249,19 @@ namespace AbsurdMoneySimulations
 
 		public static void EvolveSwarm()
 		{
-			networks = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			Load();
+			files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 
 			while (true)
-				for (int n = 0; n < networks.Length; n++)
+				for (int n = 0; n < files.Length; n++)
 				{
 					swarm[n]._LEARNING_RATE = 0.002f;
 					swarm[n].FitByBackPropagtion(200);
 
-
-					Thread.Sleep(1000);
-					File.Delete(networks[n]);
+					Thread.Sleep(1000);					
 					string standartNN = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
-					NN.Save(swarm[n], networks[n]);
+					File.Delete(files[n]);
+					NN.Save(swarm[n], files[n]);
 					Log($"Saved nn #{n} to swarm");
 					Thread.Sleep(1000);
 				}
@@ -269,14 +269,17 @@ namespace AbsurdMoneySimulations
 
 		public static void RecreateSwarm()
 		{
-			Disk2.ClearDirectory(Disk2._programFiles + "NN\\Swarm");
-			Manager.ClearPreviousNNHistory();
-
-			for (int i = 0; i < 10; i++)
+			if (UserAsker.Ask("Are you shure? Previous swarm will be deleted"))
 			{
-				NN nn = Builder.CreateSmallMegatron2Subs();
-				NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
-				Log($"NN {i + 1}");
+				Disk2.ClearDirectory(Disk2._programFiles + "NN\\Swarm");
+				Manager.ClearPreviousNNHistory();
+
+				for (int i = 0; i < 10; i++)
+				{
+					NN nn = Builder.CreateBasicGoodPerceptron();
+					NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
+					Log($"NN {i + 1}");
+				}
 			}
 		}
 

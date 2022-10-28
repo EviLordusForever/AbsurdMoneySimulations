@@ -106,8 +106,8 @@ namespace AbsurdMoneySimulations
 
 		private void InitTesters()
 		{
-			_testerV.Init(this, "Grafic//ForValidation", "VALIDATION");
-			_testerE.Init(this, "Grafic//ForTraining", "TRAINING");
+			_testerV.Init(this, "Graph//ForValidation", "VALIDATION");
+			_testerE.Init(this, "Graph//ForTraining", "TRAINING");
 			Log("Testers were initialized");
 		}
 
@@ -207,9 +207,10 @@ namespace AbsurdMoneySimulations
 
 			void FillBatch()
 			{
-				_testerE.FillBatchBy(200);
+				int count = 200;
+				_testerE.FillBatchBy(count);
 				//testerE.FillFullBatch();
-				Log("Batch refilled");
+				Log($"Batch refilled ({count})");
 			}
 
 			void EarlyStopping()

@@ -12,6 +12,11 @@ namespace AbsurdMoneySimulations
 		public static IWebDriver _driver;
 		public static ChromeDriverService _chromeDriverService;
 
+		public static string GetDomain()
+		{
+			return (string)_driver.Scripts().ExecuteScript("return document.domain");
+		}
+
 		public static void LoadBrowser(string link)
 		{
 			_chromeDriverService = ChromeDriverService.CreateDefaultService();
@@ -62,7 +67,7 @@ namespace AbsurdMoneySimulations
 		{
 			ReadOnlyCollection<Cookie> cookies = _driver.Manage().Cookies.AllCookies;
 
-			string domain = (string)_driver.Scripts().ExecuteScript("return document.domain");
+			string domain = GetDomain();
 
 			if (cookies.Count > 0)
 			{			
@@ -79,7 +84,7 @@ namespace AbsurdMoneySimulations
 
 		public static void LoadCookies()
 		{
-			string domain = (string)_driver.Scripts().ExecuteScript("return document.domain");
+			string domain = GetDomain();
 
 			if (File.Exists($"{Disk2._programFiles}Cookies\\{domain}.json"))
 			{
@@ -111,7 +116,7 @@ namespace AbsurdMoneySimulations
 
 		public static void DeleteCookies()
 		{
-			string domain = (string)_driver.Scripts().ExecuteScript("return document.domain");
+			string domain = GetDomain();
 			_driver.Manage().Cookies.DeleteAllCookies();
 			Disk2.DeleteFileFromProgramFiles($"Cookies\\{domain}.json");
 			Log($"Cookies were deleted! {domain}");

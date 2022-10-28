@@ -30,6 +30,8 @@ namespace AbsurdMoneySimulations
 
 			Disk2.SaveImageToProgramFiles(bmp, "OTC.bmp");
 			Logger.Log("done #1");
+			FormsManager.ShowImage(bmp);
+			Thread.Sleep(3000);
 
 			//////////////////////////////
 
@@ -66,6 +68,7 @@ namespace AbsurdMoneySimulations
 
 			Disk2.SaveImageToProgramFiles(bmp, "OTC2.bmp");
 			Logger.Log("done #2");
+			FormsManager.ShowImage(bmp);
 
 
 			void DrawIndicator1(Pen pen, int gOffset, int yOffset)
