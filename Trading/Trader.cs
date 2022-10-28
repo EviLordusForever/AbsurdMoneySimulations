@@ -24,6 +24,10 @@ namespace AbsurdMoneySimulations
 		private static float _prediction;
 		private static float _previousPrediction;
 
+		private static float maxOfDerivativeForLastNPoints = -1000000;
+		private static float minOfDerivativeForLastNPoints = 1000000;
+		const int n = 500;
+
 		public static void TradeBySwarm()
 		{
 			Swarm.Load();
@@ -43,7 +47,6 @@ namespace AbsurdMoneySimulations
 				WaitGraphUpdated();
 				traderReport = "";
 
-				AddToDerivativeLive();
 				AddToHorizonLive();
 
 				CutInput();
@@ -74,12 +77,6 @@ namespace AbsurdMoneySimulations
 					float standartDeviation = Math2.FindStandartDeviation(_input);
 					_input = Tester.Normalize(_input, standartDeviation, inputAF, moveInput);
 				}
-			}
-
-			void AddToDerivativeLive()
-			{
-				if (_graphLive.Count > 1)
-					_derivativeLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 2]);
 			}
 
 			void AddToHorizonLive()
@@ -143,17 +140,21 @@ namespace AbsurdMoneySimulations
 					info = "Not float skip";
 				}
 
-				if (i > 2 && MathF.Abs(1 - Convert.ToSingle(value) / Convert.ToSingle(previousValue)) > 0.005f)
-				{
-					value = previousValue;
-					info = "Big jump skip";
-				}
-
 				if (value.Length != correctValueLength)
 				{
 					value = previousValue;
 					info = "Wrong length skip";
 				}
+
+				Math2.FindMinAndMaxForLastNPoints(_derivativeLive, ref minOfDerivativeForLastNPoints, ref maxOfDerivativeForLastNPoints, n);
+
+				float limit = 3 * Math.Max(Math.Abs(minOfDerivativeForLastNPoints), Math.Abs(maxOfDerivativeForLastNPoints));
+				float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
+				if (newDerivative > limit)
+				{
+					value = previousValue;
+					info = "Big jump skip";
+				}				
 
 				previousValue = value;
 
@@ -162,10 +163,18 @@ namespace AbsurdMoneySimulations
 
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
-				_graphUpdated = true;
-				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\n{info}");
+
+				AddToDerivativeLive();
+
+				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\nd{_derivativeLive[_derivativeLive.Count - 1]}\n{info}");
 
 				MakeGraphBackupEvery(i, 3600);
+			}
+
+			void AddToDerivativeLive()
+			{
+				if (_graphLive.Count > 1)
+					_derivativeLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 2]);
 			}
 
 			void FakeFill()
@@ -433,6 +442,7 @@ namespace AbsurdMoneySimulations
 			int height = 11;
 
 			Bitmap bmpCut = new Bitmap(width, height);
+			Disk2.SaveImageToProgramFiles(screenshot, "HERE IT IS");
 			Graphics grCut = Graphics.FromImage(bmpCut);
 			grCut.DrawImage(screenshot, 0, 0, new Rectangle(left, up + 6, width, height), GraphicsUnit.Pixel);
 
@@ -521,7 +531,7 @@ namespace AbsurdMoneySimulations
 		private static bool ItIsBlue(Bitmap screenshot, int x, int y)
 		{
 			Color c = screenshot.GetPixel(x, y);
-			return c.R < 60 && c.B > 100;
+			return c.R < 60 && c.B > 200;
 		}
 
 		private static int FindWhiteLabelY(Bitmap screenshot)

@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestTests);
+			Thread myThread = new Thread(TestMaxMin);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
@@ -290,6 +290,37 @@ namespace AbsurdMoneySimulations
 		public static void TestDetailedStat()
 		{
 			Manager.FindDetailedSectionsStatistics();
+		}
+
+		public static void TestMaxMin()
+		{
+			string graphFolder = "Graph//ForTraining";
+			var files = Directory.GetFiles(Disk2._programFiles + graphFolder);
+			var graph = new List<float>();
+			var derivative = new List<float>();
+
+			float localMin = 0;
+			float localMax = 0;
+			const int n = 500;
+
+			string csv = "";
+
+			string[] lines = File.ReadAllLines(files[0]);
+
+			for (int l = 0;  l < lines.Length; l++)
+				graph.Add(Convert.ToSingle(lines[l]));
+
+			for (int l = 1; l < graph.Count; l++)
+			{
+				derivative.Add(graph[l] - graph[l - 1]);
+
+				Math2.FindMinAndMaxForLastNPoints(derivative, ref localMin, ref localMax, n);
+
+				csv += $"{derivative[derivative.Count - 1]},{localMin},{localMax}\n";
+			}
+
+			Disk2.WriteToProgramFiles("TestMinMax", "csv", csv, false);
+			Log("done");
 		}
 	}
 }

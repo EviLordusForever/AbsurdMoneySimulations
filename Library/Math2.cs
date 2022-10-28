@@ -69,6 +69,36 @@ namespace Library
 			return min;
 		}
 
+		public static void FindMinAndMaxForLastNPoints(List<float> array, ref float currentMin, ref float currentMax, int n)
+		{
+			int count = array.Count;
+			int lastIndex = count - 1;
+			int firstIndex = count - n;
+
+			if (count > n)
+			{
+				if (array[firstIndex - 1] == currentMin || array[firstIndex - 1] == currentMax)
+					RefindMaxMin(ref currentMin, ref currentMax);
+				else
+				{
+					if (array[lastIndex] > currentMax)
+						currentMax = array[lastIndex];
+
+					if (array[lastIndex] < currentMin)
+						currentMin = array[lastIndex];
+				}
+			}
+			else if (count == n)
+				RefindMaxMin(ref currentMin, ref currentMax);
+
+			void RefindMaxMin(ref float currentMin, ref float currentMax)
+			{
+				var subArray = array.GetRange(firstIndex, n).ToArray();
+				currentMax = Max(subArray);
+				currentMin = Min(subArray);
+			}
+		}
+
 		public static float FindStandartDeviation(float[] input)
 		{
 			float standartDeviation = 0;
@@ -78,8 +108,6 @@ namespace Library
 			standartDeviation = MathF.Sqrt(standartDeviation);
 			return standartDeviation;
 		}
-
-
 
 		public static double CalculateRandomness(double k, int n)
 		{
