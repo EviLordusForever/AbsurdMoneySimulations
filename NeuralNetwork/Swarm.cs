@@ -8,15 +8,15 @@ namespace AbsurdMoneySimulations
 		public static NN[] swarm;
 		public static string[] files;
 
-		public static void CalculateSwarmStatistics()
+		public static void CalculateStatistics()
 		{
 			Log("Starting calculating swarm statistics...");
+			Load();
 
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
-			NN nn = NN.Load();
 			
-			Tester testerV = nn._testerV;
-			Tester testerT = nn._testerT;
+			Tester testerV = swarm[0]._testerV;
+			Tester testerT = swarm[0]._testerT;
 			float[,] predictions;
 			float[] predictionsSumms;
 			string csv = "";
@@ -87,14 +87,11 @@ namespace AbsurdMoneySimulations
 				predictions = new float[tester._testsCount, files.Length];
 
 				for (int n = 0; n < files.Length; n++)
-				{
-					nn = NN.Load(files[n]);
-
 					for (int test = 0; test < tester._testsCount; test++)
-						predictions[test, n] = nn.Calculate(test, tester._tests[test], false);
-				}
+						predictions[test, n] = swarm[n].Calculate(test, tester._tests[test], false);
 
-				Log("Predictions are calculated. Now wait...");
+				Log("Predictions are calculated.");
+				Log("Now wait...");
 				return predictions;
 			}
 

@@ -60,7 +60,7 @@
 
 			void StartSwarmThread()
 			{
-				Swarm.CalculateSwarmStatistics();
+				Swarm.CalculateStatistics();
 			}
 		}
 
