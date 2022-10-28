@@ -30,7 +30,7 @@ namespace AbsurdMoneySimulations
 			int horizon = Swarm.swarm[0]._horizon;
 			int inputWindow = Swarm.swarm[0]._inputWindow;
 			ActivationFunction inputAF = Swarm.swarm[0]._inputAF;
-			int moveInput = Swarm.swarm[0]._testerE._moveInputsOverZero;
+			int moveInput = Swarm.swarm[0]._testerT._moveInputsOverZero;
 
 			InititializePredictionForm();
 

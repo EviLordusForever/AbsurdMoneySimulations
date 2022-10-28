@@ -25,14 +25,14 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = NN.Load();
 			string csv = "";
-			string[] subcsv = new string[nn._testerE._testsCount];
+			string[] subcsv = new string[nn._testerT._testsCount];
 
-			for (int test = 0; test < nn._testerE._testsCount; test++)
+			for (int test = 0; test < nn._testerT._testsCount; test++)
 			{
-				subcsv[test] = String.Join("\r\n", nn._testerE._tests[test]);
+				subcsv[test] = String.Join("\r\n", nn._testerT._tests[test]);
 
 				subcsv[test] += "\r\n\r\n\r\n";
-				subcsv[test] += nn._testerE._answers[test];
+				subcsv[test] += nn._testerT._answers[test];
 				subcsv[test] += "\r\n\r\n\r\n";
 
 				if (test % 50 == 0)
@@ -49,13 +49,13 @@ namespace AbsurdMoneySimulations
 			NN nn = NN.Load();
 
 			string csv = "";
-			string[] subcsv = new string[nn._testerE.OriginalGraph.Length];
+			string[] subcsv = new string[nn._testerT.OriginalGraph.Length];
 
-			for (int i = 0; i < nn._testerE.OriginalGraph.Length; i++)
-				subcsv[i] = nn._testerE.OriginalGraph[i] + ",0\r\n";
+			for (int i = 0; i < nn._testerT.OriginalGraph.Length; i++)
+				subcsv[i] = nn._testerT.OriginalGraph[i] + ",0\r\n";
 
-			for (int i = 0; i < nn._testerE._availableGraphPoints.Count; i++)
-				subcsv[nn._testerE._availableGraphPoints[i]] = nn._testerE.OriginalGraph[nn._testerE._availableGraphPoints[i]] + ",1\r\n";
+			for (int i = 0; i < nn._testerT._availableGraphPoints.Count; i++)
+				subcsv[nn._testerT._availableGraphPoints[i]] = nn._testerT.OriginalGraph[nn._testerT._availableGraphPoints[i]] + ",1\r\n";
 
 			csv = string.Concat(subcsv);
 
@@ -74,7 +74,7 @@ namespace AbsurdMoneySimulations
 			NN nn = Builder.CreateBasicGoodPerceptron();
 
 			for (int i = 0; i < 100; i++)
-				Log(nn.FindLossSquared(nn._testerE, false));
+				Log(nn.FindLossSquared(nn._testerT, false));
 		}
 
 		public static void TestSelenium()
@@ -126,7 +126,7 @@ namespace AbsurdMoneySimulations
 				Storage._coresCount = coresCount;
 				long ms = DateTime.Now.Ticks;
 				for (int i = 0; i < 10; i++)
-					nn.FindLossSquared(nn._testerE, false);
+					nn.FindLossSquared(nn._testerT, false);
 				Log($"{Storage._coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
 		}
@@ -135,22 +135,22 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = NN.Load();
 
-			nn._testerE.FillTestsFromNormilizedDerivativeGraph();
+			nn._testerT.FillTestsFromNormilizedDerivativeGraph();
 
-			int test = Math2.rnd.Next(nn._testerE._testsCount);
+			int test = Math2.rnd.Next(nn._testerT._testsCount);
 			string[] strings = new string[nn._inputWindow];
 
-			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
-				strings[i] += nn._testerE._tests[test][i].ToString();
+			for (int i = 0; i < nn._testerT._tests[test].Length; i++)
+				strings[i] += nn._testerT._tests[test][i].ToString();
 
-			nn._testerE.FillTestsFromOriginalGraph();
+			nn._testerT.FillTestsFromOriginalGraph();
 
-			for (int i = 0; i < nn._testerE._tests[test].Length; i++)
-				strings[i] += "," + nn._testerE._tests[test][i].ToString();
+			for (int i = 0; i < nn._testerT._tests[test].Length; i++)
+				strings[i] += "," + nn._testerT._tests[test][i].ToString();
 
 			nn = NN.Load();
 
-			nn.Calculate(test, nn._testerE._tests[test], false);
+			nn.Calculate(test, nn._testerT._tests[test], false);
 
 			int subsCount = nn._layers[0]._values[test].Count();
 			float inputSize = 300;
@@ -160,7 +160,7 @@ namespace AbsurdMoneySimulations
 
 			for (int sub = 0; sub < subsCount; sub++)
 			{
-				for (int v = 0 + head; v < nn._testerE._tests[test].Length - head; v++)
+				for (int v = 0 + head; v < nn._testerT._tests[test].Length - head; v++)
 				{
 					int j = (int)(((v - subsCount) / (inputSize - head)) * subSize);
 					strings[v] += "," + nn._layers[0]._values[test][sub][j];

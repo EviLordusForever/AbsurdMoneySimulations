@@ -121,7 +121,7 @@ namespace AbsurdMoneySimulations
 			_af = af;
 			_dropoutProbability = dropoutProbability;
 
-			int testsCount = ownerNN._testerE._testsCount;
+			int testsCount = ownerNN._testerT._testsCount;
 
 			_nodes = new Node[nodesCount];
 			for (int i = 0; i < _nodes.Count(); i++)

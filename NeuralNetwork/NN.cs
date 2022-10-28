@@ -25,7 +25,7 @@ namespace AbsurdMoneySimulations
 		public List<Layer> _layers;
 
 		public Tester _testerV;
-		public Tester _testerE;
+		public Tester _testerT;
 
 		public string _name;
 
@@ -107,14 +107,14 @@ namespace AbsurdMoneySimulations
 		private void InitTesters()
 		{
 			_testerV.Init(this, "Graph//ForValidation", "VALIDATION");
-			_testerE.Init(this, "Graph//ForTraining", "TRAINING");
+			_testerT.Init(this, "Graph//ForTraining", "TRAINING");
 			Log("Testers were initialized");
 		}
 
 		private void InitValues()
 		{
 			for (int l = 0; l < _layers.Count; l++)
-				_layers[l].InitValues(_testerE._testsCount);
+				_layers[l].InitValues(_testerT._testsCount);
 
 			Log("NN values were initialized");
 		}
@@ -154,7 +154,7 @@ namespace AbsurdMoneySimulations
 			float vLoss = FindLoss(_testerV, false);
 			Log("Current validation loss: " + vLoss);
 
-			float tLoss = FindLoss(_testerE, false);
+			float tLoss = FindLoss(_testerT, false);
 			Log("Current train loss: " + tLoss);
 
 			float oldTLoss = tLoss;
@@ -170,9 +170,9 @@ namespace AbsurdMoneySimulations
 				_cuttedGradientsCount = 0;
 
 				FillBatch();
-				UseMomentumForBPGradients(_testerE);
-				FindBPGradients(_testerE);
-				CorrectWeightsByBP(_testerE);
+				UseMomentumForBPGradients(_testerT);
+				FindBPGradients(_testerT);
+				CorrectWeightsByBP(_testerT);
 
 				oldVLoss = vLoss;
 				vLoss = FindLoss(_testerV, false);
@@ -181,13 +181,13 @@ namespace AbsurdMoneySimulations
 					Dropout();
 
 				oldTLoss = tLoss;
-				tLoss = FindLoss(_testerE, true);
+				tLoss = FindLoss(_testerT, true);
 
 				FindSpeed();
 				FindAcceleration();
 
 				LogAllInformation();
-				SaveEvolveHistory();
+				SaveFittingHistory();
 				Save(this);
 				EarlyStopping();
 
@@ -195,20 +195,20 @@ namespace AbsurdMoneySimulations
 				{
 					string validation = Statistics.CalculateStatistics(this, _testerV);
 					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
-					string evolition = Statistics.CalculateStatistics(this, _testerE);
-					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Evolution"), true);
+					string training = Statistics.CalculateStatistics(this, _testerT);
+					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Training"), true);
 
-					Log("Evolution dataset:\n" + evolition);
+					Log("Training dataset:\n" + training);
 					Log("Validation dataset:\n" + validation);
 				}
 			}
 
-			Log($"SUCCESSFULLY EVOLVED {count} GENERATIONS");
+			Log($"SUCCESSFULLY FITTED {count} GENERATIONS");
 
 			void FillBatch()
 			{
 				int count = 200;
-				_testerE.FillBatchBy(count);
+				_testerT.FillBatchBy(count);
 				//testerE.FillFullBatch();
 				Log($"Batch refilled ({count})");
 			}
@@ -243,9 +243,9 @@ namespace AbsurdMoneySimulations
 				Log($"vanished {_vanishedGradientsCount} cutted {_cuttedGradientsCount}");
 			}
 
-			void SaveEvolveHistory()
+			void SaveFittingHistory()
 			{
-				Disk2.WriteToProgramFiles("EvolveHistory", "csv", $"{tLoss}, {vLoss}\r\n", true);
+				Disk2.WriteToProgramFiles("FittingHistory", "csv", $"{tLoss}, {vLoss}\r\n", true);
 			}
 
 			float GetVLossRecord()

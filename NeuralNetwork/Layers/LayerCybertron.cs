@@ -99,7 +99,7 @@ namespace AbsurdMoneySimulations
 			_ownerNN = ownerNN;
 			_outNodesSummCount = outNodesSummCount;
 
-			int testsCount = ownerNN._testerE._testsCount;
+			int testsCount = ownerNN._testerT._testsCount;
 
 			_perceptrons = new LayerPerceptron[perceptronsCount];
 			for (int p = 0; p < _perceptrons.Count(); p++)

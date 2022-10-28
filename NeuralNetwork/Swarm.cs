@@ -16,7 +16,7 @@ namespace AbsurdMoneySimulations
 			NN nn = NN.Load();
 			
 			Tester testerV = nn._testerV;
-			Tester testerT = nn._testerE;
+			Tester testerT = nn._testerT;
 			float[,] predictions;
 			float[] predictionsSumms;
 			string csv = "";
@@ -247,7 +247,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void EvolveSwarm()
+		public static void FitSwarm()
 		{
 			Load();
 			files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
@@ -255,7 +255,7 @@ namespace AbsurdMoneySimulations
 			while (true)
 				for (int n = 0; n < files.Length; n++)
 				{
-					swarm[n]._LEARNING_RATE = 0.002f;
+					swarm[n]._LEARNING_RATE = 0.002f; //
 					swarm[n].FitByBackPropagtion(200);
 
 					Thread.Sleep(1000);					

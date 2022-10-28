@@ -113,7 +113,7 @@ namespace AbsurdMoneySimulations
 			_weightsPerSubCount = weightsPerSubCount;
 			_dropoutProbability = dropoutProbability;
 
-			int testsCount = ownerNN._testerE._testsCount;
+			int testsCount = ownerNN._testerT._testsCount;
 
 			_subs = new Node[subsCount];
 			for (int sub = 0; sub < _subs.Count(); sub++)

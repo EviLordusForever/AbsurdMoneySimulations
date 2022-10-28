@@ -34,7 +34,7 @@
 
 			void StartEvolutionThread()
 			{
-				Manager.EvolveByBackPropagation();
+				Manager.FitByBackPropagation();
 			}
 		}
 
@@ -96,7 +96,7 @@
 
 			void SwarmEvolutionThread()
 			{
-				Swarm.EvolveSwarm();
+				Swarm.FitSwarm();
 			}
 		}
 
