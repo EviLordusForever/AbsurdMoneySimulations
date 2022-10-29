@@ -117,7 +117,7 @@ namespace AbsurdMoneySimulations
 		public static void SetQtxLoginPassword(string login, string password)
 		{
 			Disk2.WriteToProgramFiles("qtxLogin", "txt", login, false);
-			Disk2.WriteToProgramFiles("qtxLogin", "password", login, false);
+			Disk2.WriteToProgramFiles("qtxPassword", "txt", password, false);
 		}
 
 		public static string GetQtxLogin()

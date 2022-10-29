@@ -103,7 +103,7 @@
 			string login = API.GetQtxLogin();
 			string password = API.GetQtxPassword();
 			login = UserAsker.AskValue("Login for qtx auto SignIn:\n(if empty auto SignIn will be disabled)", "Set login", login);
-			password = UserAsker.AskValue("Password for qtx auto SignIn:\n(if empty auto SignIn will be disabled)", "Set password:", password);
+			password = UserAsker.AskValue("Password for qtx auto SignIn:\n(if empty auto SignIn will be disabled)", "Set password", password);
 			API.SetQtxLoginPassword(login, password);
 		}
 	}

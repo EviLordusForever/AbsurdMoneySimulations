@@ -36,19 +36,18 @@ namespace AbsurdMoneySimulations
 			ActivationFunction inputAF = Swarm.swarm[0]._inputAF;
 			int moveInput = Swarm.swarm[0]._testerT._moveInputsOverZero;
 
-			InititializePredictionForm();
-
 			_input = new float[inputWindow];
 			string traderReport = "";
-			int i = 0;
 
+			InititializePredictionForm();
+
+			int i = 0;
 			while (true)
-			{				
-				WaitGraphUpdated();
+			{
 				traderReport = "";
 
+				WaitGraphUpdated();
 				AddToHorizonLive();
-
 				CutInput();
 
 				if (_horizonLive.Count > inputWindow)
@@ -163,8 +162,8 @@ namespace AbsurdMoneySimulations
 
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
-
 				AddToDerivativeLive();
+				_graphUpdated = true;
 
 				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\nd{_derivativeLive[_derivativeLive.Count - 1]}\n{info}");
 

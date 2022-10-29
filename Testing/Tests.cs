@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestMaxMin);
+			Thread myThread = new Thread(TestTests);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
