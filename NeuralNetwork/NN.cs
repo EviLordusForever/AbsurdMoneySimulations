@@ -216,10 +216,8 @@ namespace AbsurdMoneySimulations
 
 			void FillBatch()
 			{
-				int count = 700;
-				_testerT.FillBatchBy(count);
-				//testerE.FillFullBatch();
-				Log($"Batch refilled ({count})");
+				_testerT.FillBatch();
+				Log($"Batch refilled ({_testerT._batchSize})");
 			}
 
 			void EarlyStopping()

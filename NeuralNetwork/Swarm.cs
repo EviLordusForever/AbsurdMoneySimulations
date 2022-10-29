@@ -311,6 +311,8 @@ namespace AbsurdMoneySimulations
 
 			for (int n = 0; n < networks.Length; n++)
 			{
+				Log($"Loading NN {n + 1}");
+
 				swarm[n] = NN.Load(networks[n]);
 
 				swarm[n]._LEARNING_RATE = _LEARNING_RATE;
@@ -333,7 +335,7 @@ namespace AbsurdMoneySimulations
 			for (int n = 0; n < swarm.Length; n++)
 				prediction += swarm[n].Calculate(0, input, false);
 
-			return prediction;
+			return prediction / swarm.Length;
 		}
 	}
 }
