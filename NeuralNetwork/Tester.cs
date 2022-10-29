@@ -66,7 +66,7 @@ namespace AbsurdMoneySimulations
 					l++; g++;
 				}
 
-				Log($"Loaded graph: \"{Text2.StringInsideLast(files[f], "\\", ".")}\"");
+				Log($"Loaded graph: \"{Text2.StringBeforeLast(Text2.StringAfterLast(files[f], "\\"), ".")}\"");
 			}
 
 			_originalGraph = graphL.ToArray();

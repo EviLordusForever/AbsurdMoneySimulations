@@ -29,7 +29,7 @@ namespace AbsurdMoneySimulations
 
 		public string _name;
 
-		private int _generation;
+		public int _generation;
 
 		[JsonIgnore] public int _vanishedGradientsCount;
 		[JsonIgnore] public int _cuttedGradientsCount;
@@ -111,7 +111,7 @@ namespace AbsurdMoneySimulations
 			Log("Testers were initialized");
 		}
 
-		private void InitValues()
+		public void InitValues()
 		{
 			for (int l = 0; l < _layers.Count; l++)
 				_layers[l].InitValues(_testerT._testsCount);

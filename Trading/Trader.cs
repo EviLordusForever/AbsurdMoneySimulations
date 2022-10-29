@@ -28,6 +28,8 @@ namespace AbsurdMoneySimulations
 		private static float minOfDerivativeForLastNPoints = 1000000;
 		const int n = 500;
 
+		private const float _predictionScaling = 6;
+
 		public static void TradeBySwarm()
 		{
 			Swarm.Load();
@@ -253,8 +255,8 @@ namespace AbsurdMoneySimulations
 				_gr.DrawLine(Pens.Red, _bmp.Width - 1 - d - d * horizon, old1, _bmp.Width - 1 - d * horizon, now1);
 			}
 
-			int old2 = Rescale(-_previousPrediction / 5);
-			int now2 = Rescale(-_prediction / 5);
+			int old2 = Rescale(-_previousPrediction * _predictionScaling);
+			int now2 = Rescale(-_prediction * _predictionScaling);
 			_gr.DrawLine(Pens.Cyan, _bmp.Width - 1 - d, old2, _bmp.Width - 1, now2);
 
 			FormsManager.ShowImageToPredictionForm(_bmp);

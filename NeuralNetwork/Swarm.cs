@@ -24,7 +24,7 @@ namespace AbsurdMoneySimulations
 			predictions = CalculateAllPredictions(testerV);
 			predictionsSumms = FindPredictionsSumms(testerV);
 
-			for (int test = 0; test < testerV._testsCount; test++)
+/*			for (int test = 0; test < testerV._testsCount; test++)
 			{
 				WriteAnswer(test);
 				WritePredictions(test);
@@ -35,9 +35,9 @@ namespace AbsurdMoneySimulations
 				WriteCommonResultSimilar(test);
 				WriteCommonResultsSimilarAndCutted(test, 0.31f);
 				csv += "\r\n";				
-			}
+			}*/
 
-			SaveSwarmStatisticsToCsv();
+			//SaveSwarmStatisticsToCsv();
 
 			SaveBothSidesDetailedStaisticsToCsv(testerV, "VALIDATION");
 			SaveSingleSideDetailedStaisticsToCsv(testerV, "VALIDATION");
@@ -59,14 +59,14 @@ namespace AbsurdMoneySimulations
 
 			void SaveBothSidesDetailedStaisticsToCsv(Tester tester, string reason)
 			{
-				csv = Statistics.GetDetailedStatisticsCsv(predictionsSumms, tester, -5, 5, 0.001f, false);
+				csv = Statistics.GetDetailedStatisticsCsv(predictionsSumms, tester, -0.5f, 0.5f, 0.001f, false);
 				Disk2.WriteToProgramFiles($"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Both sides)", "csv", csv, false);
 				Log($"Saved to csv \"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Both sides)\"");
 			}
 
 			void SaveSingleSideDetailedStaisticsToCsv(Tester tester, string reason)
 			{
-				csv = Statistics.GetDetailedStatisticsCsv(predictionsSumms, tester, 0, 5, 0.001f, true);
+				csv = Statistics.GetDetailedStatisticsCsv(predictionsSumms, tester, 0, 0.5f, 0.001f, true);
 				Disk2.WriteToProgramFiles($"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Single side)", "csv", csv, false);
 				Log($"Saved to csv \"Swarm Cutters Statistics 2 ({reason}) (predictions summ) (Single side)\"");
 			}
@@ -75,9 +75,29 @@ namespace AbsurdMoneySimulations
 			{
 				float[] summs = new float[tester._testsCount];
 
-				for (int n = 0; n < files.Length; n++)
-					for (int test = 0; test < tester._testsCount; test++)
+				for (int test = 0; test < tester._testsCount; test++)
+				{
+					for (int n = 0; n < files.Length; n++)
 						summs[test] += predictions[test, n];
+
+					summs[test] /= files.Length;
+				}
+
+				return summs;
+			}
+
+			float[] FindSquaredPredictionsSumms(Tester tester)
+			{
+				float[] summs = new float[tester._testsCount];
+
+				for (int test = 0; test < tester._testsCount; test++)
+				{
+					for (int n = 0; n < files.Length; n++)
+						summs[test] += MathF.Pow(predictions[test, n], 2) * MathF.Sign(predictions[test, n]);
+
+					summs[test] /= tester._testsCount;
+					summs[test] = MathF.Sqrt(Math.Abs(summs[test])) * MathF.Sign(summs[test]);
+				}
 
 				return summs;
 			}
@@ -252,7 +272,8 @@ namespace AbsurdMoneySimulations
 			while (true)
 				for (int n = 0; n < files.Length; n++)
 				{
-					swarm[n]._LEARNING_RATE = 0.002f; //
+					swarm[n]._LEARNING_RATE = 0.004f; //
+
 					swarm[n].FitByBackPropagtion(200);
 
 					Thread.Sleep(1000);					
@@ -286,7 +307,14 @@ namespace AbsurdMoneySimulations
 			swarm = new NN[networks.Length];
 
 			for (int n = 0; n < networks.Length; n++)
+			{
 				swarm[n] = NN.Load(networks[n]);
+				swarm[n]._testerT._testsCount = 20000;
+				swarm[n]._testerT.FillTestsFromHorizonGraph();
+				swarm[n]._testerV._testsCount = 8000;
+				swarm[n]._testerV.FillTestsFromHorizonGraph();
+				swarm[n].InitValues();
+			}
 		}
 
 		public static float Calculate(float[] input)
