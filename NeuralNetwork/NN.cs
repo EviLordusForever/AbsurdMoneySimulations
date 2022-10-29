@@ -160,19 +160,22 @@ namespace AbsurdMoneySimulations
 			float oldTLoss = tLoss;
 			float oldVLoss = vLoss;
 
+			FillBatch();
+
 			for (int localGeneration = 0; localGeneration < count; localGeneration++)
 			{
 				_generation++;
 
-				Log($"G{_generation} ({localGeneration + 1}) ({localGeneration % 20})");
+				Log($"G{_generation} ({localGeneration + 1}) ({localGeneration % 50})");
 
 				_vanishedGradientsCount = 0;
 				_cuttedGradientsCount = 0;
-
-				FillBatch();
+				
 				UseMomentumForBPGradients(_testerT);
 				FindBPGradients(_testerT);
 				CorrectWeightsByBP(_testerT);
+
+				FillBatch();
 
 				if (needValidationLoss)
 				{
@@ -204,11 +207,16 @@ namespace AbsurdMoneySimulations
 
 					string validation = Statistics.CalculateStatistics(this, _testerV);
 					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
+					Disk2.WriteToProgramFiles("FittingHistory (Version for speedup)", "csv", $"{Statistics._loss},", true);
+
 					string training = Statistics.CalculateStatistics(this, _testerT);
 					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Training"), true);
+					Disk2.WriteToProgramFiles("FittingHistory (Version for speedup)", "csv", $"{Statistics._loss}\n", true);
 
 					Log("Training dataset:\n" + training);
 					Log("Validation dataset:\n" + validation);
+
+					float loss = Statistics._loss;
 				}
 			}
 

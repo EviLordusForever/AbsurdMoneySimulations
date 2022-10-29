@@ -10,7 +10,7 @@ namespace AbsurdMoneySimulations
 
 		public const int _trainingTestsCount = 20000;
 		public const int _batchSize = 700;
-		public const int _validationTestsCount = 2000;
+		public const int _validationTestsCount = 8000;
 		public const float _LEARNING_RATE = 0.004f;
 
 		public static void CalculateStatistics()
@@ -311,7 +311,7 @@ namespace AbsurdMoneySimulations
 
 			for (int n = 0; n < networks.Length; n++)
 			{
-				Log($"Loading NN {n + 1}");
+				Log($"NN {n + 1}");
 
 				swarm[n] = NN.Load(networks[n]);
 
