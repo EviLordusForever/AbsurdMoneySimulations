@@ -147,13 +147,16 @@ namespace AbsurdMoneySimulations
 
 				Math2.FindMinAndMaxForLastNPoints(_derivativeLive, ref minOfDerivativeForLastNPoints, ref maxOfDerivativeForLastNPoints, n);
 
-				float limit = 3 * Math.Max(Math.Abs(minOfDerivativeForLastNPoints), Math.Abs(maxOfDerivativeForLastNPoints));
-				float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
-				if (newDerivative > limit)
+				if (_graphLive.Count >= 2)
 				{
-					value = previousValue;
-					info = "Big jump skip";
-				}				
+					float limit = 3 * Math.Max(Math.Abs(minOfDerivativeForLastNPoints), Math.Abs(maxOfDerivativeForLastNPoints));
+					float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
+					if (newDerivative > limit)
+					{
+						value = previousValue;
+						info = "Big jump skip";
+					}
+				}
 
 				previousValue = value;
 
@@ -165,7 +168,10 @@ namespace AbsurdMoneySimulations
 				AddToDerivativeLive();
 				_graphUpdated = true;
 
-				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\nd{_derivativeLive[_derivativeLive.Count - 1]}\n{info}");
+				string der = "";
+				if (_derivativeLive.Count >= 2)
+					der = MathF.Round(_derivativeLive[_derivativeLive.Count - 1], 5).ToString();
+				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\nd {der}\n{info}");
 
 				MakeGraphBackupEvery(i, 3600);
 			}
