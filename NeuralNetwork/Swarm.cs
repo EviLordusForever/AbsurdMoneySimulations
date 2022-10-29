@@ -8,6 +8,11 @@ namespace AbsurdMoneySimulations
 		public static NN[] swarm;
 		public static string[] files;
 
+		public const int _trainingTestsCount = 20000;
+		public const int _batchSize = 700;
+		public const int _validationTestsCount = 2000;
+		public const float _LEARNING_RATE = 0.004f;
+
 		public static void CalculateStatistics()
 		{
 			Log("Starting calculating swarm statistics...");
@@ -272,9 +277,7 @@ namespace AbsurdMoneySimulations
 			while (true)
 				for (int n = 0; n < files.Length; n++)
 				{
-					swarm[n]._LEARNING_RATE = 0.004f; //
-
-					swarm[n].FitByBackPropagtion(200);
+					swarm[n].FitByBackPropagtion(200, true, false);
 
 					Thread.Sleep(1000);					
 					string standartNN = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
@@ -309,10 +312,17 @@ namespace AbsurdMoneySimulations
 			for (int n = 0; n < networks.Length; n++)
 			{
 				swarm[n] = NN.Load(networks[n]);
-				swarm[n]._testerT._testsCount = 20000;
+
+				swarm[n]._LEARNING_RATE = _LEARNING_RATE;
+
+				swarm[n]._testerT._testsCount = _trainingTestsCount;
+				swarm[n]._testerT._batchSize = _batchSize;
 				swarm[n]._testerT.FillTestsFromHorizonGraph();
-				swarm[n]._testerV._testsCount = 8000;
+
+				swarm[n]._testerV._testsCount = _validationTestsCount;
+				swarm[n]._testerV._batchSize = _batchSize;
 				swarm[n]._testerV.FillTestsFromHorizonGraph();
+
 				swarm[n].InitValues();
 			}
 		}

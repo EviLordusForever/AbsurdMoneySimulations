@@ -114,8 +114,7 @@ namespace AbsurdMoneySimulations
 		public static void FitByBackPropagation()
 		{
 			NN nn = NN.Load();
-			nn._LEARNING_RATE = 0.002f; //
-			nn.FitByBackPropagtion();
+			nn.FitByBackPropagtion(false, true);
 		}
 
 		public static void FindDetailedSectionsStatistics()

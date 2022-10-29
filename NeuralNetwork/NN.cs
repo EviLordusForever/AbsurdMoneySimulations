@@ -133,12 +133,12 @@ namespace AbsurdMoneySimulations
 				_layers[l].FillWeightsRandomly();
 		}
 
-		public void FitByBackPropagtion()
+		public void FitByBackPropagtion(bool useBatchForTLoss, bool needValidationLoss)
 		{
-			FitByBackPropagtion(1000000000);
+			FitByBackPropagtion(1000000000, useBatchForTLoss, needValidationLoss);
 		}
 
-		public void FitByBackPropagtion(int count)
+		public void FitByBackPropagtion(int count, bool useBatchForTLoss, bool needValidationLoss)
 		{
 			//Just very very important function
 
@@ -151,10 +151,10 @@ namespace AbsurdMoneySimulations
 			float vLossRecord = GetVLossRecord();
 			Log("Validation loss record: " + vLossRecord);
 
-			float vLoss = FindLoss(_testerV, false);
+			float vLoss = FindLoss(_testerV, false, false);
 			Log("Current validation loss: " + vLoss);
 
-			float tLoss = FindLoss(_testerT, false);
+			float tLoss = FindLoss(_testerT, false, useBatchForTLoss);
 			Log("Current train loss: " + tLoss);
 
 			float oldTLoss = tLoss;
@@ -174,14 +174,17 @@ namespace AbsurdMoneySimulations
 				FindBPGradients(_testerT);
 				CorrectWeightsByBP(_testerT);
 
-				oldVLoss = vLoss;
-				vLoss = FindLoss(_testerV, false);
+				if (needValidationLoss)
+				{
+					oldVLoss = vLoss;
+					vLoss = FindLoss(_testerV, false, false);
+				}
 
 				if (needDropout)
 					Dropout();
 
 				oldTLoss = tLoss;
-				tLoss = FindLoss(_testerT, true);
+				tLoss = FindLoss(_testerT, true, useBatchForTLoss);
 
 				FindSpeed();
 				FindAcceleration();
@@ -191,8 +194,14 @@ namespace AbsurdMoneySimulations
 				Save(this);
 				EarlyStopping();
 
-				if (localGeneration % 20 == 19)
+				if (localGeneration % 50 == 49)
 				{
+					if (!needValidationLoss)
+					{
+						oldVLoss = vLoss;
+						vLoss = FindLoss(_testerV, false, false);
+					}
+
 					string validation = Statistics.CalculateStatistics(this, _testerV);
 					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
 					string training = Statistics.CalculateStatistics(this, _testerT);
@@ -371,9 +380,12 @@ namespace AbsurdMoneySimulations
 			Log("Weights are corrected!");
 		}
 
-		public float FindLoss(Tester tester, bool withDropout)
+		public float FindLoss(Tester tester, bool withDropout, bool useBatch)
 		{
-			return FindLossSquared(tester, withDropout);
+			if (useBatch)
+				return FindLossSquaredForBatch(tester, withDropout);
+			else
+				return FindLossSquared(tester, withDropout);
 		}
 
 		public float FindLossLinear(Tester tester, bool withDropout)
@@ -491,6 +503,67 @@ namespace AbsurdMoneySimulations
 				er += suber[core];
 
 			er /= tester._testsCount;
+
+			return er;
+		}
+
+		public float FindLossSquaredForBatch(Tester tester, bool withDropout)
+		{
+			restart:
+
+			int testsPerCoreCount = tester._testsCount / _coresCount;
+
+			float er = 0;
+			float[] suber = new float[_coresCount];
+
+			int alive = _coresCount;
+
+			Thread[] subThreads = new Thread[_coresCount];
+
+			for (int core = 0; core < _coresCount; core++)
+			{
+				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
+				subThreads[core].Name = "Core " + core;
+				subThreads[core].Priority = ThreadPriority.Highest;
+				subThreads[core].Start(core);
+			}
+
+			void SubThread(object obj)
+			{
+				int core = (int)obj;
+
+				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
+					if (tester._batch[test] == 1)
+					{
+						float prediction = Calculate(test, tester._tests[test], withDropout);
+
+						float reality = tester._answers[test];
+
+						suber[core] += MathF.Pow(prediction - reality, 2);
+					}
+
+				alive--;
+			}
+
+			long ms = DateTime.Now.Ticks;
+			while (alive > 0)
+			{
+				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
+				{
+					Log("THE THREAD IS STACKED");
+					for (int core = 0; core < _coresCount; core++)
+						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
+					Log("AGAIN");
+
+					goto restart;
+				}
+			}
+
+
+			for (int core = 0; core < _coresCount; core++)
+				er += suber[core];
+
+			er /= tester._batchSize;
 
 			return er;
 		}
