@@ -24,8 +24,8 @@ namespace AbsurdMoneySimulations
 		private static float _prediction;
 		private static float _previousPrediction;
 
-		private static float maxOfDerivativeForLastNPoints = -1000000;
-		private static float minOfDerivativeForLastNPoints = 1000000;
+		private static float maxOfDerivativeForLastNPoints = 0;
+		private static float minOfDerivativeForLastNPoints = 0;
 		const int n = 500;
 
 		private const float _predictionScaling = 6;
@@ -242,12 +242,10 @@ namespace AbsurdMoneySimulations
 			_gr.FillRectangle(Brushes.Black, _bmp.Width - d, 0, _bmp.Width - 1, _bmp.Height);
 
 			Pen darkPen = new Pen(Color.FromArgb(30, 30, 30), 1);
+			for (int i = 1; i <= 9; i++)
+				_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * i / 10f, _bmp.Width - 1, _bmp.Height * i / 10f);
 
 			_gr.DrawLine(Pens.Orange, _bmp.Width - d, _bmp.Height / 2, _bmp.Width - 1, _bmp.Height / 2);
-			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 2 / 10f, _bmp.Width - 1, _bmp.Height * 2 / 10f);
-			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 8 / 10f, _bmp.Width - 1, _bmp.Height * 8 / 10f);
-			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 1 / 10f, _bmp.Width - 1, _bmp.Height * 1 / 10f);
-			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * 9 / 10f, _bmp.Width - 1, _bmp.Height * 9 / 10f);
 
 			if (_input.Length > 2)
 			{

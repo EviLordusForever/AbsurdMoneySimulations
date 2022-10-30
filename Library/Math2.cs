@@ -75,7 +75,9 @@ namespace Library
 			int lastIndex = count - 1;
 			int firstIndex = count - n;
 
-			if (count > n)
+			if (count == 0)
+				return;
+			else if (count > n)
 			{
 				if (array[firstIndex - 1] == currentMin || array[firstIndex - 1] == currentMax)
 					RefindMaxMin(ref currentMin, ref currentMax);
