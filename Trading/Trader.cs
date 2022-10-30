@@ -35,7 +35,7 @@ namespace AbsurdMoneySimulations
 			InititializePredictionForm();
 			FormsManager.SayToTraderReport2("Loading swarm...");
 
-			Swarm.Load();
+			Swarm.Load(false);
 			int horizon = Swarm._swarm[0]._horizon;
 			int inputWindow = Swarm._swarm[0]._inputWindow;
 			ActivationFunction inputAF = Swarm._swarm[0]._inputAF;

@@ -16,7 +16,7 @@ namespace AbsurdMoneySimulations
 		public static void CalculateStatistics()
 		{
 			Log("Starting calculating swarm statistics...");
-			Load();
+			Load(true);
 
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 			
@@ -271,7 +271,7 @@ namespace AbsurdMoneySimulations
 
 		public static void Fit()
 		{
-			Load();			
+			Load(true);			
 
 			while (true)
 				for (int n = 0; n < _swarm.Length; n++)
@@ -300,7 +300,7 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void Load()
+		public static void Load(bool withTesters)
 		{
 			_files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 			_swarm = new NN[_files.Length];
@@ -315,13 +315,27 @@ namespace AbsurdMoneySimulations
 
 				_swarm[n]._LEARNING_RATE = _LEARNING_RATE;
 
-				_swarm[n]._testerT._testsCount = _trainingTestsCount;
-				_swarm[n]._testerT._batchSize = _batchSize;
-				_swarm[n]._testerT.FillTestsFromHorizonGraph();
+				if (withTesters)
+				{
+					if (n == 0)
+					{
+						_swarm[n]._testerT._testsCount = _trainingTestsCount;
+						_swarm[n]._testerT._batchSize = _batchSize;
+						_swarm[n]._testerT.FillTestsFromHorizonGraph();
 
-				_swarm[n]._testerV._testsCount = _validationTestsCount;
-				_swarm[n]._testerV._batchSize = _batchSize;
-				_swarm[n]._testerV.FillTestsFromHorizonGraph();
+						_swarm[n]._testerV._testsCount = _validationTestsCount;
+						_swarm[n]._testerV._batchSize = _batchSize;
+						_swarm[n]._testerV.FillTestsFromHorizonGraph();
+					}
+					else
+					{
+						_swarm[n]._testerT = _swarm[0]._testerT;
+						_swarm[n]._testerV = _swarm[0]._testerV;
+					}
+				}
+				else
+					_swarm[n]._testerT._testsCount = 1;
+
 
 				_swarm[n].InitValues();
 			}
