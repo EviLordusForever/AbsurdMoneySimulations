@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 		public static string[] _files;
 
 		public const int _trainingTestsCount = 21000;
-		public const int _batchSize = 2500;
+		public const int _batchSize = 21000;
 		public const int _validationTestsCount = 8000;
 		public const float _LEARNING_RATE = 0.002f;
 
@@ -280,7 +280,7 @@ namespace AbsurdMoneySimulations
 
 					File.Delete(_files[n]);
 					NN.Save(_swarm[n], _files[n]);
-					Log($"(!!!) SAVED NN #{n} TO SWARM");
+					Log($"(!!!) SAVED NN #{n + 1} TO SWARM");
 				}
 		}
 
@@ -303,6 +303,8 @@ namespace AbsurdMoneySimulations
 					NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
 					Log($"NN {i + 1}");
 				}
+
+				Log("Swarm was recreated");
 			}
 		}
 
@@ -346,7 +348,7 @@ namespace AbsurdMoneySimulations
 				_swarm[n].InitValues();
 			}
 
-			Log("Swarm was recreated");
+			Log("Swarm was loaded");
 		}
 
 		public static float Calculate(float[] input)

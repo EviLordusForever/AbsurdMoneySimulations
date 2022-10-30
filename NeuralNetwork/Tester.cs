@@ -127,7 +127,8 @@ namespace AbsurdMoneySimulations
 
 				_tests[test] = Array2.SubArray(_normalizedDerivativeOfGraph, offset, _ownerNN._inputWindow);
 
-				Normalize(test);
+				float standartDeviation = Math2.FindStandartDeviation(_tests[test]);
+				_tests[test] = Normalize(_tests[test], standartDeviation, _ownerNN._inputAF, _moveInputsOverZero);
 
 				float[] ar = Array2.SubArray(_derivativeOfGraph, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
@@ -139,12 +140,6 @@ namespace AbsurdMoneySimulations
 			}
 
 			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE graph. ({_tests.Length})");
-
-			void Normalize(int test)
-			{
-				for (int i = 0; i < _tests[test].Length; i++)
-					_tests[test][i] += _moveInputsOverZero;
-			}
 		}
 
 		public void FillTestsFromOriginalGraph()
@@ -256,6 +251,8 @@ namespace AbsurdMoneySimulations
 			_batch = new byte[_testsCount];
 			for (int i = 0; i < _testsCount; i++)
 				_batch[i] = 1;
+
+			Log("Filled full batch");
 		}
 
 		[JsonIgnore]

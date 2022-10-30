@@ -72,6 +72,39 @@ namespace AbsurdMoneySimulations
 			return nn;
 		}
 
+		public static NN CreateBasicGoodPerceptronDerivative()
+		{
+			NN nn = new NN();
+
+			nn._horizon = 30;
+			nn._inputWindow = 300;
+			nn._weightsInitMin = -1f;
+			nn._weightsInitMax = 1f;
+
+			nn._gradientCutter = 10f;
+
+			nn._biasInput = 0.01f;
+
+			nn._LEARNING_RATE = 0.001f; //0.05f
+			nn._MOMENTUM = 0f; //0.8f
+
+			nn._inputAF = new SoftSign();
+			nn._answersAF = new SoftSign();
+
+			nn._testerT = new Tester(nn, 4000, 1, "Graph//ForTraining", "TRAINING", 1, 0, 0);
+			nn._testerV = new Tester(nn, 2000, 1, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
+
+			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 5, 8, 0, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 1, 5, 0f, new SoftSign())); //40 x 15 = 600
+
+			nn.FillWeightsRandomly();
+
+			Log("New Neural Network created!");
+			return nn;
+		}
+
 		public static NN CreateClassicMegatron3Subs()
 		{
 			NN nn = new NN();
