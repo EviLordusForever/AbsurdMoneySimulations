@@ -8,7 +8,7 @@ namespace AbsurdMoneySimulations
 		public static NN[] _swarm;
 		public static string[] _files;
 
-		public const int _trainingTestsCount = 20000;
+		public const int _trainingTestsCount = 21000;
 		public const int _batchSize = 2500;
 		public const int _validationTestsCount = 8000;
 		public const float _LEARNING_RATE = 0.002f;
@@ -293,7 +293,13 @@ namespace AbsurdMoneySimulations
 
 				for (int i = 0; i < 10; i++)
 				{
-					NN nn = Builder.CreateBasicGoodPerceptron();
+					NN nn = Builder.CreateBasicGoodPerceptronOriginal();
+
+					nn._testerT._testsCount = _trainingTestsCount;
+					nn._testerV._testsCount = _validationTestsCount;
+					nn._LEARNING_RATE = _LEARNING_RATE;
+					nn._testerT._batchSize = _batchSize;
+
 					NN.Save(nn, $"{Disk2._programFiles}NN\\Swarm\\Dummy {i + 1}.json");
 					Log($"NN {i + 1}");
 				}
@@ -321,11 +327,11 @@ namespace AbsurdMoneySimulations
 					{
 						_swarm[n]._testerT._testsCount = _trainingTestsCount;
 						_swarm[n]._testerT._batchSize = _batchSize;
-						_swarm[n]._testerT.FillTestsFromHorizonGraph();
+						_swarm[n]._testerT.FillTests();
 
 						_swarm[n]._testerV._testsCount = _validationTestsCount;
 						_swarm[n]._testerV._batchSize = _batchSize;
-						_swarm[n]._testerV.FillTestsFromHorizonGraph();
+						_swarm[n]._testerV.FillTests();
 					}
 					else
 					{
@@ -339,6 +345,8 @@ namespace AbsurdMoneySimulations
 
 				_swarm[n].InitValues();
 			}
+
+			Log("Swarm was recreated");
 		}
 
 		public static float Calculate(float[] input)

@@ -100,6 +100,18 @@ namespace AbsurdMoneySimulations
 			Log("HorizonGraph is filled.");
 		}
 
+		public void FillTests()
+		{
+			if (_graphLoadingType == 0)
+				FillTestsFromOriginalGraph();
+			else if (_graphLoadingType == 1)
+				FillTestsFromNormilizedDerivativeGraph();
+			else if (_graphLoadingType == 2)
+				FillTestsFromHorizonGraph();
+			else
+				throw new Exception();
+		}
+
 		public void FillTestsFromNormilizedDerivativeGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
@@ -241,6 +253,7 @@ namespace AbsurdMoneySimulations
 
 		public void FillFullBatch()
 		{
+			_batch = new byte[_testsCount];
 			for (int i = 0; i < _testsCount; i++)
 				_batch[i] = 1;
 		}
@@ -266,14 +279,7 @@ namespace AbsurdMoneySimulations
 				if (_batchSize == _testsCount)
 					FillFullBatch();
 
-				if (_graphLoadingType == 0)
-					FillTestsFromOriginalGraph();
-				else if (_graphLoadingType == 1)
-					FillTestsFromNormilizedDerivativeGraph();
-				else if (_graphLoadingType == 2)
-					FillTestsFromHorizonGraph();
-				else
-					throw new Exception();
+				FillTests();
 			}
 		}
 

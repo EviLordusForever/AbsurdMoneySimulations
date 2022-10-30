@@ -92,11 +92,11 @@ namespace AbsurdMoneySimulations
 
 		public static void FitSwarm()
 		{
-			Thread myThread = new Thread(SwarmEvolutionThread);
-			myThread.Name = "Swarm Evolution Thread";
+			Thread myThread = new Thread(SwarmFittingThread);
+			myThread.Name = "Swarm Fitting Thread";
 			myThread.Start();
 
-			void SwarmEvolutionThread()
+			void SwarmFittingThread()
 			{
 				Swarm.Fit();
 			}
