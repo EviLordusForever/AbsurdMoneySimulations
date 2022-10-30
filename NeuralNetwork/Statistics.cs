@@ -1,5 +1,5 @@
 ﻿using static AbsurdMoneySimulations.Logger;
-using static AbsurdMoneySimulations.Storage;
+using static AbsurdMoneySimulations.Params;
 using Library;
 
 namespace AbsurdMoneySimulations

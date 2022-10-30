@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using static AbsurdMoneySimulations.Logger;
-using static AbsurdMoneySimulations.Storage;
+using static AbsurdMoneySimulations.Params;
 using Library;
 
 namespace AbsurdMoneySimulations
@@ -133,12 +133,12 @@ namespace AbsurdMoneySimulations
 				_layers[l].FillWeightsRandomly();
 		}
 
-		public void FitByBackPropagtion(bool useBatchForTLoss, bool needValidationLoss)
+		public void Fit(bool useBatchForTLoss, bool needValidationLoss)
 		{
-			FitByBackPropagtion(1000000000, useBatchForTLoss, needValidationLoss);
+			Fit(1000000000, useBatchForTLoss, needValidationLoss);
 		}
 
-		public void FitByBackPropagtion(int count, bool useBatchForTLoss, bool needValidationLoss)
+		public void Fit(int count, bool useBatchForTLoss, bool needValidationLoss)
 		{
 			//Just very very important function
 
@@ -215,8 +215,6 @@ namespace AbsurdMoneySimulations
 
 					Log("Training dataset:\n" + training);
 					Log("Validation dataset:\n" + validation);
-
-					float loss = Statistics._loss;
 				}
 			}
 

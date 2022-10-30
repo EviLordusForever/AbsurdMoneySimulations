@@ -1,5 +1,5 @@
 ﻿using OpenQA.Selenium;
-using static AbsurdMoneySimulations.BrowserManager;
+using static AbsurdMoneySimulations.Browser;
 using static AbsurdMoneySimulations.Logger;
 using Library;
 
@@ -79,7 +79,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestSelenium()
 		{
-			LoadBrowser("https://google.com");
+			Load("https://google.com");
 			Thread.Sleep(3000);
 			Navi("https://vk.com");
 			Thread.Sleep(3000);
@@ -90,7 +90,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestSelenium2()
 		{
-			LoadBrowser("https://google.com");
+			Load("https://google.com");
 			UserAsker.SayWait("So, let's we begin");
 			Thread.Sleep(100);
 			_driver.FindElement(By.CssSelector("[class='gLFyf gsfi']")).Click();
@@ -100,7 +100,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestTrader()
 		{
-			LoadBrowser("https://google.com");
+			Load("https://google.com");
 			LoadCookies();
 			UserAsker.SayWait("So, let's we begin!");
 			Thread.Sleep(100);
@@ -123,11 +123,11 @@ namespace AbsurdMoneySimulations
 
 			void So(int coresCount)
 			{
-				Storage._coresCount = coresCount;
+				Params._coresCount = coresCount;
 				long ms = DateTime.Now.Ticks;
 				for (int i = 0; i < 10; i++)
 					nn.FindLossSquared(nn._testerT, false);
-				Log($"{Storage._coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
+				Log($"{Params._coresCount} cores: {(decimal)(DateTime.Now.Ticks - ms) / (10000 * 1000)}");
 			}
 		}
 

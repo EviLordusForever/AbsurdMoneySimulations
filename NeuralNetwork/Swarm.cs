@@ -5,13 +5,13 @@ namespace AbsurdMoneySimulations
 {
 	public static class Swarm
 	{
-		public static NN[] swarm;
-		public static string[] files;
+		public static NN[] _swarm;
+		public static string[] _files;
 
 		public const int _trainingTestsCount = 20000;
-		public const int _batchSize = 700;
+		public const int _batchSize = 2500;
 		public const int _validationTestsCount = 8000;
-		public const float _LEARNING_RATE = 0.004f;
+		public const float _LEARNING_RATE = 0.002f;
 
 		public static void CalculateStatistics()
 		{
@@ -20,8 +20,8 @@ namespace AbsurdMoneySimulations
 
 			string[] files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
 			
-			Tester testerV = swarm[0]._testerV;
-			Tester testerT = swarm[0]._testerT;
+			Tester testerV = _swarm[0]._testerV;
+			Tester testerT = _swarm[0]._testerT;
 			float[,] predictions;
 			float[] predictionsSumms;
 			string csv = "";
@@ -113,7 +113,7 @@ namespace AbsurdMoneySimulations
 
 				for (int n = 0; n < files.Length; n++)
 					for (int test = 0; test < tester._testsCount; test++)
-						predictions[test, n] = swarm[n].Calculate(test, tester._tests[test], false);
+						predictions[test, n] = _swarm[n].Calculate(test, tester._tests[test], false);
 
 				Log("Predictions are calculated.");
 				Log("Now wait...");
@@ -269,26 +269,22 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void FitSwarm()
+		public static void Fit()
 		{
-			Load();
-			files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			Load();			
 
 			while (true)
-				for (int n = 0; n < files.Length; n++)
+				for (int n = 0; n < _swarm.Length; n++)
 				{
-					swarm[n].FitByBackPropagtion(200, true, false);
+					_swarm[n].Fit(200, true, false);
 
-					Thread.Sleep(1000);					
-					string standartNN = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
-					File.Delete(files[n]);
-					NN.Save(swarm[n], files[n]);
-					Log($"Saved nn #{n} to swarm");
-					Thread.Sleep(1000);
+					File.Delete(_files[n]);
+					NN.Save(_swarm[n], _files[n]);
+					Log($"(!!!) SAVED NN #{n} TO SWARM");
 				}
 		}
 
-		public static void RecreateSwarm()
+		public static void Recreate()
 		{
 			if (UserAsker.Ask("Are you shure? Previous swarm will be deleted"))
 			{
@@ -306,36 +302,36 @@ namespace AbsurdMoneySimulations
 
 		public static void Load()
 		{
-			string[] networks = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
-			swarm = new NN[networks.Length];
+			_files = Directory.GetFiles(Disk2._programFiles + "NN\\Swarm");
+			_swarm = new NN[_files.Length];
 
-			for (int n = 0; n < networks.Length; n++)
+			for (int n = 0; n < _files.Length; n++)
 			{
 				Log($"NN {n + 1}");
 
-				swarm[n] = NN.Load(networks[n]);
+				_swarm[n] = NN.Load(_files[n]);
 
-				swarm[n]._LEARNING_RATE = _LEARNING_RATE;
+				_swarm[n]._LEARNING_RATE = _LEARNING_RATE;
 
-				swarm[n]._testerT._testsCount = _trainingTestsCount;
-				swarm[n]._testerT._batchSize = _batchSize;
-				swarm[n]._testerT.FillTestsFromHorizonGraph();
+				_swarm[n]._testerT._testsCount = _trainingTestsCount;
+				_swarm[n]._testerT._batchSize = _batchSize;
+				_swarm[n]._testerT.FillTestsFromHorizonGraph();
 
-				swarm[n]._testerV._testsCount = _validationTestsCount;
-				swarm[n]._testerV._batchSize = _batchSize;
-				swarm[n]._testerV.FillTestsFromHorizonGraph();
+				_swarm[n]._testerV._testsCount = _validationTestsCount;
+				_swarm[n]._testerV._batchSize = _batchSize;
+				_swarm[n]._testerV.FillTestsFromHorizonGraph();
 
-				swarm[n].InitValues();
+				_swarm[n].InitValues();
 			}
 		}
 
 		public static float Calculate(float[] input)
 		{
 			float prediction = 0;
-			for (int n = 0; n < swarm.Length; n++)
-				prediction += swarm[n].Calculate(0, input, false);
+			for (int n = 0; n < _swarm.Length; n++)
+				prediction += _swarm[n].Calculate(0, input, false);
 
-			return prediction / swarm.Length;
+			return prediction / _swarm.Length;
 		}
 	}
 }

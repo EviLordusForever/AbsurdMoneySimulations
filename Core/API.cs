@@ -28,15 +28,15 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void FitByBackPropgation()
+		public static void FitNeuralNetwork()
 		{
-			Thread myThread = new Thread(StartEvolutionThread);
-			myThread.Name = "EVOLUTION thread";
+			Thread myThread = new Thread(StartFittingThread);
+			myThread.Name = "Fitting thread";
 			myThread.Start();
 
-			void StartEvolutionThread()
+			void StartFittingThread()
 			{
-				Manager.FitByBackPropagation();
+				Manager.FitNeuralNetwork();
 			}
 		}
 
@@ -98,7 +98,7 @@ namespace AbsurdMoneySimulations
 
 			void SwarmEvolutionThread()
 			{
-				Swarm.FitSwarm();
+				Swarm.Fit();
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace AbsurdMoneySimulations
 
 			void SwarmRecreatingThread()
 			{
-				Swarm.RecreateSwarm();
+				Swarm.Recreate();
 			}
 		}
 

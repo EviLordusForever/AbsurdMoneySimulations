@@ -1,4 +1,4 @@
-﻿using static AbsurdMoneySimulations.Logger;
+using static AbsurdMoneySimulations.Logger;
 using Newtonsoft.Json;
 using Library;
 
@@ -163,7 +163,7 @@ namespace AbsurdMoneySimulations
 			Log($"Tests and answers for NN are filled from NORMILIZED ORIGINAL graph. ({_tests.Length})");
 
 			void Normalize(int test)
-			{				
+			{
 				float final = _tests[test][_tests[test].Length - 1];
 
 				for (int i = 0; i < _tests[test].Length; i++)

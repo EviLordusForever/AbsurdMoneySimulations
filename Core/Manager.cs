@@ -107,14 +107,15 @@ namespace AbsurdMoneySimulations
 		public static void ClearPreviousNNHistory()
 		{
 			Disk2.DeleteFileFromProgramFiles("FittingHistory.csv");
+			Disk2.DeleteFileFromProgramFiles("FittingHistory (Version for speedup).csv");
 			Disk2.DeleteFileFromProgramFiles("weights.csv");
 			Disk2.ClearDirectory(Disk2._programFiles + "NN\\EarlyStopping");
 		}
 
-		public static void FitByBackPropagation()
+		public static void FitNeuralNetwork()
 		{
 			NN nn = NN.Load();
-			nn.FitByBackPropagtion(false, true);
+			nn.Fit(false, true);
 		}
 
 		public static void FindDetailedSectionsStatistics()
@@ -124,20 +125,21 @@ namespace AbsurdMoneySimulations
 			Statistics.FindDetailedSectionsStatistics(nn._testerT, "Training");
 			Statistics.CalculateStatistics(nn, nn._testerV);
 			Statistics.FindDetailedSectionsStatistics(nn._testerV, "Validation");
+			Log("All done");
 		}
 
 		public static void DeleteCookies()
 		{
-			if (BrowserManager._driver == null)
+			if (Browser._driver == null)
 			{
 				UserAsker.SayWait("Can't delete cookies: Browser is closed. Can't get domain");
 				return;
 			}
 
-			string domain = BrowserManager.GetDomain();
+			string domain = Browser.GetDomain();
 
 			if (UserAsker.Ask("Delete cookies for domain \"{domain}\""))
-				BrowserManager.DeleteCookies();
+				Browser.DeleteCookies();
 		}
 
 		public static void DrawOtcIndicators()
@@ -152,8 +154,8 @@ namespace AbsurdMoneySimulations
 
 		public static void OpenQtxOnly()
 		{
-			BrowserManager.LoadBrowser("https://google.com");
-			BrowserManager.LoadCookies();
+			Browser.Load("https://google.com");
+			Browser.LoadCookies();
 			Trader.CloseChromeMessage();
 			Trader.OpenQtx();
 		}

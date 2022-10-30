@@ -39,13 +39,13 @@
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			BrowserManager.Quit();
+			Browser.Quit();
 			Logger.Quit();
 		}
 
 		private void button7_Click(object sender, EventArgs e)
 		{
-			API.FitByBackPropgation();
+			API.FitNeuralNetwork();
 		}
 
 		private void button8_Click(object sender, EventArgs e)

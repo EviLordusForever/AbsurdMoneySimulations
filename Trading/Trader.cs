@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium;
 using System.Threading;
-using static AbsurdMoneySimulations.BrowserManager;
+using static AbsurdMoneySimulations.Browser;
 using static AbsurdMoneySimulations.Logger;
 using Library;
 using IronOcr;
@@ -33,10 +33,10 @@ namespace AbsurdMoneySimulations
 		public static void TradeBySwarm()
 		{
 			Swarm.Load();
-			int horizon = Swarm.swarm[0]._horizon;
-			int inputWindow = Swarm.swarm[0]._inputWindow;
-			ActivationFunction inputAF = Swarm.swarm[0]._inputAF;
-			int moveInput = Swarm.swarm[0]._testerT._moveInputsOverZero;
+			int horizon = Swarm._swarm[0]._horizon;
+			int inputWindow = Swarm._swarm[0]._inputWindow;
+			ActivationFunction inputAF = Swarm._swarm[0]._inputAF;
+			int moveInput = Swarm._swarm[0]._testerT._moveInputsOverZero;
 
 			_input = new float[inputWindow];
 			string traderReport = "";
@@ -97,7 +97,7 @@ namespace AbsurdMoneySimulations
 
 		public static void GetGraphLive(int delaySeconds)
 		{
-			LoadBrowser("https://google.com");
+			Load("https://google.com");
 			LoadCookies();
 			CloseChromeMessage();
 			OpenQtx();

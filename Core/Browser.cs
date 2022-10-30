@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace AbsurdMoneySimulations
 {
-	public static class BrowserManager
+	public static class Browser
 	{
 		public static IWebDriver _driver;
 		public static ChromeDriverService _chromeDriverService;
@@ -17,7 +17,7 @@ namespace AbsurdMoneySimulations
 			return (string)_driver.Scripts().ExecuteScript("return document.domain");
 		}
 
-		public static void LoadBrowser(string link)
+		public static void Load(string link)
 		{
 			_chromeDriverService = ChromeDriverService.CreateDefaultService();
 			_chromeDriverService.HideCommandPromptWindow = true;
