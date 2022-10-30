@@ -90,6 +90,8 @@ namespace Library
 			}
 			else if (count == n)
 				RefindMaxMin(ref currentMin, ref currentMax);
+			else
+				FindMinAndMaxForLastNPoints(array, ref currentMin, ref currentMax, count);
 
 			void RefindMaxMin(ref float currentMin, ref float currentMax)
 			{

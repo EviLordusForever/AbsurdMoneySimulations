@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestTests);
+			Thread myThread = new Thread(TestMaxMin);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
@@ -294,14 +294,15 @@ namespace AbsurdMoneySimulations
 
 		public static void TestMaxMin()
 		{
-			string graphFolder = "Graph//ForTraining";
+			string graphFolder = "Graph//ForValidation";
 			var files = Directory.GetFiles(Disk2._programFiles + graphFolder);
 			var graph = new List<float>();
-			var derivative = new List<float>();
+			var badDerivative = new List<float>();
+			var goodDerivative = new List<float>();
 
-			float localMin = 0;
-			float localMax = 0;
-			const int n = 500;
+			float localMin = 10;
+			float localMax = -10;
+			const int n = 300;
 
 			string csv = "";
 
@@ -312,11 +313,16 @@ namespace AbsurdMoneySimulations
 
 			for (int l = 1; l < graph.Count; l++)
 			{
-				derivative.Add(graph[l] - graph[l - 1]);
+				badDerivative.Add(graph[l] - graph[l - 1]);
+				float limit = 3 * Math.Max(Math.Abs(localMin), Math.Abs(localMax));
+				if (Math.Abs(badDerivative.Last()) > limit && l > 10)
+					goodDerivative.Add(goodDerivative.Last());
+				else
+					goodDerivative.Add(badDerivative.Last());
 
-				Math2.FindMinAndMaxForLastNPoints(derivative, ref localMin, ref localMax, n);
+				Math2.FindMinAndMaxForLastNPoints(goodDerivative, ref localMin, ref localMax, n);
 
-				csv += $"{derivative[derivative.Count - 1]},{localMin},{localMax}\n";
+				csv += $"{badDerivative[badDerivative.Count - 1]},{goodDerivative[goodDerivative.Count - 1]},{localMin},{localMax}\n";
 			}
 
 			Disk2.WriteToProgramFiles("TestMinMax", "csv", csv, false);

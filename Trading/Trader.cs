@@ -150,11 +150,11 @@ namespace AbsurdMoneySimulations
 
 				Math2.FindMinAndMaxForLastNPoints(_derivativeLive, ref minOfDerivativeForLastNPoints, ref maxOfDerivativeForLastNPoints, n);
 
-				if (_graphLive.Count >= 2)
+				if (_graphLive.Count > 10)
 				{
 					float limit = 3 * Math.Max(Math.Abs(minOfDerivativeForLastNPoints), Math.Abs(maxOfDerivativeForLastNPoints));
 					float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
-					if (newDerivative > limit)
+					if (Math.Abs(newDerivative) > limit)
 					{
 						value = previousValue;
 						info = "Big jump skip";
