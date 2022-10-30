@@ -32,6 +32,9 @@ namespace AbsurdMoneySimulations
 
 		public static void TradeBySwarm()
 		{
+			InititializePredictionForm();
+			FormsManager.SayToTraderReport2("Loading swarm...");
+
 			Swarm.Load();
 			int horizon = Swarm._swarm[0]._horizon;
 			int inputWindow = Swarm._swarm[0]._inputWindow;
@@ -40,8 +43,6 @@ namespace AbsurdMoneySimulations
 
 			_input = new float[inputWindow];
 			string traderReport = "";
-
-			InititializePredictionForm();
 
 			int i = 0;
 			while (true)

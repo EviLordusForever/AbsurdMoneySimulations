@@ -308,6 +308,8 @@ namespace AbsurdMoneySimulations
 			for (int n = 0; n < _files.Length; n++)
 			{
 				Log($"NN {n + 1}");
+				if (FormsManager._traderReportForm != null)
+					FormsManager.SayToTraderReport2($"Loading swarm...\nNN {n + 1}");
 
 				_swarm[n] = NN.Load(_files[n]);
 
