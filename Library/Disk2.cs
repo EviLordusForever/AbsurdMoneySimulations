@@ -10,14 +10,38 @@ namespace Library
 
 		static Disk2()
 		{
-			_currentDirectory = $"{Environment.CurrentDirectory}\\";
-			_programFiles = $"{_currentDirectory}ProgramFiles\\";
+			Init();
+		}
 
-			if (!Directory.Exists(_programFiles))
+		public static void Init()
+		{
+			_currentDirectory = $"{Environment.CurrentDirectory}\\";
+
+			if (!File.Exists($"{_currentDirectory}ProgramFilesPath.txt"))
+				File.WriteAllText($"{_currentDirectory}\\ProgramFilesPath.txt", $"{_currentDirectory}ProgramFiles\\");
+
+			_programFiles = File.ReadAllText($"{_currentDirectory}ProgramFilesPath.txt");
+
+			if (_programFiles[_programFiles.Length - 1] == '\\')
+				_programFiles = Text2.StringBeforeLast(_programFiles, "\\");
+
+			while (!Directory.Exists(_programFiles) || Text2.StringAfterLast(_programFiles, "\\") != "ProgramFiles")
 			{
-				Directory.CreateDirectory(_programFiles);
-				MessageBox.Show($"Directory \"{_programFiles}\" was created!");
+				UserAsker.SayWait(
+					"HELLO!\n" +
+					"PLEASE, SELECT \"ProgramFiles\" folder path.\n" +
+					"This is special folder of that app.\n" +
+					"It contains THAT app information.\n" +
+					"Contact author if u have no that folder.");
+				_programFiles = UserAsker.AskFolder(Environment.SpecialFolder.Startup, "Select ProgramFiles folder");
+
+				if (_programFiles[_programFiles.Length - 1] == '\\')
+					_programFiles = Text2.StringBeforeLast(_programFiles, "\\");
+				if (Text2.StringAfterLast(_programFiles, "\\") != "ProgramFiles")
+					UserAsker.SayWait($"The\"{_programFiles}\"\nis not \"ProgramFiles\" folder\n");
 			}
+			_programFiles += "\\";
+			File.WriteAllText($"{_currentDirectory}\\ProgramFilesPath.txt", _programFiles);
 		}
 
 		public static void SaveImage(Bitmap image, string path)

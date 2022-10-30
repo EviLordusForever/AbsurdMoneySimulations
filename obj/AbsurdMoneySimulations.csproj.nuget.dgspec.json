@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj": {}
+    "E:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj": {}
   },
   "projects": {
-    "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj": {
+    "E:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj",
+        "projectUniqueName": "E:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj",
         "projectName": "AbsurdMoneySimulations",
-        "projectPath": "E:\\Programmer\\AbsurdMoneySimulations\\AbsurdMoneySimulations.csproj",
+        "projectPath": "E:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "E:\\Programmer\\AbsurdMoneySimulations\\obj\\",
+        "outputPath": "E:\\Programmer\\AbsurdMoneySimulations3\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",

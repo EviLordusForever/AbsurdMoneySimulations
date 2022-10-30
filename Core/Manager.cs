@@ -13,8 +13,11 @@ namespace AbsurdMoneySimulations
 
 			void StartingThread()
 			{
-				Logger.Log("So app is starting...");
 				FormsManager.HideForm(FormsManager._mainForm);
+
+				Disk2.Init();
+
+				Log("So app is starting...");
 				FormsManager.HideForm(FormsManager._logForm);
 
 				if (UserHasAccess())
@@ -22,7 +25,7 @@ namespace AbsurdMoneySimulations
 					FormsManager.UnhideForm(FormsManager._logForm);
 					FormsManager.UnhideForm(FormsManager._mainForm);
 					FormsManager.BringToFrontForm(FormsManager._mainForm);
-					Logger.Log("Hello my dear!");
+					Log("Hello my dear!");
 				}
 				else
 				{
