@@ -25,7 +25,7 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore] public float[][] _tests;
 		[JsonIgnore] public float[] _answers;
 		[JsonIgnore] public bool[] _batch;
-		[JsonIgnore] public bool _filledFullBatch;
+		[JsonIgnore] private bool _filledFullBatch;
 
 		[JsonIgnore] private NN _ownerNN { get; set; }
 

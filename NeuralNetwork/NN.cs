@@ -364,7 +364,7 @@ namespace AbsurdMoneySimulations
 				int core = (int)obj;
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
-					if (tester._batch[test] == 1)
+					if (tester._batch[test])
 					{
 						_layers[_layers.Count - 1].FindBPGradient(test, tester._answers[test]);
 						for (int layer = _layers.Count - 2; layer >= 0; layer--)
@@ -406,7 +406,7 @@ namespace AbsurdMoneySimulations
 		{
 			for (int test = 0; test < tester._testsCount; test++)
 			{
-				if (tester._batch[test] == 1)
+				if (tester._batch[test])
 				{
 					float[][] array = new float[1][];
 					array[0] = tester._tests[test];
@@ -452,7 +452,7 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					if (tester._batch[test] == 1)
+					if (tester._batch[test])
 					{
 						float prediction = Calculate(test, tester._tests[test], withDropout);
 
@@ -513,7 +513,7 @@ namespace AbsurdMoneySimulations
 				int core = (int)obj;
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
-					if (tester._batch[test] == 1)
+					if (tester._batch[test])
 					{
 						float prediction = Calculate(test, tester._tests[test], withDropout);
 
