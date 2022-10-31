@@ -267,7 +267,7 @@ namespace AbsurdMoneySimulations
 					return Convert.ToSingle(record);
 				}
 				else
-					return 1f;
+					return 1000000f;
 			}
 
 			bool DefineIfAcuallyNeedDropout()
@@ -482,7 +482,7 @@ namespace AbsurdMoneySimulations
 			for (int core = 0; core < _coresCount; core++)
 				er += suber[core];
 
-			er /= tester._testsCount;
+			er /= tester._batchSize;
 
 			return er;
 		}

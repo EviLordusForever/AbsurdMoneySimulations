@@ -266,10 +266,10 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public Tester(NN ownerNN, int testsCount, int batchSize, string graphPath, string reason, int graphLoadingType, int moveInputsOverZero, int moveAnswersOverZero)
+		public Tester(NN ownerNN, int testsCount, string graphPath, string reason, int graphLoadingType, int moveInputsOverZero, int moveAnswersOverZero)
 		{
 			_testsCount = testsCount;
-			_batchSize = batchSize;
+			_batchSize = testsCount;
 
 			_moveAnswersOverZero = moveAnswersOverZero;
 			_moveInputsOverZero = moveInputsOverZero;

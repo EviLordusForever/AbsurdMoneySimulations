@@ -102,7 +102,7 @@ namespace AbsurdMoneySimulations
 			if (UserAsker.Ask("Are you shure? Previous neural network will be deleted"))
 			{
 				ClearPreviousNNHistory();
-				NN nn = Builder.CreateBasicGoodPerceptron();
+				NN nn = Builder.CreateBasicGoodPerceptronDerivative();
 				NN.Save(nn);
 			}
 		}
@@ -118,7 +118,13 @@ namespace AbsurdMoneySimulations
 		public static void FitNeuralNetwork()
 		{
 			NN nn = NN.Load();
-			nn.SetFittingParams(FormsManager.AskFittingParams(nn.GetFittingParams()));
+			FittingParams ft1 = nn.GetFittingParams();
+			FittingParams ft2 = FormsManager.AskFittingParams(ft1);
+			if (ft1 != ft2)
+			{
+				nn.SetFittingParams(ft2);
+				NN.Save(nn);
+			}
 			nn.Fit();
 		}
 

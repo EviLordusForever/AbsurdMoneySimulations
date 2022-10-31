@@ -22,11 +22,14 @@ namespace AbsurdMoneySimulations
 			nn._LEARNING_RATE = 0.001f; //0.05f
 			nn._MOMENTUM = 0f; //0.8f
 
+			nn._statisticsRecalculatePeriod = 50;
+			nn._validationRecalculatePeriod = 30;
+
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerT = new Tester(nn, 4000, 1, "Graph//ForTraining", "TRAINING", 2, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Graph//ForValidation", "VALIDATION", 2, 0, 0);
+			nn._testerT = new Tester(nn, 4000, "Graph//ForTraining", "TRAINING", 2, 0, 0);
+			nn._testerV = new Tester(nn, 2000, "Graph//ForValidation", "VALIDATION", 2, 0, 0);
 
 			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers.Add(new LayerPerceptron(nn, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
@@ -58,8 +61,11 @@ namespace AbsurdMoneySimulations
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerT = new Tester(nn, 4000, 1, "Graph//ForTraining", "TRAINING", 0, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Graph//ForValidation", "VALIDATION", 0, 0, 0);
+			nn._statisticsRecalculatePeriod = 50;
+			nn._validationRecalculatePeriod = 30;
+
+			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 0, 0, 0);
+			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 0, 0, 0);
 
 			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers.Add(new LayerPerceptron(nn, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
@@ -91,8 +97,11 @@ namespace AbsurdMoneySimulations
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerT = new Tester(nn, 4000, 1, "Graph//ForTraining", "TRAINING", 1, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
+			nn._statisticsRecalculatePeriod = 50;
+			nn._validationRecalculatePeriod = 30;
+
+			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 1, 0, 0);
+			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
 
 			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers.Add(new LayerPerceptron(nn, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
@@ -121,11 +130,14 @@ namespace AbsurdMoneySimulations
 			nn._LEARNING_RATE = 0.001f; //0.05f
 			nn._MOMENTUM = 0f; //0.8f
 
+			nn._statisticsRecalculatePeriod = 50;
+			nn._validationRecalculatePeriod = 30;
+
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerT = new Tester(nn, 4000, 1, "Graph//ForTraining", "TRAINING", 2, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Graph//ForValidation", "VALIDATION", 2, 0, 0);
+			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 2, 0, 0);
+			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 2, 0, 0);
 
 			nn._layers.Add(new LayerMegatron(nn, 3, 271, 30, 1, 0, new SoftSign()));   //136 x 30 x 10 = 
 			nn._layers.Add(new LayerCybertron(nn, 3, 271, 5, 15, 0, new SoftSign())); //6 x 136 x 10 = 
@@ -155,11 +167,14 @@ namespace AbsurdMoneySimulations
 			nn._LEARNING_RATE = 0.001f; //0.05f
 			nn._MOMENTUM = 0f; //0.8f
 
+			nn._statisticsRecalculatePeriod = 50;
+			nn._validationRecalculatePeriod = 30;
+
 			nn._inputAF = new SoftSign();
 			nn._answersAF = new SoftSign();
 
-			nn._testerT = new Tester(nn, 4000, 1, "Graph//ForTraining", "TRAINING", 2, 0, 0);
-			nn._testerV = new Tester(nn, 2000, 1, "Graph//ForValidation", "VALIDATION", 2, 0, 0);
+			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 2, 0, 0);
+			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 2, 0, 0);
 
 			nn._layers.Add(new LayerMegatron(nn, 2, 271, 30, 1, 0, new SoftSign()));   //271 x 30 x 2 = 
 			nn._layers.Add(new LayerCybertron(nn, 2, 271, 5, 10, 0, new SoftSign())); //2 x 271 x 5 =
