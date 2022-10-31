@@ -9,9 +9,9 @@ namespace AbsurdMoneySimulations
 		public static string[] _files;
 
 		public const int _trainingTestsCount = 21000;
-		public const int _batchSize = 21000;
+		public const int _batchSize = 15000;
 		public const int _validationTestsCount = 8000;
-		public const float _LEARNING_RATE = 0.002f;
+		public const float _LEARNING_RATE = 0.0001f;
 
 		public static void CalculateStatistics()
 		{
@@ -271,12 +271,16 @@ namespace AbsurdMoneySimulations
 
 		public static void Fit()
 		{
-			Load(true);			
+			Load(true);
+
+			FittingParams fp = FormsManager.AskFittingParams(_swarm[0].GetFittingParams());
+			for (int n = 0; n < _swarm.Length; n++)
+				_swarm[n].SetFittingParams(fp);
 
 			while (true)
 				for (int n = 0; n < _swarm.Length; n++)
 				{
-					_swarm[n].Fit(200, true, false);
+					_swarm[n].Fit(200);
 
 					File.Delete(_files[n]);
 					NN.Save(_swarm[n], _files[n]);
@@ -293,7 +297,7 @@ namespace AbsurdMoneySimulations
 
 				for (int i = 0; i < 10; i++)
 				{
-					NN nn = Builder.CreateBasicGoodPerceptronOriginal();
+					NN nn = Builder.CreateBasicGoodPerceptronDerivative();
 
 					nn._testerT._testsCount = _trainingTestsCount;
 					nn._testerV._testsCount = _validationTestsCount;
@@ -321,29 +325,18 @@ namespace AbsurdMoneySimulations
 
 				_swarm[n] = NN.Load(_files[n]);
 
-				_swarm[n]._LEARNING_RATE = _LEARNING_RATE;
-
-				if (withTesters)
+				if (n == 0 && !withTesters)
 				{
-					if (n == 0)
-					{
-						_swarm[n]._testerT._testsCount = _trainingTestsCount;
-						_swarm[n]._testerT._batchSize = _batchSize;
-						_swarm[n]._testerT.FillTests();
-
-						_swarm[n]._testerV._testsCount = _validationTestsCount;
-						_swarm[n]._testerV._batchSize = _batchSize;
-						_swarm[n]._testerV.FillTests();
-					}
-					else
-					{
-						_swarm[n]._testerT = _swarm[0]._testerT;
-						_swarm[n]._testerV = _swarm[0]._testerV;
-					}
-				}
-				else
 					_swarm[n]._testerT._testsCount = 1;
-
+					_swarm[n]._testerT.FillTests();
+					_swarm[n]._testerV._testsCount = 1;
+					_swarm[n]._testerT.FillTests();
+				}
+				if (n > 0)
+				{
+					_swarm[n]._testerT = _swarm[0]._testerT;
+					_swarm[n]._testerV = _swarm[0]._testerV;
+				}
 
 				_swarm[n].InitValues();
 			}

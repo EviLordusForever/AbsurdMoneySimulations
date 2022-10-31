@@ -44,11 +44,11 @@
 			this.button12 = new System.Windows.Forms.Button();
 			this.panel3 = new System.Windows.Forms.Panel();
 			this.panel4 = new System.Windows.Forms.Panel();
+			this.button16 = new System.Windows.Forms.Button();
 			this.button14 = new System.Windows.Forms.Button();
 			this.button15 = new System.Windows.Forms.Button();
 			this.button13 = new System.Windows.Forms.Button();
 			this.panel5 = new System.Windows.Forms.Panel();
-			this.button16 = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel3.SuspendLayout();
@@ -112,7 +112,7 @@
 			this.button7.Name = "button7";
 			this.button7.Size = new System.Drawing.Size(456, 23);
 			this.button7.TabIndex = 6;
-			this.button7.Text = "Neural Network Evolution";
+			this.button7.Text = "Fit Neural Network";
 			this.button7.UseVisualStyleBackColor = true;
 			this.button7.Click += new System.EventHandler(this.button7_Click);
 			// 
@@ -162,7 +162,7 @@
 			this.button11.Name = "button11";
 			this.button11.Size = new System.Drawing.Size(456, 23);
 			this.button11.TabIndex = 11;
-			this.button11.Text = "Swarm Evolution";
+			this.button11.Text = "Fit Swarm";
 			this.button11.UseVisualStyleBackColor = true;
 			this.button11.Click += new System.EventHandler(this.button11_Click);
 			// 
@@ -222,6 +222,16 @@
 			this.panel4.Size = new System.Drawing.Size(464, 147);
 			this.panel4.TabIndex = 14;
 			// 
+			// button16
+			// 
+			this.button16.Location = new System.Drawing.Point(3, 3);
+			this.button16.Name = "button16";
+			this.button16.Size = new System.Drawing.Size(456, 23);
+			this.button16.TabIndex = 7;
+			this.button16.Text = "Set AutoSignIn";
+			this.button16.UseVisualStyleBackColor = true;
+			this.button16.Click += new System.EventHandler(this.button16_Click);
+			// 
 			// button14
 			// 
 			this.button14.Location = new System.Drawing.Point(3, 90);
@@ -261,16 +271,6 @@
 			this.panel5.Name = "panel5";
 			this.panel5.Size = new System.Drawing.Size(464, 60);
 			this.panel5.TabIndex = 15;
-			// 
-			// button16
-			// 
-			this.button16.Location = new System.Drawing.Point(3, 3);
-			this.button16.Name = "button16";
-			this.button16.Size = new System.Drawing.Size(456, 23);
-			this.button16.TabIndex = 7;
-			this.button16.Text = "Set AutoSignIn";
-			this.button16.UseVisualStyleBackColor = true;
-			this.button16.Click += new System.EventHandler(this.button16_Click);
 			// 
 			// MainForm
 			// 

@@ -118,7 +118,8 @@ namespace AbsurdMoneySimulations
 		public static void FitNeuralNetwork()
 		{
 			NN nn = NN.Load();
-			nn.Fit(false, true);
+			nn.SetFittingParams(FormsManager.AskFittingParams(nn.GetFittingParams()));
+			nn.Fit();
 		}
 
 		public static void FindDetailedSectionsStatistics()

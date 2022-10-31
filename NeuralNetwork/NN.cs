@@ -24,6 +24,10 @@ namespace AbsurdMoneySimulations
 
 		public List<Layer> _layers;
 
+		public int _validationRecalculatePeriod;
+		public int _statisticsRecalculatePeriod;
+		public bool _useDropout;
+
 		public Tester _testerV;
 		public Tester _testerT;
 
@@ -133,16 +137,16 @@ namespace AbsurdMoneySimulations
 				_layers[l].FillWeightsRandomly();
 		}
 
-		public void Fit(bool useBatchForTLoss, bool needValidationLoss)
+		public void Fit()
 		{
-			Fit(1000000000, useBatchForTLoss, needValidationLoss);
+			Fit(1000000000);
 		}
 
-		public void Fit(int count, bool useBatchForTLoss, bool needValidationLoss)
+		public void Fit(int generations)
 		{
 			//Just very very important function
 
-			bool needDropout = DefineIfNeedDropout();
+			_useDropout = DefineIfAcuallyNeedDropout();
 
 			float v = 0;
 			float old_v = 0;
@@ -151,10 +155,10 @@ namespace AbsurdMoneySimulations
 			float vLossRecord = GetVLossRecord();
 			Log("Validation loss record: " + vLossRecord);
 
-			float vLoss = FindLoss(_testerV, false, false);
+			float vLoss = FindLoss(_testerV, false);
 			Log("Current validation loss: " + vLoss);
 
-			float tLoss = FindLoss(_testerT, false, useBatchForTLoss);
+			float tLoss = FindLoss(_testerT, false);
 			Log("Current train loss: " + tLoss);
 
 			float oldTLoss = tLoss;
@@ -162,7 +166,7 @@ namespace AbsurdMoneySimulations
 
 			FillBatch();
 
-			for (int localGeneration = 0; localGeneration < count; localGeneration++)
+			for (int localGeneration = 0; localGeneration < generations; localGeneration++)
 			{
 				_generation++;
 
@@ -177,17 +181,17 @@ namespace AbsurdMoneySimulations
 
 				FillBatch();
 
-				if (needValidationLoss)
+				if (localGeneration % _validationRecalculatePeriod == 0)
 				{
 					oldVLoss = vLoss;
-					vLoss = FindLoss(_testerV, false, false);
+					vLoss = FindLoss(_testerV, _useDropout);
 				}
 
-				if (needDropout)
+				if (_useDropout)
 					Dropout();
 
 				oldTLoss = tLoss;
-				tLoss = FindLoss(_testerT, true, useBatchForTLoss);
+				tLoss = FindLoss(_testerT, _useDropout);
 
 				FindSpeed();
 				FindAcceleration();
@@ -199,12 +203,6 @@ namespace AbsurdMoneySimulations
 
 				if (localGeneration % 50 == 49)
 				{
-					if (!needValidationLoss)
-					{
-						oldVLoss = vLoss;
-						vLoss = FindLoss(_testerV, false, false);
-					}
-
 					string validation = Statistics.CalculateStatistics(this, _testerV);
 					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);
 					Disk2.WriteToProgramFiles("FittingHistory (Version for speedup)", "csv", $"{Statistics._loss},", true);
@@ -218,7 +216,7 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-			Log($"SUCCESSFULLY FITTED {count} GENERATIONS");
+			Log($"SUCCESSFULLY FITTED {generations} GENERATIONS");
 
 			void FillBatch()
 			{
@@ -228,7 +226,7 @@ namespace AbsurdMoneySimulations
 
 			void EarlyStopping()
 			{
-				if (vLoss <= vLossRecord)
+				if (vLoss < vLossRecord)
 				{
 					vLossRecord = vLoss;
 					var path = Directory.GetFiles(Disk2._programFiles + "\\NN")[0];
@@ -273,7 +271,7 @@ namespace AbsurdMoneySimulations
 					return 1f;
 			}
 
-			bool DefineIfNeedDropout()
+			bool DefineIfAcuallyNeedDropout()
 			{
 				if (_layers.Count > 1)
 				{
@@ -286,6 +284,45 @@ namespace AbsurdMoneySimulations
 				else
 					return false;
 			}
+		}
+
+		public void SetFittingParams(FittingParams fp)
+		{
+			_LEARNING_RATE = fp._LEARINING_RATE;
+			_MOMENTUM = fp._MOMENTUM;
+			_testerT._batchSize = fp._batchSize;
+			_validationRecalculatePeriod = fp._validationRecalculatePeriod;
+			_statisticsRecalculatePeriod = fp._statisticsRecalculatePeriod;
+			_useDropout = fp._useDropout;
+
+			if (_testerT._testsCount != fp._trainingTestsCount)
+			{
+				_testerT._testsCount = fp._trainingTestsCount;
+				_testerT.FillTests();
+				InitValues();
+			}
+			if (_testerV._testsCount != fp._validationTestsCount)
+			{
+				_testerV._testsCount = fp._validationTestsCount;
+				_testerV.FillTests();
+				InitValues();
+			}
+		}
+
+		public FittingParams GetFittingParams()
+		{
+			FittingParams fp = new FittingParams();
+
+			fp._trainingTestsCount = _testerT._testsCount;
+			fp._validationTestsCount = _testerV._testsCount;
+			fp._LEARINING_RATE = _LEARNING_RATE;
+			fp._MOMENTUM = _MOMENTUM;
+			fp._batchSize = _testerT._batchSize;
+			fp._useDropout = _useDropout;
+			fp._validationRecalculatePeriod = _validationRecalculatePeriod;
+			fp._statisticsRecalculatePeriod = _statisticsRecalculatePeriod;
+
+			return fp;
 		}
 
 		public void Dropout()
@@ -384,12 +421,9 @@ namespace AbsurdMoneySimulations
 			Log("Weights are corrected!");
 		}
 
-		public float FindLoss(Tester tester, bool withDropout, bool useBatch)
+		public float FindLoss(Tester tester, bool withDropout)
 		{
-			if (useBatch)
-				return FindLossSquaredForBatch(tester, withDropout);
-			else
-				return FindLossSquared(tester, withDropout);
+			return FindLossSquared(tester, withDropout);
 		}
 
 		public float FindLossLinear(Tester tester, bool withDropout)
@@ -419,11 +453,14 @@ namespace AbsurdMoneySimulations
 
 				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
 				{
-					float prediction = Calculate(test, tester._tests[test], withDropout);
+					if (tester._batch[test] == 1)
+					{
+						float prediction = Calculate(test, tester._tests[test], withDropout);
 
-					float reality = tester._answers[test];
+						float reality = tester._answers[test];
 
-					suber[core] += MathF.Abs(prediction - reality);
+						suber[core] += MathF.Abs(prediction - reality);
+					}
 				}
 
 				alive--;
@@ -452,66 +489,6 @@ namespace AbsurdMoneySimulations
 		}
 
 		public float FindLossSquared(Tester tester, bool withDropout)
-		{
-			restart:
-
-			int testsPerCoreCount = tester._testsCount / _coresCount;
-
-			float er = 0;
-			float[] suber = new float[_coresCount];
-
-			int alive = _coresCount;
-
-			Thread[] subThreads = new Thread[_coresCount];
-
-			for (int core = 0; core < _coresCount; core++)
-			{
-				subThreads[core] = new Thread(new ParameterizedThreadStart(SubThread));
-				subThreads[core].Name = "Core " + core;
-				subThreads[core].Priority = ThreadPriority.Highest;
-				subThreads[core].Start(core);
-			}
-
-			void SubThread(object obj)
-			{
-				int core = (int)obj;
-
-				for (int test = core * testsPerCoreCount; test < core * testsPerCoreCount + testsPerCoreCount; test++)
-				{
-					float prediction = Calculate(test, tester._tests[test], withDropout);
-
-					float reality = tester._answers[test];
-
-					suber[core] += MathF.Pow(prediction - reality, 2);
-				}
-
-				alive--;
-			}
-
-			long ms = DateTime.Now.Ticks;
-			while (alive > 0)
-			{
-				if (DateTime.Now.Ticks > ms + 10000 * 1000 * 10)
-				{
-					Log("THE THREAD IS STACKED");
-					for (int core = 0; core < _coresCount; core++)
-						Log($"Thread / core {core}: {subThreads[core].ThreadState}");
-					Log("AGAIN");
-
-					goto restart;
-				}
-			}
-
-
-			for (int core = 0; core < _coresCount; core++)
-				er += suber[core];
-
-			er /= tester._testsCount;
-
-			return er;
-		}
-
-		public float FindLossSquaredForBatch(Tester tester, bool withDropout)
 		{
 			restart:
 

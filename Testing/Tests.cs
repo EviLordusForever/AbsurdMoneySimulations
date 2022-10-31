@@ -9,7 +9,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void StartTest()
 		{
-			Thread myThread = new Thread(TestMaxMin);
+			Thread myThread = new Thread(TestAnswersOnly);
 			myThread.Name = "Tests thread";
 			myThread.Start();
 		}
@@ -326,6 +326,19 @@ namespace AbsurdMoneySimulations
 			}
 
 			Disk2.WriteToProgramFiles("TestMinMax", "csv", csv, false);
+			Log("done");
+		}
+
+		public static void TestAnswersOnly()
+		{
+			NN nn = NN.Load();
+			Tester t = nn._testerT;
+			string csv = "";
+			for (int i = 0; i < t._answers.Length; i++)
+				csv += t._answers[i] + "\n";
+
+			Disk2.WriteToProgramFiles("answersTest", "csv", csv, false);
+
 			Log("done");
 		}
 	}

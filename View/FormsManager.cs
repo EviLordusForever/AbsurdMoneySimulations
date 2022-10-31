@@ -8,6 +8,7 @@
 		public static LogForm _logForm;
 		public static PredictionForm _predictionForm;
 		public static TraderReportForm _traderReportForm;
+		public static FittingParamsForm _fittingParamsForm;
 
 		public static void ShowImage(Image img)
 		{
@@ -104,14 +105,6 @@
 			}));
 		}
 
-		public static void SetShowFormSize(int w, int h)
-		{
-			_mainForm.Invoke(new Action(() =>
-			{
-				_showForm.Size = new Size(w, h);
-			}));
-		}
-
 		public static void OpenLogForm()
 		{
 			_mainForm.Invoke(new Action(() =>
@@ -125,6 +118,47 @@
 					_logForm.Location = new Point(-7, 0);
 					_logForm.rtb.ForeColor = Color.FromArgb(0, 255, 0);
 				}
+			}));
+		}
+
+		public static FittingParams AskFittingParams(FittingParams fp)
+		{
+			OpenFittingParamsForm(fp);
+			while (_fittingParamsForm == null || _fittingParamsForm._fp == null)
+				Thread.Sleep(100);
+			fp = _fittingParamsForm._fp;
+			FormsManager.CloseForm(_fittingParamsForm);
+			return fp;
+		}
+
+		public static void OpenFittingParamsForm(FittingParams fp)
+		{
+			_mainForm.Invoke(new Action(() =>
+			{
+				if (_fittingParamsForm == null || _fittingParamsForm.IsDisposed)
+				{
+					_fittingParamsForm = new FittingParamsForm();
+					_fittingParamsForm.BringToFront();
+					_fittingParamsForm.Show();
+					_fittingParamsForm.WindowState = FormWindowState.Normal;
+				}
+
+				_fittingParamsForm.LEARNING_RATE.Text = fp._LEARINING_RATE.ToString();
+				_fittingParamsForm.MOMENTUM.Text = fp._MOMENTUM.ToString().ToString();
+				_fittingParamsForm.trainingTestsCount.Text = fp._trainingTestsCount.ToString();
+				_fittingParamsForm.validationRecalculatePeriod.Text = fp._validationTestsCount.ToString();
+				_fittingParamsForm.batchSize.Text = fp._batchSize.ToString();
+				_fittingParamsForm.validationRecalculatePeriod.Text = fp._validationRecalculatePeriod.ToString();
+				_fittingParamsForm.statisticsRecalculatePeriod.Text = fp._statisticsRecalculatePeriod.ToString();
+				_fittingParamsForm.useDropout.Text = fp._useDropout.ToString();
+			}));
+		}
+
+		public static void SetShowFormSize(int w, int h)
+		{
+			_mainForm.Invoke(new Action(() =>
+			{
+				_showForm.Size = new Size(w, h);
 			}));
 		}
 

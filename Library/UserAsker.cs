@@ -4,6 +4,8 @@ namespace Library
 {
 	public static class UserAsker
 	{
+		public static Form _sis;
+
 		public static bool Ask(string q)
 		{
 			return MessageBox.Show(q, "Hey", MessageBoxButtons.YesNo) == DialogResult.Yes;

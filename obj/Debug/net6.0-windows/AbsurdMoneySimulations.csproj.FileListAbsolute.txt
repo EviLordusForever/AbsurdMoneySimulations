@@ -130,3 +130,4 @@ E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\refint\AbsurdMone
 E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\AbsurdMoneySimulations.pdb
 E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\AbsurdMoneySimulations.genruntimeconfig.cache
 E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\ref\AbsurdMoneySimulations.dll
+E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\AbsurdMoneySimulations.FittingParamsForm.resources
