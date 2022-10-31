@@ -127,7 +127,7 @@
 			while (_fittingParamsForm == null || _fittingParamsForm._fp == null)
 				Thread.Sleep(100);
 			fp = _fittingParamsForm._fp;
-			FormsManager.CloseForm(_fittingParamsForm);
+			CloseForm(_fittingParamsForm);
 			return fp;
 		}
 

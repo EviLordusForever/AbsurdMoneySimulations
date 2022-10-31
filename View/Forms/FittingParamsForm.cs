@@ -31,7 +31,7 @@ namespace AbsurdMoneySimulations
 			fp._LEARINING_RATE = Convert.ToSingle(LEARNING_RATE.Text);
 			fp._MOMENTUM = Convert.ToSingle(MOMENTUM.Text);
 			fp._trainingTestsCount = Convert.ToInt32(trainingTestsCount.Text);
-			fp._validationTestsCount = Convert.ToInt32(validationRecalculatePeriod.Text);
+			fp._validationTestsCount = Convert.ToInt32(validationTestsCount.Text);
 			fp._batchSize = Convert.ToInt32(batchSize.Text);
 			fp._validationRecalculatePeriod = Convert.ToInt32(validationRecalculatePeriod.Text);
 			fp._statisticsRecalculatePeriod = Convert.ToInt32(statisticsRecalculatePeriod.Text);

@@ -135,7 +135,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = NN.Load();
 
-			nn._testerT.FillTestsFromDerivativeGraph();
+			nn._testerT.FillTests(1);
 
 			int test = Math2.rnd.Next(nn._testerT._testsCount);
 			string[] strings = new string[nn._inputWindow];
@@ -143,7 +143,7 @@ namespace AbsurdMoneySimulations
 			for (int i = 0; i < nn._testerT._tests[test].Length; i++)
 				strings[i] += nn._testerT._tests[test][i].ToString();
 
-			nn._testerT.FillTestsFromOriginalGraph();
+			nn._testerT.FillTests(0);
 
 			for (int i = 0; i < nn._testerT._tests[test].Length; i++)
 				strings[i] += "," + nn._testerT._tests[test][i].ToString();

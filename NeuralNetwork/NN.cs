@@ -152,6 +152,8 @@ namespace AbsurdMoneySimulations
 			float old_v = 0;
 			float a = 0;
 
+			FillBatch();
+
 			float vLossRecord = GetVLossRecord();
 			Log("Validation loss record: " + vLossRecord);
 
@@ -163,8 +165,6 @@ namespace AbsurdMoneySimulations
 
 			float oldTLoss = tLoss;
 			float oldVLoss = vLoss;
-
-			FillBatch();
 
 			for (int localGeneration = 0; localGeneration < generations; localGeneration++)
 			{

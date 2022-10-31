@@ -150,7 +150,7 @@ namespace AbsurdMoneySimulations
 		{
 			DrawerOfOtcIndicators drawer = new DrawerOfOtcIndicators();
 			NN nn = NN.Load();
-			nn._testerT.FillTestsFromOriginalGraph();
+			nn._testerT.FillTests(0);
 
 			drawer.Draw(nn._testerT.OriginalGraph);
 			Log("drawed");

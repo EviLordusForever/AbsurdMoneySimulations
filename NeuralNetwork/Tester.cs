@@ -90,8 +90,17 @@ namespace AbsurdMoneySimulations
 			Log("HorizonGraph is filled.");
 		}
 
+		public void FillTests(int graficLoadingType)
+		{
+			_graphLoadingType = graficLoadingType;
+			FillTests();
+		}
+
 		public void FillTests()
 		{
+			_tests = new float[_testsCount][];
+			_answers = new float[_testsCount];
+
 			if (_graphLoadingType == 0)
 				FillTestsFromOriginalGraph();
 			else if (_graphLoadingType == 1)
@@ -100,15 +109,14 @@ namespace AbsurdMoneySimulations
 				FillTestsFromHorizonGraph();
 			else
 				throw new Exception();
+
+			FillFullBatch();
 		}
 
-		public void FillTestsFromDerivativeGraph()
+		private void FillTestsFromDerivativeGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
 			double deltaOfDelta = 0.990 * maximalDelta / _testsCount;
-
-			_tests = new float[_testsCount][];
-			_answers = new float[_testsCount];
 
 			int test = 0;
 			for (double delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
@@ -130,7 +138,7 @@ namespace AbsurdMoneySimulations
 			Log($"Tests and answers for NN were filled and normalized from DERIVATIVE graph. ({_tests.Length})");
 		}
 
-		public void FillTestsFromOriginalGraph()
+		private void FillTestsFromOriginalGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
 			double deltaOfDelta = 0.990 * maximalDelta / _testsCount;
@@ -164,7 +172,7 @@ namespace AbsurdMoneySimulations
 			Log($"Tests and answers for NN were filled and normalized from ORIGINAL graph. ({_tests.Length})");
 		}
 
-		public void FillTestsFromHorizonGraph()
+		private void FillTestsFromHorizonGraph()
 		{
 			int maximalDelta = _availableGraphPointsForHorizonGraph.Count();
 			double DeltaOfDelta = 0.990 * maximalDelta / _testsCount;
@@ -227,7 +235,7 @@ namespace AbsurdMoneySimulations
 
 		public void FillFullBatch()
 		{
-			if (!_filledFullBatch)
+			if (!_filledFullBatch || _batch.Length != _testsCount)
 			{
 				_batch = new bool[_testsCount];
 				for (int i = 0; i < _testsCount; i++)
@@ -271,11 +279,6 @@ namespace AbsurdMoneySimulations
 			_reason = reason;
 
 			Init(ownerNN, _graphPath, _reason);
-		}
-
-		public void SetOwnerNN(NN ownerNN)
-		{
-			_ownerNN = ownerNN;
 		}
 	}
 }
