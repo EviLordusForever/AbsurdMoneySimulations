@@ -18,7 +18,6 @@ namespace AbsurdMoneySimulations
 
 		[JsonIgnore] private float[] _originalGraph;
 		[JsonIgnore] private float[] _derivativeOfGraph;
-		[JsonIgnore] private float[] _normalizedDerivativeOfGraph;
 		[JsonIgnore] private float[] _horizonGraph;
 
 		[JsonIgnore] public List<int> _availableGraphPoints;
@@ -33,7 +32,6 @@ namespace AbsurdMoneySimulations
 		{
 			LoadOriginalGraph(path, reason);
 			FillDerivativeOfGraph();
-			NormalizeDerivativeOfGraph();
 			FillHorizonOfGraph();
 		}
 
@@ -83,15 +81,6 @@ namespace AbsurdMoneySimulations
 			Log("Derivative of graph is filled.");
 		}
 
-		private void NormalizeDerivativeOfGraph()
-		{
-			_normalizedDerivativeOfGraph = new float[_originalGraph.Length];
-
-			for (int i = 1; i < _derivativeOfGraph.Length; i++)
-				_normalizedDerivativeOfGraph[i] = _ownerNN._inputAF.f(_derivativeOfGraph[i]);
-			Log("Derivative of graph is normilized.");
-		}
-
 		private void FillHorizonOfGraph()
 		{
 			_horizonGraph = new float[_originalGraph.Length];
@@ -105,27 +94,27 @@ namespace AbsurdMoneySimulations
 			if (_graphLoadingType == 0)
 				FillTestsFromOriginalGraph();
 			else if (_graphLoadingType == 1)
-				FillTestsFromNormilizedDerivativeGraph();
+				FillTestsFromDerivativeGraph();
 			else if (_graphLoadingType == 2)
 				FillTestsFromHorizonGraph();
 			else
 				throw new Exception();
 		}
 
-		public void FillTestsFromNormilizedDerivativeGraph()
+		public void FillTestsFromDerivativeGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
-			float delta_delta = 0.990f * maximalDelta / _testsCount;
+			float deltaOfDelta = 0.990f * maximalDelta / _testsCount;
 
 			_tests = new float[_testsCount][];
 			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += delta_delta)
+			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
 			{
 				int offset = _availableGraphPoints[Convert.ToInt32(delta)];
 
-				_tests[test] = Array2.SubArray(_normalizedDerivativeOfGraph, offset, _ownerNN._inputWindow);
+				_tests[test] = Array2.SubArray(_derivativeOfGraph, offset, _ownerNN._inputWindow);
 
 				float standartDeviation = Math2.FindStandartDeviation(_tests[test]);
 				_tests[test] = Normalize(_tests[test], standartDeviation, _ownerNN._inputAF, _moveInputsOverZero);
@@ -134,56 +123,44 @@ namespace AbsurdMoneySimulations
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = _ownerNN._answersAF.f(_answers[test]) + _moveAnswersOverZero;
-
-				test++;
+				_answers[test] = _ownerNN._answersAF.f(_answers[test] / standartDeviation) + _moveAnswersOverZero;
 			}
 
-			Log($"Tests and answers for NN are filled from NORMILIZED DERIVATIVE graph. ({_tests.Length})");
+			Log($"Tests and answers for NN were filled and normalized from DERIVATIVE graph. ({_tests.Length})");
 		}
 
 		public void FillTestsFromOriginalGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
-			float delta_delta = 0.990f * maximalDelta / _testsCount;
+			float deltaOfDelta = 0.990f * maximalDelta / _testsCount;
 
 			_tests = new float[_testsCount][];
 			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += delta_delta)
+			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
 			{
 				int offset = _availableGraphPoints[Convert.ToInt32(delta)];
 
 				_tests[test] = Array2.SubArray(_originalGraph, offset, _ownerNN._inputWindow);
-				Normalize(test);
+
+				float final = _tests[test].Last();
+
+				for (int i = 0; i < _tests[test].Length; i++)
+					_tests[test][i] = _tests[test][i] - final;
+
+				float standartDeviation = Math2.FindStandartDeviation(_tests[test]);
+
+				Normalize(_tests[test], standartDeviation, _ownerNN._inputAF, _moveInputsOverZero);
 
 				float[] ar = Array2.SubArray(_derivativeOfGraph, offset + _ownerNN._inputWindow, _ownerNN._horizon);
 				for (int j = 0; j < ar.Length; j++)
 					_answers[test] += ar[j];
 
-				_answers[test] = _ownerNN._answersAF.f(_answers[test]) + _moveAnswersOverZero;
-
-				test++;
+				_answers[test] = _ownerNN._answersAF.f(_answers[test] / standartDeviation) + _moveAnswersOverZero;
 			}
 
-			Log($"Tests and answers for NN are filled from NORMILIZED ORIGINAL graph. ({_tests.Length})");
-
-			void Normalize(int test)
-			{
-				float final = _tests[test][_tests[test].Length - 1];
-
-				for (int i = 0; i < _tests[test].Length; i++)
-					_tests[test][i] = _tests[test][i] - final;
-
-				float min = Math2.Min(_tests[test]);
-				float max = Math2.Max(_tests[test]);
-
-				max = MathF.Max(MathF.Abs(max), MathF.Abs(min));
-
-				for (int i = 0; i < _tests[test].Length; i++)
-					_tests[test][i] = _tests[test][i] / max + _moveInputsOverZero;
-			}
+			Log($"Tests and answers for NN were filled and normalized from ORIGINAL graph. ({_tests.Length})");
 		}
 
 		public void FillTestsFromHorizonGraph()
@@ -209,7 +186,7 @@ namespace AbsurdMoneySimulations
 				test++;
 			}
 
-			Log($"Tests and answers for NN are filled from NORMALIZED HORIZON(!!!) graph. ({_tests.Length})");
+			Log($"Tests and answers for NN were filled and normalized from HORIZON(!!!) graph. ({_tests.Length})");
 		}
 
 		public static float[] Normalize(float[] input, float standartDeviation, ActivationFunction af, float move)

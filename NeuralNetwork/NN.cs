@@ -181,7 +181,7 @@ namespace AbsurdMoneySimulations
 
 				FillBatch();
 
-				if (localGeneration % _validationRecalculatePeriod == 0)
+				if (localGeneration % _validationRecalculatePeriod == _validationRecalculatePeriod - 1)
 				{
 					oldVLoss = vLoss;
 					vLoss = FindLoss(_testerV, _useDropout);
@@ -201,7 +201,7 @@ namespace AbsurdMoneySimulations
 				Save(this);
 				EarlyStopping();
 
-				if (localGeneration % 50 == 49)
+				if (localGeneration % _statisticsRecalculatePeriod == _statisticsRecalculatePeriod - 1)
 				{
 					string validation = Statistics.CalculateStatistics(this, _testerV);
 					Disk2.WriteToProgramFiles("Stat", "csv", Statistics.StatToCsv("Validation") + "\n", true);

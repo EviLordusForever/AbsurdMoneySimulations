@@ -135,7 +135,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = NN.Load();
 
-			nn._testerT.FillTestsFromNormilizedDerivativeGraph();
+			nn._testerT.FillTestsFromDerivativeGraph();
 
 			int test = Math2.rnd.Next(nn._testerT._testsCount);
 			string[] strings = new string[nn._inputWindow];
