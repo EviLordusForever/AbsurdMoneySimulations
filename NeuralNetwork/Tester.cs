@@ -24,7 +24,8 @@ namespace AbsurdMoneySimulations
 		[JsonIgnore] public List<int> _availableGraphPointsForHorizonGraph;
 		[JsonIgnore] public float[][] _tests;
 		[JsonIgnore] public float[] _answers;
-		[JsonIgnore] public byte[] _batch;
+		[JsonIgnore] public bool[] _batch;
+		[JsonIgnore] public bool _filledFullBatch;
 
 		[JsonIgnore] private NN _ownerNN { get; set; }
 
@@ -104,13 +105,13 @@ namespace AbsurdMoneySimulations
 		public void FillTestsFromDerivativeGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
-			float deltaOfDelta = 0.990f * maximalDelta / _testsCount;
+			double deltaOfDelta = 0.990 * maximalDelta / _testsCount;
 
 			_tests = new float[_testsCount][];
 			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
+			for (double delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
 			{
 				int offset = _availableGraphPoints[Convert.ToInt32(delta)];
 
@@ -132,13 +133,13 @@ namespace AbsurdMoneySimulations
 		public void FillTestsFromOriginalGraph()
 		{
 			int maximalDelta = _availableGraphPoints.Count();
-			float deltaOfDelta = 0.990f * maximalDelta / _testsCount;
+			double deltaOfDelta = 0.990 * maximalDelta / _testsCount;
 
 			_tests = new float[_testsCount][];
 			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
+			for (double delta = 0; delta < maximalDelta && test < _testsCount; delta += deltaOfDelta, test++)
 			{
 				int offset = _availableGraphPoints[Convert.ToInt32(delta)];
 
@@ -166,13 +167,13 @@ namespace AbsurdMoneySimulations
 		public void FillTestsFromHorizonGraph()
 		{
 			int maximalDelta = _availableGraphPointsForHorizonGraph.Count();
-			float delta_delta = 0.990f * maximalDelta / _testsCount;
+			double DeltaOfDelta = 0.990 * maximalDelta / _testsCount;
 
 			_tests = new float[_testsCount][];
 			_answers = new float[_testsCount];
 
 			int test = 0;
-			for (float delta = 0; delta < maximalDelta && test < _testsCount; delta += delta_delta)
+			for (double delta = 0; delta < maximalDelta && test < _testsCount; delta += DeltaOfDelta, test++)
 			{
 				int offset = _availableGraphPointsForHorizonGraph[Convert.ToInt32(delta)];
 
@@ -182,8 +183,6 @@ namespace AbsurdMoneySimulations
 
 				_answers[test] = _horizonGraph[offset + _ownerNN._inputWindow + _ownerNN._horizon];
 				_answers[test] = _ownerNN._answersAF.f(_answers[test] / standartDeviation) + _moveAnswersOverZero;
-
-				test++;
 			}
 
 			Log($"Tests and answers for NN were filled and normalized from HORIZON(!!!) graph. ({_tests.Length})");
@@ -208,28 +207,35 @@ namespace AbsurdMoneySimulations
 				FillFullBatch();
 			else
 			{
-				_batch = new byte[_testsCount];
+				_batch = new bool[_testsCount];
 
 				int i = 0;
 				while (i < count)
 				{
 					int n = Math2.rnd.Next(_testsCount);
-					if (_batch[n] == 0)
+					if (!_batch[n])
 					{
-						_batch[n] = 1;
+						_batch[n] = true;
 						i++;
 					}
 				}
+
+				Log($"Batch refilled ({count})");
+				_filledFullBatch = false;
 			}
 		}
 
 		public void FillFullBatch()
 		{
-			_batch = new byte[_testsCount];
-			for (int i = 0; i < _testsCount; i++)
-				_batch[i] = 1;
+			if (!_filledFullBatch)
+			{
+				_batch = new bool[_testsCount];
+				for (int i = 0; i < _testsCount; i++)
+					_batch[i] = true;
 
-			Log("Filled full batch");
+				Log($"Filled full batch ({_testsCount})");
+				_filledFullBatch = true;
+			}
 		}
 
 		[JsonIgnore]
@@ -244,15 +250,10 @@ namespace AbsurdMoneySimulations
 		public void Init(NN ownerNN, string graphPath, string reason)
 		{
 			_ownerNN = ownerNN;
-			_batch = new byte[_testsCount];
 
 			if (graphPath != null)
 			{
 				LoadGraph(graphPath, reason);
-
-				if (_batchSize == _testsCount)
-					FillFullBatch();
-
 				FillTests();
 			}
 		}
