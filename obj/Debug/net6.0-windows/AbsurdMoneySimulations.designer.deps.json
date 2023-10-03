@@ -223,7 +223,7 @@
           }
         }
       },
-      "Selenium.WebDriver.ChromeDriver/106.0.5249.6100": {},
+      "Selenium.WebDriver.ChromeDriver/117.0.5938.9200": {},
       "SharpZipLib/1.3.3": {
         "runtime": {
           "lib/netstandard2.1/ICSharpCode.SharpZipLib.dll": {
@@ -417,12 +417,12 @@
       "path": "selenium.webdriver/4.5.1",
       "hashPath": "selenium.webdriver.4.5.1.nupkg.sha512"
     },
-    "Selenium.WebDriver.ChromeDriver/106.0.5249.6100": {
+    "Selenium.WebDriver.ChromeDriver/117.0.5938.9200": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ZJA+xb9uLlxmrkPsWziPpoi3sVMzuvQ2pHDpCM/OtCV72u2iJZL/UP0eGGtjS9neOzTOjO7bdeUkur0hCipGHw==",
-      "path": "selenium.webdriver.chromedriver/106.0.5249.6100",
-      "hashPath": "selenium.webdriver.chromedriver.106.0.5249.6100.nupkg.sha512"
+      "sha512": "sha512-cCeKHiyR5Duu2Vwd+JFT+iBz3U0MiCI0Fmwl6GUdlkE6LigkANDj+dIound5FZxIe8ieiV+/jvTCGy6CnDxRLw==",
+      "path": "selenium.webdriver.chromedriver/117.0.5938.9200",
+      "hashPath": "selenium.webdriver.chromedriver.117.0.5938.9200.nupkg.sha512"
     },
     "SharpZipLib/1.3.3": {
       "type": "package",

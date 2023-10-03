@@ -213,7 +213,7 @@
           "lib/net5.0/WebDriver.dll": {}
         }
       },
-      "Selenium.WebDriver.ChromeDriver/106.0.5249.6100": {
+      "Selenium.WebDriver.ChromeDriver/117.0.5938.9200": {
         "type": "package",
         "build": {
           "build/Selenium.WebDriver.ChromeDriver.targets": {}
@@ -597,22 +597,26 @@
         "selenium.webdriver.nuspec"
       ]
     },
-    "Selenium.WebDriver.ChromeDriver/106.0.5249.6100": {
-      "sha512": "ZJA+xb9uLlxmrkPsWziPpoi3sVMzuvQ2pHDpCM/OtCV72u2iJZL/UP0eGGtjS9neOzTOjO7bdeUkur0hCipGHw==",
+    "Selenium.WebDriver.ChromeDriver/117.0.5938.9200": {
+      "sha512": "cCeKHiyR5Duu2Vwd+JFT+iBz3U0MiCI0Fmwl6GUdlkE6LigkANDj+dIound5FZxIe8ieiV+/jvTCGy6CnDxRLw==",
       "type": "package",
-      "path": "selenium.webdriver.chromedriver/106.0.5249.6100",
+      "path": "selenium.webdriver.chromedriver/117.0.5938.9200",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "README.md",
         "build/DefinePropertiesChromeDriver.targets",
         "build/Selenium.WebDriver.ChromeDriver.targets",
+        "driver/linux64/LICENSE.chromedriver",
         "driver/linux64/chromedriver",
+        "driver/mac64/LICENSE.chromedriver",
         "driver/mac64/chromedriver",
+        "driver/mac64arm/LICENSE.chromedriver",
         "driver/mac64arm/chromedriver",
+        "driver/win32/LICENSE.chromedriver",
         "driver/win32/chromedriver.exe",
         "nupkg-icon.png",
-        "selenium.webdriver.chromedriver.106.0.5249.6100.nupkg.sha512",
+        "selenium.webdriver.chromedriver.117.0.5938.9200.nupkg.sha512",
         "selenium.webdriver.chromedriver.nuspec"
       ]
     },
@@ -958,7 +962,7 @@
       "MathNet.Numerics >= 5.0.0",
       "Newtonsoft.Json >= 13.0.1",
       "Selenium.WebDriver >= 4.5.1",
-      "Selenium.WebDriver.ChromeDriver >= 106.0.5249.6100",
+      "Selenium.WebDriver.ChromeDriver >= 117.0.5938.9200",
       "Tesseract.Net.SDK >= 4.5.411",
       "WebDriverManager >= 2.16.0"
     ]
@@ -969,11 +973,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj",
+      "projectUniqueName": "F:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj",
       "projectName": "AbsurdMoneySimulations",
-      "projectPath": "E:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj",
+      "projectPath": "F:\\Programmer\\AbsurdMoneySimulations3\\AbsurdMoneySimulations.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "E:\\Programmer\\AbsurdMoneySimulations3\\obj\\",
+      "outputPath": "F:\\Programmer\\AbsurdMoneySimulations3\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1024,7 +1028,7 @@
           },
           "Selenium.WebDriver.ChromeDriver": {
             "target": "Package",
-            "version": "[106.0.5249.6100, )"
+            "version": "[117.0.5938.9200, )"
           },
           "Tesseract.Net.SDK": {
             "target": "Package",

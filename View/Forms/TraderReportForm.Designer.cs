@@ -41,7 +41,7 @@
 			this.rtb1.Location = new System.Drawing.Point(0, 0);
 			this.rtb1.Name = "rtb1";
 			this.rtb1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-			this.rtb1.Size = new System.Drawing.Size(119, 117);
+			this.rtb1.Size = new System.Drawing.Size(119, 176);
 			this.rtb1.TabIndex = 0;
 			this.rtb1.Text = "";
 			this.rtb1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.rtb1_MouseDoubleClick);
@@ -53,7 +53,7 @@
 			this.rtb2.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.rtb2.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.rtb2.ForeColor = System.Drawing.Color.Lime;
-			this.rtb2.Location = new System.Drawing.Point(0, 123);
+			this.rtb2.Location = new System.Drawing.Point(0, 182);
 			this.rtb2.Name = "rtb2";
 			this.rtb2.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.rtb2.Size = new System.Drawing.Size(119, 117);
@@ -66,7 +66,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(119, 239);
+			this.ClientSize = new System.Drawing.Size(119, 296);
 			this.Controls.Add(this.rtb2);
 			this.Controls.Add(this.rtb1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

@@ -1,5 +1,6 @@
 ﻿using static AbsurdMoneySimulations.Logger;
 using Library;
+using System.Globalization;
 
 namespace AbsurdMoneySimulations
 {
@@ -13,6 +14,9 @@ namespace AbsurdMoneySimulations
 
 			void StartingThread()
 			{
+				CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+				CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
 				FormsManager.HideForm(FormsManager._mainForm);
 
 				Disk2.Init();

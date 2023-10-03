@@ -18,7 +18,7 @@
 		public static void ShowImage(Bitmap bmp)
 		{
 			if (_showForm == null || _showForm.IsDisposed)
-				OpenShowForm("aboba");
+				OpenShowForm("Image:");
 
 			Bitmap bmp0 = Library.Graphics2.RescaleBitmap(bmp, _showForm.ClientSize.Width, _showForm.ClientSize.Height);
 
@@ -97,9 +97,10 @@
 				_showForm.Show();
 				_showForm.WindowState = FormWindowState.Normal;
 				_showForm.BringToFront();
-				_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-				_showForm.Location = new Point(0, 0);
+				_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width / 5, Screen.PrimaryScreen.Bounds.Height / 5);
+				_showForm.Location = new Point(Screen.PrimaryScreen.Bounds.Width / 3, 0);
 				_showForm.BackgroundImageLayout = ImageLayout.Stretch;
+				_showForm.TopMost = true;
 
 				_showForm.Text = text;
 			}));

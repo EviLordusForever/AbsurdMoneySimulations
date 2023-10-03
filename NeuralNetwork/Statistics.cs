@@ -173,7 +173,7 @@ namespace AbsurdMoneySimulations
 			string stat = "========================\n";
 			for (int section = 0; section < _wins.Length; section++)
 				if (_tests[section] > 0)
-					stat += String.Format("{0,-25} {1,-12} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
+					stat += String.Format("{0,-25} {1,-13} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
 
 			stat += $"loss: {_loss}\n";
 			stat += $"========================";

@@ -1,6 +1,7 @@
 using static AbsurdMoneySimulations.Logger;
 using Newtonsoft.Json;
 using Library;
+using System.Globalization;
 
 namespace AbsurdMoneySimulations
 {
@@ -52,7 +53,7 @@ namespace AbsurdMoneySimulations
 				int l = 0;
 				while (l < lines.Length)
 				{
-					graphL.Add(Convert.ToSingle(lines[l]));
+					graphL.Add(Convert.ToSingle(lines[l], CultureInfo.InvariantCulture));
 
 					if (l < lines.Length - _ownerNN._inputWindow - _ownerNN._horizon - 2)
 					{
@@ -251,7 +252,7 @@ namespace AbsurdMoneySimulations
 		{
 			get
 			{
-				return _originalGraph;
+				return _originalGraph;	
 			}
 		}
 

@@ -98,12 +98,12 @@ namespace AbsurdMoneySimulations
 
 		public static void GetGraphLive(int delaySeconds)
 		{
-			Load("https://google.com");
-			LoadCookies();
-			CloseChromeMessage();
-			OpenQtx();
-			StaySignedIn();
-			MakeGraphBackupCopy();
+			//Load("https://google.com");
+			//LoadCookies();
+			//CloseChromeMessage();
+			//OpenQtx();
+			//StaySignedIn();
+			//MakeGraphBackupCopy();
 			//DoMaxScale();
 			string graphCSV = "";
 
@@ -112,9 +112,9 @@ namespace AbsurdMoneySimulations
 			FormsManager.OpenTraderReportForm();
 
 			int correctValueLength = FindCorrectValueLength();
-			string value = "";
-			string previousValue = "";
-			string info = "";
+			string value = "empty";
+			string previousValue = "empty";
+			string info = "empty";
 
 			for (int i = 0; ; i += delaySeconds)
 			{
@@ -129,7 +129,8 @@ namespace AbsurdMoneySimulations
 				catch (CantFindBlueLabelException ex)
 				{
 					value = previousValue;
-					info = "Can't find blue label skip";
+					info = "CAN'T FIND BLUE LABEL SKIP";
+					goto fin;
 				}
 
 				try
@@ -139,13 +140,22 @@ namespace AbsurdMoneySimulations
 				catch
 				{
 					value = previousValue;
-					info = "Not float skip";
+					info = "NOT FLOAT SKIP";
+					goto fin;
 				}
 
 				if (value.Length != correctValueLength)
 				{
 					value = previousValue;
-					info = "Wrong length skip";
+					info = "WRONG LENGTH SKIP";
+					goto fin;
+				} //check
+
+				else if (value.Length <= 5)
+				{
+					value = previousValue;
+					info = "SHORT LENGTH SKIP";
+					goto fin;
 				}
 
 				Math2.FindMinAndMaxForLastNPoints(_derivativeLive, ref minOfDerivativeForLastNPoints, ref maxOfDerivativeForLastNPoints, n);
@@ -154,12 +164,19 @@ namespace AbsurdMoneySimulations
 				{
 					float limit = 3 * Math.Max(Math.Abs(minOfDerivativeForLastNPoints), Math.Abs(maxOfDerivativeForLastNPoints));
 					float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
-					if (Math.Abs(newDerivative) > limit)
+					newDerivative = Math.Abs(newDerivative);
+
+					info += $"\njump limit {limit}";
+
+					if (newDerivative > limit)
 					{
 						value = previousValue;
-						info = "Big jump skip";
+						info = $"BIG JUMP SKIP\nlimit {limit}\nderivative {newDerivative}";
+						goto fin;
 					}
 				}
+
+				fin:
 
 				previousValue = value;
 
@@ -170,6 +187,8 @@ namespace AbsurdMoneySimulations
 				graphCSV += $"{value}\n";
 				AddToDerivativeLive();
 				_graphUpdated = true;
+
+				info += $"\nValue: {value}";
 
 				string der = "";
 				if (_derivativeLive.Count >= 2)
@@ -294,9 +313,10 @@ namespace AbsurdMoneySimulations
 
 				_itIsTime = false;
 
-				int newValueLength = GetQtxGraphValue().Length;
+				var value = GetQtxGraphValue();
+				int newValueLength = value.Length;
 
-				FormsManager.SayToTraderReport1($"i {i}\nLength {newValueLength}");
+				FormsManager.SayToTraderReport1($"Getting first 5\ni {i} from 5\nLength {newValueLength}\nValue {value}");
 
 				if (newValueLength != valueLength)
 				{
@@ -309,9 +329,20 @@ namespace AbsurdMoneySimulations
 
 		private static string GetQtxGraphValue()
 		{
+			again:
 			Bitmap screenshot = Graphics2.TakeScreen2();
+			Bitmap blueLabel;
 
-			Bitmap blueLabel = CutBlueLabel(screenshot);
+			try
+			{
+				blueLabel = CutBlueLabel(screenshot);
+			}
+			catch (CantFindBlueLabelException)
+			{
+				Thread.Sleep(5000);
+				Console.Beep();
+				goto again;
+			}
 			//FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
 			blueLabel = Graphics2.ToBlackWhite(blueLabel);
@@ -321,7 +352,7 @@ namespace AbsurdMoneySimulations
 			//FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
 			blueLabel = Graphics2.MaximizeContrastAndNegate(blueLabel);
-			//FormsManager.ShowImage(blueLabel);
+			FormsManager.ShowImage(blueLabel);
 			//Thread.Sleep(4000);
 
 			string text = RecognizeFromBlueLabel(blueLabel);
@@ -343,8 +374,8 @@ namespace AbsurdMoneySimulations
 			Navi("http://qxbroker.com/en/sign-in");
 			if (!SignedIn())
 			{
-				AutoSignIn();
-				WaitUserSignedIn();
+				//AutoSignIn();
+				WaitUserSignedIn(); ///////////////////////////////////////////////////////
 				SaveCookies();
 				SaveKeys();
 			}
