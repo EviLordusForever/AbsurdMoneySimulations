@@ -106,7 +106,7 @@ namespace AbsurdMoneySimulations
 			if (UserAsker.Ask("Are you shure? Previous neural network will be deleted"))
 			{
 				ClearPreviousNNHistory();
-				NN nn = Builder.CreateBasicGoodPerceptronDerivative();
+				NN nn = Builder.CreateBasicGoodPerceptron();
 				NN.Save(nn);
 			}
 		}

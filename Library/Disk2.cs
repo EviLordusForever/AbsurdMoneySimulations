@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using AbsurdMoneySimulations;
+using System.Text;
 
 namespace Library
 {
@@ -24,6 +25,8 @@ namespace Library
 
 			if (_programFiles[_programFiles.Length - 1] == '\\')
 				_programFiles = Text2.StringBeforeLast(_programFiles, "\\");
+
+			Logger.Log($"ProgramFiles path: {_programFiles}");
 
 			while (!Directory.Exists(_programFiles) || Text2.StringAfterLast(_programFiles, "\\") != "ProgramFiles")
 			{

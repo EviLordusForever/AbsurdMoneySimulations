@@ -98,7 +98,7 @@
 				_showForm.WindowState = FormWindowState.Normal;
 				_showForm.BringToFront();
 				_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width / 5, Screen.PrimaryScreen.Bounds.Height / 5);
-				_showForm.Location = new Point(Screen.PrimaryScreen.Bounds.Width / 3, 0);
+				_showForm.Location = new Point(Screen.PrimaryScreen.Bounds.Width / 3, Screen.PrimaryScreen.Bounds.Width / 4);
 				_showForm.BackgroundImageLayout = ImageLayout.Stretch;
 				_showForm.TopMost = true;
 
