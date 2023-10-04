@@ -40,7 +40,21 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void TraderTrade()
+		public static void TradeByNN()
+		{
+			LiveGraphGetting();
+
+			Thread myThread = new Thread(StartTraderThread);
+			myThread.Name = "Trader Thread";
+			myThread.Start();
+
+			void StartTraderThread()
+			{
+				Trader.TradeByNN();
+			}
+		}
+
+		public static void TradeBySwarm()
 		{
 			LiveGraphGetting();
 

@@ -33,7 +33,7 @@ namespace AbsurdMoneySimulations
 				}
 				else
 				{
-					FormsManager.OpenShowForm("U ARE CRINGE SO U ARE BANNED");
+					FormsManager.OpenShowForm("U ARE CRINGE SO U ARE BANNED", true);
 					FormsManager.SetShowFormSize(600, 600);
 					FormsManager.MoveFormToCenter(FormsManager._showForm);
 

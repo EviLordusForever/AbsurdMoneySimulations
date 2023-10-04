@@ -6,7 +6,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void Simulate()
 		{
-			FormsManager.OpenShowForm("Bets simulation");
+			FormsManager.OpenShowForm("Bets simulation", true);
 
 			Thread myThread = new Thread(SimulateThread);
 			myThread.Name = "BetsSimulator";

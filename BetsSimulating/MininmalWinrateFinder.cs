@@ -6,7 +6,7 @@ namespace AbsurdMoneySimulations
 	{
 		public static void MakeTable()
 		{
-			FormsManager.OpenShowForm("winrate, prize and profit table");
+			FormsManager.OpenShowForm("winrate, prize and profit table", true);
 
 			double[,] table = new double[120, 120];
 

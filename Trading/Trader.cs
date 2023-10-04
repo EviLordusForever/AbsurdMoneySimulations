@@ -96,6 +96,63 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public static void TradeByNN()
+		{
+			InititializePredictionForm();
+			FormsManager.SayToTraderReport2("Loading NN...");
+
+			NN nn = NN.Load();
+			int horizon = nn._horizon;
+			int inputWindow = nn._inputWindow;
+			ActivationFunction inputAF = nn._inputAF;
+			int moveInput = nn._testerT._moveInputsOverZero;
+
+			_input = new float[inputWindow];
+			string traderReport = "";
+
+			int i = 0;
+			while (true)
+			{
+				traderReport = "";
+
+				WaitGraphUpdated();
+				CutInput();
+
+				if (_horizonLive.Count > inputWindow)
+				{
+					_previousPrediction = _prediction;
+					_prediction = nn.Calculate(0, _input, false);
+
+					traderReport += $"{i}\n";
+					traderReport += $"Value: {_graphLive[_graphLive.Count - 1]}\n";
+					traderReport += $"Predction: {_prediction}";
+					i++;
+				}
+				else
+					traderReport += $"Waiting for {inputWindow - _graphLive.Count} more points to start predicting\n";
+
+				FormsManager.SayToTraderReport2(traderReport);
+				DrawPrediction(horizon);
+			}
+
+			void CutInput()
+			{
+				if (_graphLive.Count > 1)
+				{
+					int cuttedWindow = Math.Min(inputWindow, _graphLive.Count - 1);
+					_input = _graphLive.GetRange(_graphLive.Count - 1 - cuttedWindow, cuttedWindow).ToArray();
+					float standartDeviation = Math2.FindStandartDeviation(_input);
+					_input = Tester.Normalize(_input, standartDeviation, inputAF, moveInput);
+				}
+			}
+
+			void WaitGraphUpdated()
+			{
+				while (!_graphUpdated) { }
+				_graphUpdated = false;
+			}
+		}
+
 		public static void GetGraphLive(int delaySeconds)
 		{
 			//Load("https://google.com");

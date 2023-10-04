@@ -15,10 +15,10 @@
 			ShowImage((Bitmap)img);
 		}
 
-		public static void ShowImage(Bitmap bmp)
+		public static void ShowImage(Bitmap bmp, bool fullscreen)
 		{
 			if (_showForm == null || _showForm.IsDisposed)
-				OpenShowForm("Image:");
+				OpenShowForm("Image:", fullscreen);
 
 			Bitmap bmp0 = Library.Graphics2.RescaleBitmap(bmp, _showForm.ClientSize.Width, _showForm.ClientSize.Height);
 
@@ -30,9 +30,6 @@
 
 		public static void ShowImageToPredictionForm(Bitmap bmp)
 		{
-			if (_showForm == null || _showForm.IsDisposed)
-				OpenShowForm("aboba");
-
 			Bitmap bmp0 = Library.Graphics2.RescaleBitmap(bmp, _predictionForm.ClientSize.Width, _predictionForm.ClientSize.Height);
 
 			_mainForm.Invoke(new Action(() =>
@@ -85,7 +82,7 @@
 			}));
 		}
 
-		public static void OpenShowForm(string text)
+		public static void OpenShowForm(string text, bool fullscreen)
 		{
 			_mainForm.Invoke(new Action(() =>
 			{
@@ -97,10 +94,19 @@
 				_showForm.Show();
 				_showForm.WindowState = FormWindowState.Normal;
 				_showForm.BringToFront();
-				_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width / 5, Screen.PrimaryScreen.Bounds.Height / 5);
-				_showForm.Location = new Point(Screen.PrimaryScreen.Bounds.Width / 3, Screen.PrimaryScreen.Bounds.Width / 4);
-				_showForm.BackgroundImageLayout = ImageLayout.Stretch;
-				_showForm.TopMost = true;
+
+				if (!fullscreen)
+				{
+					_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width / 5, Screen.PrimaryScreen.Bounds.Height / 5);
+					_showForm.Location = new Point(Screen.PrimaryScreen.Bounds.Width / 3, Screen.PrimaryScreen.Bounds.Width / 4);
+					_showForm.TopMost = true;
+				}
+				else
+				{
+					_showForm.Size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+					_showForm.Location = new Point(0, 0);
+				}
+				_showForm.BackgroundImageLayout = ImageLayout.Stretch;				
 
 				_showForm.Text = text;
 			}));

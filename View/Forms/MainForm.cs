@@ -19,7 +19,7 @@
 
 		private void button4_Click(object sender, EventArgs e)
 		{
-			API.TraderTrade();
+			API.TradeBySwarm();
 		}
 
 		private void MainForm_Load_1(object sender, EventArgs e)
@@ -105,6 +105,11 @@
 			login = Library.UserAsker.AskValue("Login for qtx auto SignIn:\n(if empty auto SignIn will be disabled)", "Set login", login);
 			password = Library.UserAsker.AskValue("Password for qtx auto SignIn:\n(if empty auto SignIn will be disabled)", "Set password", password);
 			API.SetQtxLoginPassword(login, password);
+		}
+
+		private void button17_Click(object sender, EventArgs e)
+		{
+			API.TradeByNN();
 		}
 	}
 }
