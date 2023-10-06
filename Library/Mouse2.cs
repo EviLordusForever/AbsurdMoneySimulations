@@ -151,5 +151,10 @@ namespace Library
 
 			mouse_event(MOUSEEVENTF_LEFTUP, posX, posY, 0, new IntPtr());
 		}
+
+		public static void Set(int x, int y)
+		{
+			Cursor.Position = new Point(x, y);
+		}
 	}
 }

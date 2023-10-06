@@ -118,7 +118,7 @@ namespace AbsurdMoneySimulations
 				WaitGraphUpdated();
 				CutInput();
 
-				if (_horizonLive.Count > inputWindow)
+				if (_graphLive.Count > inputWindow)
 				{
 					_previousPrediction = _prediction;
 					_prediction = nn.Calculate(0, _input, false);
@@ -179,6 +179,8 @@ namespace AbsurdMoneySimulations
 
 				info = "";
 
+				Drag(i);
+
 				try
 				{
 					value = GetQtxGraphValue();
@@ -206,7 +208,7 @@ namespace AbsurdMoneySimulations
 					value = previousValue;
 					info = "WRONG LENGTH SKIP";
 					goto fin;
-				} //check
+				}
 
 				else if (value.Length <= 5)
 				{
@@ -253,6 +255,15 @@ namespace AbsurdMoneySimulations
 				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\nd {der}\n{info}");
 
 				MakeGraphBackupEvery(i, 3600);
+
+				void Drag(int i)
+				{
+					if (i % 30 == 0)
+					{
+						Mouse2.Set(900, 400);
+						Mouse2.Drag(-700, 0, 1000, 80);
+					}
+				}
 			}
 
 			void AddToDerivativeLive()
