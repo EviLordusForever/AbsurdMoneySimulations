@@ -69,8 +69,29 @@ namespace Library
 			return min;
 		}
 
+		public static void FindMinAndMaxForLastNPoints2(List<float> array, ref float currentMin, ref float currentMax, int n)
+		{
+			if (array.Count == 0)
+				return;
+
+			int lastIndex = array.Count - 1;
+			int firstIndex = array.Count - Math.Min(n, array.Count);
+
+			currentMin = array[firstIndex];
+			currentMax = array[lastIndex];
+
+			for (int i = firstIndex; i < lastIndex; i++)
+			{
+				if (array[i] > currentMax)
+					currentMax = array[i];
+				if (array[i] < currentMin)
+					currentMin = array[i];
+			}
+		}
+
 		public static void FindMinAndMaxForLastNPoints(List<float> array, ref float currentMin, ref float currentMax, int n)
 		{
+			//This method is extremely strange, check it maybe.
 			int count = array.Count;
 			int lastIndex = count - 1;
 			int firstIndex = count - n;

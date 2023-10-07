@@ -24,11 +24,15 @@ namespace AbsurdMoneySimulations
 		private static float _prediction;
 		private static float _previousPrediction;
 
-		private static float maxOfDerivativeForLastNPoints = 0;
-		private static float minOfDerivativeForLastNPoints = 0;
-		const int n = 500;
+		private static float _maxOfDerivativeForLastNPoints = 0;
+		private static float _minOfDerivativeForLastNPoints = 0;
+		const int _n = 500;
+
+		private static int old1 = 0;
+		private static int old2 = 0;
 
 		private const float _predictionScaling = 6;
+		private const int _horizon = 30; //do better?
 
 		public static void TradeBySwarm()
 		{
@@ -50,7 +54,6 @@ namespace AbsurdMoneySimulations
 				traderReport = "";
 
 				WaitGraphUpdated();
-				AddToHorizonLive();
 				CutInput();
 
 				if (_horizonLive.Count > inputWindow)
@@ -67,7 +70,7 @@ namespace AbsurdMoneySimulations
 					traderReport += $"Waiting for {inputWindow - _horizonLive.Count} more points to start predicting\n";
 
 				FormsManager.SayToTraderReport2(traderReport);
-				DrawPrediction(horizon);
+				DrawPredictionForHorizon(horizon);
 			}
 
 			void CutInput()
@@ -79,14 +82,6 @@ namespace AbsurdMoneySimulations
 					float standartDeviation = Math2.FindStandartDeviation(_input);
 					_input = Tester.Normalize(_input, standartDeviation, inputAF, moveInput);
 				}
-			}
-
-			void AddToHorizonLive()
-			{
-				if (_graphLive.Count > horizon)
-					_horizonLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 1 - horizon]);
-				else
-					traderReport += $"Waiting for {horizon - _graphLive.Count} more points to start finding Horizon\n";
 			}
 
 			void WaitGraphUpdated()
@@ -176,66 +171,20 @@ namespace AbsurdMoneySimulations
 			for (int i = 0; ; i += delaySeconds)
 			{
 				WaitYourTime();
-
 				info = "";
-
 				Drag(i);
 
 				try
 				{
-					value = GetQtxGraphValue();
+					CheckBlueLabel();
+					CheckFloat();
+					CheckLength();
+					CheckJumpLimit();
 				}
-				catch (CantFindBlueLabelException ex)
+				catch (Exception ex)
 				{
-					value = previousValue;
-					info = "CAN'T FIND BLUE LABEL SKIP";
-					goto fin;
+					Log(ex.Message);
 				}
-
-				try
-				{
-					float valuef = Convert.ToSingle(value);
-				}
-				catch
-				{
-					value = previousValue;
-					info = "NOT FLOAT SKIP";
-					goto fin;
-				}
-
-				if (value.Length != correctValueLength)
-				{
-					value = previousValue;
-					info = "WRONG LENGTH SKIP";
-					goto fin;
-				}
-
-				else if (value.Length <= 5)
-				{
-					value = previousValue;
-					info = "SHORT LENGTH SKIP";
-					goto fin;
-				}
-
-				Math2.FindMinAndMaxForLastNPoints(_derivativeLive, ref minOfDerivativeForLastNPoints, ref maxOfDerivativeForLastNPoints, n);
-
-				if (_graphLive.Count > 10)
-				{
-					float limit = 3 * Math.Max(Math.Abs(minOfDerivativeForLastNPoints), Math.Abs(maxOfDerivativeForLastNPoints));
-					float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
-					newDerivative = Math.Abs(newDerivative);
-
-					info += $"\njump limit {limit}";
-
-					if (newDerivative > limit)
-					{
-						value = previousValue;
-						info = $"BIG JUMP SKIP\nlimit {limit}\nderivative {newDerivative}";
-						goto fin;
-					}
-				}
-
-				fin:
 
 				previousValue = value;
 
@@ -245,23 +194,90 @@ namespace AbsurdMoneySimulations
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
 				AddToDerivativeLive();
+				AddToHorizonLive();
 				_graphUpdated = true;
-
-				info += $"\nValue: {value}";
 
 				string der = "";
 				if (_derivativeLive.Count >= 2)
-					der = MathF.Round(_derivativeLive[_derivativeLive.Count - 1], 5).ToString();
-				FormsManager.SayToTraderReport1($"{i} seconds\n{value}\nd {der}\n{info}");
+					der = _derivativeLive[_derivativeLive.Count - 1].ToString("0.#####");
+
+				FormsManager.SayToTraderReport1($"{i} seconds\nValue {value}\nDer {der}\n{info}");
 
 				MakeGraphBackupEvery(i, 3600);
+
+				void CheckLength()
+				{
+					if (value.Length != correctValueLength)
+					{
+						value = previousValue;
+						info = "WRONG LENGTH SKIP";
+						throw new ArgumentException();
+					}
+					else if (value.Length <= 5)
+					{
+						value = previousValue;
+						info = "SHORT LENGTH SKIP";
+						throw new ArgumentException();
+					}
+				}
+
+				void CheckFloat()
+				{
+					try
+					{
+						float valuef = Convert.ToSingle(value);
+					}
+					catch
+					{
+						value = previousValue;
+						if (value == "empty")
+							value = "0";
+						info = "NOT FLOAT SKIP";
+						throw new ArgumentException();
+					}
+				}
 
 				void Drag(int i)
 				{
 					if (i % 30 == 0)
 					{
 						Mouse2.Set(900, 400);
-						Mouse2.Drag(-700, 0, 1000, 80);
+						Mouse2.Drag(-700, 0, 10, 80);
+					}
+				}
+			}
+
+			void CheckBlueLabel()
+			{
+				try
+				{
+					value = GetQtxGraphValue();
+				}
+				catch (CantFindBlueLabelException ex)
+				{
+					value = previousValue;
+					info = "CAN'T FIND BLUE LABEL SKIP";
+					throw ex;
+				}
+			}
+
+			void CheckJumpLimit()
+			{
+				Math2.FindMinAndMaxForLastNPoints(_derivativeLive, ref _minOfDerivativeForLastNPoints, ref _maxOfDerivativeForLastNPoints, _n);
+
+				if (_graphLive.Count > 10)
+				{
+					float limit = 3 * Math.Max(Math.Abs(_minOfDerivativeForLastNPoints), Math.Abs(_maxOfDerivativeForLastNPoints));
+					float newDerivative = Convert.ToSingle(value) - _graphLive[_graphLive.Count - 1];
+					newDerivative = Math.Abs(newDerivative);
+
+					info += $"\njump limit {limit}\n";
+
+					if (newDerivative > limit)
+					{
+						value = previousValue;
+						info = $"BIG JUMP SKIP\nlimit {limit}\nderivative {newDerivative}";
+						throw new ArgumentException();
 					}
 				}
 			}
@@ -270,6 +286,17 @@ namespace AbsurdMoneySimulations
 			{
 				if (_graphLive.Count > 1)
 					_derivativeLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 2]);
+			}
+
+			void AddToHorizonLive()
+			{
+				if (_graphLive.Count > _horizon)
+				{
+					_horizonLive.Add(_graphLive[_graphLive.Count - 1] - _graphLive[_graphLive.Count - 1 - _horizon]);
+					info += $"\nHor {MathF.Round(_horizonLive[_horizonLive.Count - 1], 5).ToString("0.#####")}";
+				}
+				else
+					info += $"\nWaiting for {_horizon - _graphLive.Count} more points to start finding Horizon\n";
 			}
 
 			void FakeFill()
@@ -321,7 +348,18 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
-		public static void DrawPrediction(int horizon)
+		public static string GetQtxGraphValue()
+		{
+			Bitmap screenshot = Graphics2.TakeScreen2();
+			Bitmap blueLabel = CutBlueLabel(screenshot);
+			blueLabel = Graphics2.ToBlackWhite(blueLabel);
+			blueLabel = Graphics2.RescaleBitmap(blueLabel, blueLabel.Width * 2, blueLabel.Height * 2);
+			blueLabel = Graphics2.MaximizeContrastAndNegate(blueLabel);
+			FormsManager.ShowImage(blueLabel);
+			return RecognizeFromBlueLabel(blueLabel);
+		}
+
+		public static void DrawPredictionForHorizon(int horizon)
 		{
 			int d = 4;
 
@@ -353,6 +391,45 @@ namespace AbsurdMoneySimulations
 			}
 		}
 
+		public static void DrawPrediction(int horizon)
+		{
+			int d = 4;
+
+			_gr.DrawImage(_bmp, -d, 0);
+			_gr.FillRectangle(Brushes.Black, _bmp.Width - d, 0, _bmp.Width - 1, _bmp.Height);
+
+			Pen darkPen = new Pen(Color.FromArgb(30, 30, 30), 1);
+			for (int i = 1; i <= 9; i++)
+				_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * i / 10f, _bmp.Width - 1, _bmp.Height * i / 10f);
+
+			_gr.DrawLine(Pens.Orange, _bmp.Width - d, _bmp.Height / 2, _bmp.Width - 1, _bmp.Height / 2);
+
+			if (_horizonLive.Count > 2)
+			{				
+				int new1 = Rescale(_horizonLive[_horizonLive.Count - 1], _horizonLive);
+				_gr.DrawLine(Pens.Red, _bmp.Width - 1 - d - d * horizon, old1, _bmp.Width - 1 - d * horizon, new1);
+				old1 = new1;
+			}
+
+			int new2 = Rescale(_prediction, _horizonLive);
+			_gr.DrawLine(Pens.Cyan, _bmp.Width - 1 - d, old2, _bmp.Width - 1, new2);
+			old2 = new2;
+
+			FormsManager.ShowImageToPredictionForm(_bmp);
+
+			int Rescale(float v, List<float> list)
+			{
+				float min = 0;
+				float max = 0;
+				Math2.FindMinAndMaxForLastNPoints2(list, ref min, ref max, _horizon);
+				float max2 = Math.Max(MathF.Abs(min), MathF.Abs(max));
+				if (max2 == 0)
+					max2 = 0.1f;
+				v /= max2;
+				return Convert.ToInt32((-v + 1) * _bmp.Height / 2f);
+			}
+		}
+
 		private static void InititializePredictionForm()
 		{
 			FormsManager.OpenPredictionForm();
@@ -380,8 +457,19 @@ namespace AbsurdMoneySimulations
 				{ };
 
 				_itIsTime = false;
+				string value;
 
-				var value = GetQtxGraphValue();
+				try
+				{
+					value = GetQtxGraphValue();
+				}
+				catch (CantFindBlueLabelException)
+				{
+					i--;
+					Console.Beep();
+					continue;
+				}
+
 				int newValueLength = value.Length;
 
 				FormsManager.SayToTraderReport1($"Getting first 5\ni {i} from 5\nLength {newValueLength}\nValue {value}");
@@ -393,39 +481,6 @@ namespace AbsurdMoneySimulations
 				}
 			}
 			return valueLength;
-		}
-
-		private static string GetQtxGraphValue()
-		{
-			again:
-			Bitmap screenshot = Graphics2.TakeScreen2();
-			Bitmap blueLabel;
-
-			try
-			{
-				blueLabel = CutBlueLabel(screenshot);
-			}
-			catch (CantFindBlueLabelException)
-			{
-				Thread.Sleep(5000);
-				Console.Beep();
-				goto again;
-			}
-			//FormsManager.ShowImage(blueLabel);
-			//Thread.Sleep(4000);
-			blueLabel = Graphics2.ToBlackWhite(blueLabel);
-			//FormsManager.ShowImage(blueLabel);			
-			//Thread.Sleep(4000);
-			blueLabel = Graphics2.RescaleBitmap(blueLabel, blueLabel.Width * 2, blueLabel.Height * 2);
-			//FormsManager.ShowImage(blueLabel);
-			//Thread.Sleep(4000);
-			blueLabel = Graphics2.MaximizeContrastAndNegate(blueLabel);
-			FormsManager.ShowImage(blueLabel);
-			//Thread.Sleep(4000);
-
-			string text = RecognizeFromBlueLabel(blueLabel);
-			//Log(text);
-			return text;
 		}
 
 		public static void OpenQtx()
@@ -566,16 +621,18 @@ namespace AbsurdMoneySimulations
 
 		private static Bitmap CutBlueLabel(Bitmap screenshot)
 		{
-			int up = FindBlueLabelY(screenshot);
+			int up = FindBlueLabelY(screenshot) + 5;
 			int left = FindBlueLabelLeftX(screenshot, up) + 5;
 			int right = FindBlueLabelRightX(screenshot, up) - 5;
 			int width = right - left;
 			int height = 11;
 
+			if (width < 10)
+				throw new CantFindBlueLabelException();
+
 			Bitmap bmpCut = new Bitmap(width, height);
-			Disk2.SaveImageToProgramFiles(screenshot, "HERE IT IS");
 			Graphics grCut = Graphics.FromImage(bmpCut);
-			grCut.DrawImage(screenshot, 0, 0, new Rectangle(left, up + 6, width, height), GraphicsUnit.Pixel);
+			grCut.DrawImage(screenshot, 0, 0, new Rectangle(left, up, width, height), GraphicsUnit.Pixel);
 
 			return bmpCut;
 		}
