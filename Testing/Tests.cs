@@ -16,7 +16,7 @@ namespace AbsurdMoneySimulations
 
 		public static void TestCreateSaveLoad()
 		{
-			NN nn = Builder.CreateBasicGoodPerceptron();
+			NN nn = Builder.CreateBasicGoodPerceptronHorizon();
 			NN.Save(nn);
 			nn = NN.Load();
 		}
@@ -71,7 +71,7 @@ namespace AbsurdMoneySimulations
 
 		public static void StupiedTest()
 		{
-			NN nn = Builder.CreateBasicGoodPerceptron();
+			NN nn = Builder.CreateBasicGoodPerceptronHorizon();
 
 			for (int i = 0; i < 100; i++)
 				Log(nn.FindLossSquared(nn._testerT, false));

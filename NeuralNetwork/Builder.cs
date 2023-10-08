@@ -6,7 +6,43 @@ namespace AbsurdMoneySimulations
 {
 	public static class Builder
 	{
-		public static NN CreateBasicGoodPerceptron()
+		public static NN CreateSimpleDimple()
+		{
+			NN nn = new NN();
+
+			nn._horizon = 60;
+			nn._inputWindow = 300;
+			nn._weightsInitMin = -1f;
+			nn._weightsInitMax = 1f;
+
+			nn._gradientCutter = 10f;
+
+			nn._biasInput = 0.01f;
+
+			nn._LEARNING_RATE = 0.001f; //0.05f
+			nn._MOMENTUM = 0f; //0.8f
+
+			nn._inputAF = new SoftSign();
+			nn._answersAF = new SoftSign();
+
+			nn._statisticsRecalculatePeriod = 50;
+			nn._validationRecalculatePeriod = 30;
+
+			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 1, 0, 0);
+			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
+
+			nn._layers.Add(new LayerPerceptron(nn, 3, 300, 0f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 3, 3, 0f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 1, 3, 0f, new SoftSign())); //40 x 15 = 600
+
+			nn.FillWeightsRandomly();
+
+			Log("New Neural Network created!");
+			return nn;
+		}
+
+
+		public static NN CreateBasicGoodPerceptronHorizon()
 		{
 			NN nn = new NN();
 
@@ -82,7 +118,7 @@ namespace AbsurdMoneySimulations
 		{
 			NN nn = new NN();
 
-			nn._horizon = 30;
+			nn._horizon = 60;
 			nn._inputWindow = 300;
 			nn._weightsInitMin = -1f;
 			nn._weightsInitMax = 1f;
@@ -103,10 +139,9 @@ namespace AbsurdMoneySimulations
 			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 1, 0, 0);
 			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
 
-			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers.Add(new LayerPerceptron(nn, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers.Add(new LayerPerceptron(nn, 5, 8, 0, new SoftSign())); //40 x 15 = 600
-			nn._layers.Add(new LayerPerceptron(nn, 1, 5, 0f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 3, 300, 0f, new SoftSign())); 
+			nn._layers.Add(new LayerPerceptron(nn, 5, 3, 0f, new SoftSign())); 
+			nn._layers.Add(new LayerPerceptron(nn, 1, 5, 0f, new SoftSign()));
 
 			nn.FillWeightsRandomly();
 

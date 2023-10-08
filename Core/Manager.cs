@@ -30,6 +30,13 @@ namespace AbsurdMoneySimulations
 					FormsManager.UnhideForm(FormsManager._mainForm);
 					FormsManager.BringToFrontForm(FormsManager._mainForm);
 					Log("Hello my dear!");
+
+					NN nn = NN.Load();
+					float[][] a = nn._layers[0].AllWeights;
+					string str = "";
+					for (int j = 0; j < a.Length; j++)
+						str += String.Join(',', a[j]) + "\n";
+					Disk2.WriteToProgramFiles("layers", "csv", str, false);
 				}
 				else
 				{
@@ -83,7 +90,7 @@ namespace AbsurdMoneySimulations
 
 					for (int n = 0; ; n++)
 					{
-						nn = Builder.CreateBasicGoodPerceptron();
+						nn = Builder.CreateBasicGoodPerceptronHorizon();
 
 						float er = nn.FindLossSquared(nn._testerT, false);
 						Log($"er {er}");
@@ -106,7 +113,7 @@ namespace AbsurdMoneySimulations
 			if (UserAsker.Ask("Are you shure? Previous neural network will be deleted"))
 			{
 				ClearPreviousNNHistory();
-				NN nn = Builder.CreateBasicGoodPerceptron();
+				NN nn = Builder.CreateSimpleDimple();
 				NN.Save(nn);
 			}
 		}
