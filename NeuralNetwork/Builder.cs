@@ -31,9 +31,9 @@ namespace AbsurdMoneySimulations
 			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 1, 0, 0);
 			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
 
-			nn._layers.Add(new LayerPerceptron(nn, 3, 300, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers.Add(new LayerPerceptron(nn, 3, 3, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers.Add(new LayerPerceptron(nn, 1, 3, 0f, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 3, 300, 0f, new SoftSign()));
+			nn._layers.Add(new LayerPerceptron(nn, 3, 3, 0f, new SoftSign()));
+			nn._layers.Add(new LayerPerceptron(nn, 1, 3, 0f, new SoftSign()));
 
 			nn.FillWeightsRandomly();
 

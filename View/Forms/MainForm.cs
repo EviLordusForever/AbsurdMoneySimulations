@@ -111,5 +111,10 @@
 		{
 			API.TradeByNN();
 		}
+
+		private void button18_Click(object sender, EventArgs e)
+		{
+			FakeOTC2.DO();
+		}
 	}
 }

@@ -131,6 +131,7 @@ E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\AbsurdMoneySimula
 E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\AbsurdMoneySimulations.genruntimeconfig.cache
 E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\ref\AbsurdMoneySimulations.dll
 E:\Programmer\AbsurdMoneySimulations3\obj\Debug\net6.0-windows\AbsurdMoneySimulations.FittingParamsForm.resources
+F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AbsurdMoneySimulations.dll
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\runtimes\win-x64\native\liblept-5.dll
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\runtimes\win-x64\native\libtesseract-5.dll
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\runtimes\win-x64\native\pdfium.vanilla.dll
@@ -168,7 +169,6 @@ F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AbsurdMoneySimula
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\Trading\Scripts\ListenerScript.js
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AbsurdMoneySimulations.deps.json
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AbsurdMoneySimulations.runtimeconfig.json
-F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AbsurdMoneySimulations.dll
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AbsurdMoneySimulations.pdb
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\AngleSharp.dll
 F:\Programmer\AbsurdMoneySimulations3\bin\Debug\net6.0-windows\IronOcr.dll

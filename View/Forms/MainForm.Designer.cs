@@ -44,12 +44,13 @@
 			this.button12 = new System.Windows.Forms.Button();
 			this.panel3 = new System.Windows.Forms.Panel();
 			this.panel4 = new System.Windows.Forms.Panel();
+			this.button17 = new System.Windows.Forms.Button();
 			this.button16 = new System.Windows.Forms.Button();
 			this.button14 = new System.Windows.Forms.Button();
 			this.button15 = new System.Windows.Forms.Button();
 			this.button13 = new System.Windows.Forms.Button();
 			this.panel5 = new System.Windows.Forms.Panel();
-			this.button17 = new System.Windows.Forms.Button();
+			this.button18 = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel3.SuspendLayout();
@@ -89,7 +90,7 @@
 			// 
 			// button5
 			// 
-			this.button5.Location = new System.Drawing.Point(3, 32);
+			this.button5.Location = new System.Drawing.Point(3, 61);
 			this.button5.Name = "button5";
 			this.button5.Size = new System.Drawing.Size(456, 23);
 			this.button5.TabIndex = 4;
@@ -224,6 +225,16 @@
 			this.panel4.Size = new System.Drawing.Size(464, 176);
 			this.panel4.TabIndex = 14;
 			// 
+			// button17
+			// 
+			this.button17.Location = new System.Drawing.Point(3, 90);
+			this.button17.Name = "button17";
+			this.button17.Size = new System.Drawing.Size(456, 23);
+			this.button17.TabIndex = 8;
+			this.button17.Text = "Trade By NN";
+			this.button17.UseVisualStyleBackColor = true;
+			this.button17.Click += new System.EventHandler(this.button17_Click);
+			// 
 			// button16
 			// 
 			this.button16.Location = new System.Drawing.Point(3, 3);
@@ -267,28 +278,29 @@
 			// panel5
 			// 
 			this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel5.Controls.Add(this.button18);
 			this.panel5.Controls.Add(this.button10);
 			this.panel5.Controls.Add(this.button5);
 			this.panel5.Location = new System.Drawing.Point(12, 479);
 			this.panel5.Name = "panel5";
-			this.panel5.Size = new System.Drawing.Size(464, 60);
+			this.panel5.Size = new System.Drawing.Size(464, 89);
 			this.panel5.TabIndex = 15;
 			// 
-			// button17
+			// button18
 			// 
-			this.button17.Location = new System.Drawing.Point(3, 90);
-			this.button17.Name = "button17";
-			this.button17.Size = new System.Drawing.Size(456, 23);
-			this.button17.TabIndex = 8;
-			this.button17.Text = "Trade By NN";
-			this.button17.UseVisualStyleBackColor = true;
-			this.button17.Click += new System.EventHandler(this.button17_Click);
+			this.button18.Location = new System.Drawing.Point(3, 32);
+			this.button18.Name = "button18";
+			this.button18.Size = new System.Drawing.Size(456, 23);
+			this.button18.TabIndex = 10;
+			this.button18.Text = "Fake OTC";
+			this.button18.UseVisualStyleBackColor = true;
+			this.button18.Click += new System.EventHandler(this.button18_Click);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(488, 552);
+			this.ClientSize = new System.Drawing.Size(488, 580);
 			this.Controls.Add(this.panel5);
 			this.Controls.Add(this.panel4);
 			this.Controls.Add(this.panel3);
@@ -333,5 +345,6 @@
 		private Button button15;
 		private Button button16;
 		private Button button17;
+		private Button button18;
 	}
 }
