@@ -42,8 +42,6 @@ namespace AbsurdMoneySimulations
 				{
 					CorrectMoney(time);
 					Draw(time);
-					
-					_history.Add(_money);
 				}
 			}
 		}
@@ -80,23 +78,25 @@ namespace AbsurdMoneySimulations
 			speedDelay--;
 			if (speedDelay <= 0)
 			{
-				speed = (Math2.rnd.NextSingle() - 0.5f) * 1;
+				speed = Math2.rnd.NextSingle();
 				speedDelay = Math2.rnd.Next(15);
 				//Logger.Log(offset);
 			}
 			float aim = _history[_history.Count - 60] + offset;
 
-			if (aim > 15)
-				aim = 15;
-			if (aim < -15)
-				aim = -15;
-
-			//Logger.Log(aim);
+			if (aim > 35)
+				aim = 35;
+			if (aim < -35)
+				aim = -35;
 
 			if (aim > _money)
-				_money = _money + speed;
+				_money += speed;
 			else
-				_money = _money - speed;
+				_money -= speed;
+
+			Logger.Log($"{aim} {_money} {speed}");
+
+			_history.Add(_money);
 		}		
 	}
 }
