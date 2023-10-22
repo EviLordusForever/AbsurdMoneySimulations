@@ -28,12 +28,13 @@ namespace AbsurdMoneySimulations
 			nn._statisticsRecalculatePeriod = 50;
 			nn._validationRecalculatePeriod = 30;
 
-			nn._testerT = new Tester(nn, 21000, "Graph//ForTraining", "TRAINING", 1, 0, 0);
-			nn._testerV = new Tester(nn, 8000, "Graph//ForValidation", "VALIDATION", 1, 0, 0);
+			nn._testerT = new Tester(nn, 15000, "Graph//ForTraining", "TRAINING", 0, 0, 0);
+			nn._testerV = new Tester(nn, 4000, "Graph//ForValidation", "VALIDATION", 0, 0, 0);
 
-			nn._layers.Add(new LayerPerceptron(nn, 3, 300, 0f, new SoftSign()));
-			nn._layers.Add(new LayerPerceptron(nn, 3, 3, 0f, new SoftSign()));
-			nn._layers.Add(new LayerPerceptron(nn, 1, 3, 0f, new SoftSign()));
+			nn._layers.Add(new LayerPerceptron(nn, 5, 300, 0f, new SoftSign()));
+			nn._layers.Add(new LayerPerceptron(nn, 5, 5, 0f, new SoftSign()));
+			nn._layers.Add(new LayerPerceptron(nn, 5, 5, 0f, new SoftSign()));
+			nn._layers.Add(new LayerPerceptron(nn, 1, 5, 0f, new SoftSign()));
 
 			nn.FillWeightsRandomly();
 

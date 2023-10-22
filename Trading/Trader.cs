@@ -19,6 +19,7 @@ namespace AbsurdMoneySimulations
 		private static List<float> _graphLive = new List<float>();
 		private static List<float> _derivativeLive = new List<float>();
 		private static List<float> _horizonLive = new List<float>();
+		private static List<float> _predictionLive = new List<float>();
 		private static float[] _input;
 
 		private static float _prediction;
@@ -117,6 +118,7 @@ namespace AbsurdMoneySimulations
 				{
 					_previousPrediction = _prediction;
 					_prediction = nn.Calculate(0, _input, false);
+					_predictionLive.Add(_prediction);
 
 					traderReport += $"{i}\n";
 					traderReport += $"Value: {_graphLive[_graphLive.Count - 1]}\n";
@@ -136,6 +138,12 @@ namespace AbsurdMoneySimulations
 				{
 					int cuttedWindow = Math.Min(inputWindow, _graphLive.Count - 1);
 					_input = _graphLive.GetRange(_graphLive.Count - 1 - cuttedWindow, cuttedWindow).ToArray();
+
+					float final = _input.Last();
+
+					for (int i = 0; i < _input.Length; i++)
+						_input[i] = _input[i] - final;
+
 					float standartDeviation = Math2.FindStandartDeviation(_input);
 					_input = Tester.Normalize(_input, standartDeviation, inputAF, moveInput);
 				}
@@ -188,8 +196,8 @@ namespace AbsurdMoneySimulations
 
 				previousValue = value;
 
-				//if (i == 10)
-				//	FakeFill();
+				if (i == 10)
+					FakeFill(); /////
 
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
@@ -302,7 +310,7 @@ namespace AbsurdMoneySimulations
 			void FakeFill()
 			{
 				for (int j = 0; j < 360; j++)
-					_graphLive.Add(Convert.ToSingle(value));
+					_graphLive.Add(Convert.ToSingle(value) + Math2.rnd.NextSingle() * 0.2f - 0.1f);
 
 				for (int j = 0; j < 290; j++)
 					_horizonLive.Add(Math2.rnd.NextSingle() * 0.2f - 0.1f);
@@ -411,7 +419,7 @@ namespace AbsurdMoneySimulations
 				old1 = new1;
 			}
 
-			int new2 = Rescale(_prediction, _horizonLive);
+			int new2 = Rescale2(_prediction, 1);
 			_gr.DrawLine(Pens.Cyan, _bmp.Width - 1 - d, old2, _bmp.Width - 1, new2);
 			old2 = new2;
 
@@ -426,6 +434,12 @@ namespace AbsurdMoneySimulations
 				if (max2 == 0)
 					max2 = 0.1f;
 				v /= max2;
+				return Convert.ToInt32((-v + 1) * _bmp.Height / 2f);
+			}
+
+			int Rescale2(float v, float max)
+			{
+				v /= max;
 				return Convert.ToInt32((-v + 1) * _bmp.Height / 2f);
 			}
 		}

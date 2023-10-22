@@ -14,6 +14,8 @@ namespace AbsurdMoneySimulations
 		public static int[,] _testsPerCore;
 		public static int[] _tests;
 		private static float[] _predictions;
+		private static int _ups = 0;
+		private static int _downs = 0;
 
 		public static float[] _scores;
 		public static double[] _randomnesses;
@@ -107,12 +109,12 @@ namespace AbsurdMoneySimulations
 				}
 			}
 
-
 			for (int core = 0; core < _coresCount; core++)
 				_loss += suber[core];
 
 			_loss /= tester._testsCount;
 
+			CalculateUpsAndDowns();
 			CalculateScores();
 			CalculateRandomnesses();
 
@@ -128,6 +130,17 @@ namespace AbsurdMoneySimulations
 					if (win)
 						_winsPerCore[core, section]++;
 				}
+		}
+
+		public static void CalculateUpsAndDowns()
+		{
+			_ups = 0;
+			_downs = 0;
+			for (int t = 0; t < _predictions.Length; t++)
+				if (_predictions[t] > 0)
+					_ups++;
+				else
+					_downs++;
 		}
 
 		public static void CalculateScores()
@@ -176,6 +189,7 @@ namespace AbsurdMoneySimulations
 					stat += String.Format("{0,-25} {1,-13} {2,-17} (randomness: {3})\n", $"{_sections[section].ToString()}:", $"{_wins[section]} / {_tests[section]}", $"(winrate: {_scores[section]})", string.Format("{0:F9}", _randomnesses[section]));
 
 			stat += $"loss: {_loss}\n";
+			stat += $"ups: {_ups} downs: {_downs}\n";
 			stat += $"========================";
 			return stat;
 		}

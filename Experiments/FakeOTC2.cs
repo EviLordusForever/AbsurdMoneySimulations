@@ -17,11 +17,12 @@ namespace AbsurdMoneySimulations
 		public static Graphics _gr = Graphics.FromImage(_bmp);
 		public static Bitmap _bmp2 = new Bitmap(_width, _heigh);
 		public static Graphics _gr2 = Graphics.FromImage(_bmp2);
-		public static int yscale = 10;
+		public static int yscale = 1;
 		public static float offset = 0;
 		public static int offsetDelay = 0;
 		public static float speed = 0;
 		public static float speedDelay = 0;
+		public static int _horizon = 120;
 
 		public static void DO()
 		{
@@ -33,7 +34,7 @@ namespace AbsurdMoneySimulations
 			{
 				_history = new List<float>();
 
-				for (int i = 0; i < 60; i++)
+				for (int i = 0; i < _horizon + 5; i++)
 					_history.Add(1);
 
 				_gr.Clear(Color.Black);
@@ -48,14 +49,21 @@ namespace AbsurdMoneySimulations
 
 		public static void Draw(int time)
 		{
-			if (_history.Count < 5)
-				return;
-			
 			int x1 = _width / 2 - 2 + time % 15;
 			int x2 = _width / 2 - 1 + time % 15;
-			int y1 = (int)(_heigh / 2 - _history[_history.Count - 2] * yscale);
-			int y2 = (int)(_heigh / 2 - _history[_history.Count - 1] * yscale);
-			_gr.DrawLine(Pens.Cyan, x1, y1, x2, y2);
+
+			int y1 = (int)(_heigh / 2 - _history[_history.Count - 2 - _horizon] * yscale);
+			int y2 = (int)(_heigh / 2 - _history[_history.Count - 1 - _horizon] * yscale);
+
+			_gr.DrawLine(new Pen(new SolidBrush(Color.FromArgb(30, 30, 30))), x1, y1, x2, y2);
+
+			y1 = (int)(_heigh / 2 - _history[_history.Count - 2] * yscale);
+			y2 = (int)(_heigh / 2 - _history[_history.Count - 1] * yscale);
+
+			if (_history[_history.Count - _horizon] < _history[_history.Count - 1])
+				_gr.DrawLine(Pens.Cyan, x1, y1, x2, y2);
+			else
+				_gr.DrawLine(Pens.Cyan, x1, y1, x2, y2);
 
 			if ((time + 1) % 15 == 0)
 			{
@@ -70,31 +78,29 @@ namespace AbsurdMoneySimulations
 			offsetDelay--;
 			if (offsetDelay <= 0)
 			{
-				offset = (Math2.rnd.NextSingle() - 0.5f) * 10;
-				offsetDelay = 10 + Math2.rnd.Next(50);
-				//Logger.Log(offset);
+				offset = (Math2.rnd.NextSingle() - 0.5f) * 50;
+				offsetDelay = 10 + Math2.rnd.Next(70);
 			}
 
 			speedDelay--;
 			if (speedDelay <= 0)
 			{
-				speed = Math2.rnd.NextSingle();
-				speedDelay = Math2.rnd.Next(15);
-				//Logger.Log(offset);
+				speed = Math2.rnd.NextSingle() * 18;
+				speedDelay = Math2.rnd.Next(35);
 			}
-			float aim = _history[_history.Count - 60] + offset;
+			float aim = _history[_history.Count - _horizon] + offset;
 
-			if (aim > 35)
-				aim = 35;
-			if (aim < -35)
-				aim = -35;
+			if (aim > 135)
+				aim = 135;
+			if (aim < -135)
+				aim = -135;
 
 			if (aim > _money)
 				_money += speed;
 			else
 				_money -= speed;
 
-			Logger.Log($"{aim} {_money} {speed}");
+			//Logger.Log($"{aim} {_money} {speed}");
 
 			_history.Add(_money);
 		}		
