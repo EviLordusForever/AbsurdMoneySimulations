@@ -78,7 +78,7 @@
 				_traderReportForm.WindowState = FormWindowState.Normal;
 				_traderReportForm.BringToFront();
 				_traderReportForm.TopMost = true;
-				_traderReportForm.Location = new Point(0, 0);
+				_traderReportForm.Location = new Point(0, 105);
 			}));
 		}
 

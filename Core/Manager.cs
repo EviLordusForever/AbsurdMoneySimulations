@@ -110,10 +110,10 @@ namespace AbsurdMoneySimulations
 
 		public static void RecreateNN()
 		{
-			if (UserAsker.Ask("Are you shure? Previous neural network will be deleted"))
+			if (UserAsker.Ask("Are you sure? Previous neural network will be deleted"))
 			{
 				ClearPreviousNNHistory();
-				NN nn = Builder.CreateSimpleDimple();
+				NN nn = Builder.CreateBasicGoodPerceptronOriginal();
 				NN.Save(nn);
 			}
 		}

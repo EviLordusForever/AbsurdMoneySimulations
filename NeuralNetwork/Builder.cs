@@ -106,7 +106,7 @@ namespace AbsurdMoneySimulations
 
 			nn._layers.Add(new LayerPerceptron(nn, 8, 300, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers.Add(new LayerPerceptron(nn, 8, 8, 0f, new SoftSign())); //40 x 15 = 600
-			nn._layers.Add(new LayerPerceptron(nn, 5, 8, 0, new SoftSign())); //40 x 15 = 600
+			nn._layers.Add(new LayerPerceptron(nn, 5, 8, 0f, new SoftSign())); //40 x 15 = 600
 			nn._layers.Add(new LayerPerceptron(nn, 1, 5, 0f, new SoftSign())); //40 x 15 = 600
 
 			nn.FillWeightsRandomly();

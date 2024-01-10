@@ -25,6 +25,8 @@ namespace AbsurdMoneySimulations
 		private static float _prediction;
 		private static float _previousPrediction;
 
+		private static int _lastBetTime;
+
 		private static float _maxOfDerivativeForLastNPoints = 0;
 		private static float _minOfDerivativeForLastNPoints = 0;
 		const int _n = 500;
@@ -34,6 +36,7 @@ namespace AbsurdMoneySimulations
 
 		private const float _predictionScaling = 6;
 		private const int _horizon = 30; //do better?
+		private static float _tradeStart = 0.35f;
 
 		public static void TradeBySwarm()
 		{
@@ -122,7 +125,7 @@ namespace AbsurdMoneySimulations
 
 					traderReport += $"{i}\n";
 					traderReport += $"Value: {_graphLive[_graphLive.Count - 1]}\n";
-					traderReport += $"Predction: {_prediction}";
+					traderReport += $"Prediction: {_prediction}";
 					i++;
 				}
 				else
@@ -130,6 +133,25 @@ namespace AbsurdMoneySimulations
 
 				FormsManager.SayToTraderReport2(traderReport);
 				DrawPrediction(horizon);
+				Trade();
+			}
+
+			void Trade()
+			{
+				_lastBetTime++;
+				if (_lastBetTime > 12 && _graphLive.Count > 300)
+				{
+					if (_prediction > _tradeStart)
+					{
+						Mouse2.Click(1253, 435, 1);
+						_lastBetTime = 0;
+					}
+					if (_prediction < -_tradeStart)
+					{
+						Mouse2.Click(1253, 525, 1);
+						_lastBetTime = 0;
+					}
+				}
 			}
 
 			void CutInput()
@@ -145,6 +167,10 @@ namespace AbsurdMoneySimulations
 						_input[i] = _input[i] - final;
 
 					float standartDeviation = Math2.FindStandartDeviation(_input);
+
+					if (standartDeviation == 0)
+						standartDeviation = 1;
+
 					_input = Tester.Normalize(_input, standartDeviation, inputAF, moveInput);
 				}
 			}
@@ -196,8 +222,8 @@ namespace AbsurdMoneySimulations
 
 				previousValue = value;
 
-				if (i == 10)
-					FakeFill(); /////
+				//if (i == 10)
+				//	FakeFill(); /////
 
 				_graphLive.Add(Convert.ToSingle(value));
 				graphCSV += $"{value}\n";
@@ -310,12 +336,13 @@ namespace AbsurdMoneySimulations
 			void FakeFill()
 			{
 				for (int j = 0; j < 360; j++)
-					_graphLive.Add(Convert.ToSingle(value) + Math2.rnd.NextSingle() * 0.2f - 0.1f);
-
+					//	_graphLive.Add(Convert.ToSingle(value) + Math2.rnd.NextSingle() * 0.2f - 0.1f);
+					_graphLive.Add(_graphLive.Last());
 				for (int j = 0; j < 290; j++)
-					_horizonLive.Add(Math2.rnd.NextSingle() * 0.2f - 0.1f);
+					//	_horizonLive.Add(Math2.rnd.NextSingle() * 0.2f - 0.1f);
+					_horizonLive.Add(0);
 
-				Log("Filled graph by fake numbers");
+				Log("Filled graph by zeroes.");
 			}
 
 			void MakeGraphBackupEvery(int seconds, int everyS)
@@ -407,16 +434,38 @@ namespace AbsurdMoneySimulations
 			_gr.FillRectangle(Brushes.Black, _bmp.Width - d, 0, _bmp.Width - 1, _bmp.Height);
 
 			Pen darkPen = new Pen(Color.FromArgb(30, 30, 30), 1);
-			for (int i = 1; i <= 9; i++)
-				_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height * i / 10f, _bmp.Width - 1, _bmp.Height * i / 10f);
+			int h = (int)(_bmp.Height / 2f * _tradeStart);
+			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height / 2 - h, _bmp.Width - 1, _bmp.Height / 2 - h);
+			_gr.DrawLine(darkPen, _bmp.Width - d, _bmp.Height / 2 + h, _bmp.Width - 1, _bmp.Height / 2 + h);
 
 			_gr.DrawLine(Pens.Orange, _bmp.Width - d, _bmp.Height / 2, _bmp.Width - 1, _bmp.Height / 2);
 
+
 			if (_horizonLive.Count > 2)
-			{				
+			{
 				int new1 = Rescale(_horizonLive[_horizonLive.Count - 1], _horizonLive);
-				_gr.DrawLine(Pens.Red, _bmp.Width - 1 - d - d * horizon, old1, _bmp.Width - 1 - d * horizon, new1);
+				_gr.DrawLine(Pens.Red, _bmp.Width - 1 - d * horizon - d, old1, _bmp.Width - 1 - d * horizon, new1);
 				old1 = new1;
+
+				if (_predictionLive.Count() > _horizon)
+				{
+					int new3 = Rescale2(_predictionLive[_predictionLive.Count() - horizon], 1);
+					Pen green = new Pen(Color.FromArgb(50, 0, 255, 0), d);
+					Pen red = new Pen(Color.FromArgb(50, 255, 0, 0), d);
+					int yhalf = (int)(_bmp.Height / 2f);
+
+					if (Math.Abs(_predictionLive[_predictionLive.Count() - horizon]) > _tradeStart)
+					{
+						if (new1 < yhalf && new3 > yhalf)
+							_gr.DrawLine(red, _bmp.Width - d * horizon + d, yhalf + 1, _bmp.Width - d * horizon + d, _bmp.Height);
+						else if (new1 > yhalf && new3 < yhalf)
+							_gr.DrawLine(red, _bmp.Width - d * horizon + d, yhalf - 1, _bmp.Width - d * horizon + d, 0);
+						else if (new1 > yhalf && new3 > yhalf)
+							_gr.DrawLine(green, _bmp.Width - d * horizon + d, yhalf + 1, _bmp.Width - d * horizon + d, _bmp.Height);
+						else if (new1 < yhalf && new3 < yhalf)
+							_gr.DrawLine(green, _bmp.Width - d * horizon + d, yhalf - 1, _bmp.Width - d * horizon + d, 0);
+					}
+				}
 			}
 
 			int new2 = Rescale2(_prediction, 1);

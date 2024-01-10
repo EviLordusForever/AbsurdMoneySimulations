@@ -202,6 +202,10 @@ namespace AbsurdMoneySimulations
 			for (int i = 0; i < input.Length; i++)
 				input[i] = af.f(input[i] / standartDeviation) + move;
 
+			if (Single.IsNaN(input[0]))
+			{
+			}
+
 			return input;
 		}
 

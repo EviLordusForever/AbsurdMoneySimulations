@@ -116,5 +116,15 @@
 		{
 			FakeOTC2.DO();
 		}
+
+		private void button19_Click(object sender, EventArgs e)
+		{
+			Experiment1.Do();
+		}
+
+		private void button20_Click(object sender, EventArgs e)
+		{
+			Experiment1.OneSecToTwoSec();
+		}
 	}
 }
